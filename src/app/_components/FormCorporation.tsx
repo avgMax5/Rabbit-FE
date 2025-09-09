@@ -1,8 +1,15 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import { Check, Mail, Lock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function FormCorporation() {
+    const router = useRouter();
+
+    const handleSignupClick = () => {
+        router.push('/signup/corporation');
+    };
+
     return (
         <>
             <FormText>
@@ -20,23 +27,25 @@ export default function FormCorporation() {
                 <LoginFormContainer>
                     <InputContainer>
                         <InputIcon>
-                            <Mail size={20} color="#666" />
+                            <InputLabel>ID</InputLabel>
+                            <Mail size={20} color="#697077" />
                         </InputIcon>
-                        <LoginInput placeholder="아이디" isFirst={true} />
+                        <LoginInput placeholder="" isFirst={true} />
                     </InputContainer>
                     
                     <InputContainer>
                         <InputIcon>
-                            <Lock size={20} color="#666" />
+                            <InputLabel>PWD</InputLabel>
+                            <Lock size={20} color="#697077" />
                         </InputIcon>
-                        <LoginInput placeholder="비밀번호" type="password" isFirst={false} />
+                        <LoginInput placeholder="" type="password" isFirst={false} />
                     </InputContainer>
                 </LoginFormContainer>
             </ImageFormContainer>
             
             <Signup>
                 <SignupText>계정이 없으신가요?</SignupText>
-                <SignupButton>회원가입</SignupButton>
+                <SignupButton onClick={handleSignupClick}>회원가입</SignupButton>
             </Signup>
             
             <FeatureBox>
@@ -147,14 +156,30 @@ const InputContainer = styled.div`
     position: relative;
     width: 288px;
     height: 60px;
+    background-color: #ff0000;
+    opacity: 0.86;
+    border-radius: 15px;
+    box-shadow: inset 3px 3px 3px rgba(250, 252, 255, 0.6), inset -3px -3px 4px rgba(157, 172, 193, 1), 3px 3px 4px rgba(26, 102, 203, 0.43);
 `;
 
 const InputIcon = styled.div`
     position: absolute;
-    left: 15px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+`;
+
+const InputLabel = styled.span`
+    font-size: 12px;
+    color: #666;
+    font-family: 'nanum-square';
+    font-weight: 900;
+    white-space: nowrap;
 `;
 
 const LoginInput = styled.input.withConfig({
@@ -163,9 +188,10 @@ const LoginInput = styled.input.withConfig({
     width: 100%;
     height: 100%;
     border: none;
+    right: 10px;
     border-radius: ${props => props.isFirst ? '15px 15px 0 0' : '0 0 15px 15px'};
     background-color: #ffffff;
-    padding: 0 50px 0 50px;
+    padding: 10px 50px 0 60px;
     font-size: 1rem;
     font-family: 'nanum-square';
     color: #333;
@@ -216,10 +242,10 @@ const StartButton = styled.button`
     border: none;
     border-radius: 18px;
     background: #6787CE;
-    color: #ffffff;
+    color: #000;
     font-family: 'nanum-square';
-    font-weight: 600;
-    font-size: 1.1rem;
+    font-weight: 900;
+    font-size: 16px;
     cursor: pointer;
     margin-top: 30px;
     transition: all 0.3s ease;
