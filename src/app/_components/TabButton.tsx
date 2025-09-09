@@ -48,7 +48,8 @@ const TabButtonItem = styled.div.withConfig({
     shouldForwardProp: (prop) => prop !== 'active',
 })<{ active: boolean }>`
     flex: 1;
-    height: 42px;
+    width: 200px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;

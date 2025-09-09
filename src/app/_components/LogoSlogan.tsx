@@ -19,7 +19,7 @@ export default function LogoSlogan({ initial, animate, transition }: any) {
             />
             <SloganText>
                 개발자들의 <HighlightText>가치</HighlightText><br />
-                <GoldText>Rabbit과</GoldText> <HighlightText>같이</HighlightText>
+                <GoldText>Rabbit</GoldText>과 <HighlightText>같이</HighlightText>
             </SloganText>
         </LogoSloganContainer>
     );

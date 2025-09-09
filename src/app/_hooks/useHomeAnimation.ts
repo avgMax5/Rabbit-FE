@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 
 export const useHomeAnimation = () => {
-  const [showLogo, setShowLogo] = useState(true);
+  const [showLogo, setShowLogo] = useState(false);
   const [showHomeText, setShowHomeText] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+    setShowLogo(true);
+    
     const timer = setTimeout(() => {
       setShowLogo(false);
       setTimeout(() => {
@@ -16,7 +20,7 @@ export const useHomeAnimation = () => {
   }, []);
 
   return {
-    showLogo,
-    showHomeText,
+    showLogo: isClient ? showLogo : false,
+    showHomeText: isClient ? showHomeText : true,
   };
 };
