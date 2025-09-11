@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "styled-components";
-import Header from "../../_shared/components/header";
+import Header from "../../_shared/components/Header";
 import { LongTitle, ShortTitle } from "./_components/Title";
 import List from "./_components/List";
 import SortButton from "./_components/SortButton";
@@ -180,7 +180,6 @@ const Wrapper = styled.div`
     grid-template-rows: auto 1fr;
     gap: 5rem;
     margin: 0 auto;
-    padding: 0 2rem;
 `;
 
 const Main = styled.div`

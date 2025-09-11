@@ -27,7 +27,9 @@ function Header() {
 
     return (
         <Div>
-            <Logo src="/images/logo.png" alt="토끼로고" />
+            <Link href="/personal/home">
+                <Logo src="/images/logo.png" alt="토끼로고" />
+            </Link>
             <Navigate>
                 <Link href={`/personal/home`}>
                     <Home
@@ -92,16 +94,16 @@ const Div = styled.div`
     justify-content: space-between;
     gap: auto;
     width: 100%;
-    padding: 2rem 0rem;
+    padding: 2rem 2rem;
     align-items: center;
     justify-content: center;
-
     font-family: var(--font-rockstar);
     font-weight: 800;
 `;
 
 const Logo = styled.img`
     width: 9.5rem;
+    cursor: pointer;
 `;
 
 const Navigate = styled(WhiteContainer)`
