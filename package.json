@@ -9,12 +9,13 @@
         "lint": "eslint"
     },
     "dependencies": {
-        "framer-motion": "^12.23.12",
         "lucide-react": "^0.542.0",
+        "motion": "^12.23.12",
         "next": "15.5.2",
         "react": "19.1.0",
         "react-dom": "19.1.0",
-        "styled-components": "^6.1.19"
+        "styled-components": "^6.1.19",
+        "swiper": "^11.2.10"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
