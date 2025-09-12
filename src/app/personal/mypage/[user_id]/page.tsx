@@ -1,5 +1,5 @@
 "use client";
-import Header from "@/app/_shared/components/header";
+import Header from "@/app/_shared/components/Header";
 export default function MyPage() {
     return (
         <div>
