@@ -90,6 +90,11 @@ const WhiteContainer = styled.div`
 `;
 
 const Div = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
     gap: auto;
@@ -99,6 +104,7 @@ const Div = styled.div`
     justify-content: center;
     font-family: var(--font-rockstar);
     font-weight: 800;
+    backdrop-filter: blur(5px);
 `;
 
 const Logo = styled.img`
