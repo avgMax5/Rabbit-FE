@@ -1,9 +1,9 @@
 export default function Trade({ params }: {
-  params: { bunny_id: string }
+  params: { bunnyName: string }
 }) {
   return (
     <div>
-      <p>ID: {params.bunny_id}</p>
+      <p>ID: {params.bunnyName}</p>
     </div>
   )
 }

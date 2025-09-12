@@ -138,6 +138,7 @@ export default function List() {
   
 const Container = styled.div`
   min-height: 100vh;
+  padding-top: 120px; /* Header 높이만큼 상단 여백 추가 */
 `;
 
 const MainContent = styled.main`
