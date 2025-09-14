@@ -1,88 +1,30 @@
 import styled from "styled-components";
 
-function List() {
-    const fieldList = [
-        "코인명",
-        "직군",
-        "개발자유형",
-        "코인유형",
-        "등락률",
-        "현재가",
-        "뱃지",
-    ];
+interface ListProps<T> {
+    fieldList: { key: string; label: string }[];
+    dataList: T[];
+    width?: string;
+    height?: string;
+}
 
-    interface DataType {
-        id: number;
-        coin_name: string;
-        job: string;
-        dev_type: string;
-        coin_type: string;
-        fluctuation_rate: number;
-        current_money: number;
-        // badge: string[];
-    }
-
-    const Data: DataType[] = [
-        {
-            id: 0,
-            coin_name: "coin1",
-            job: "프론트엔드",
-            dev_type: "희소 자산형",
-            coin_type: "안정형",
-            fluctuation_rate: -20.2,
-            current_money: 20000,
-            // badge: [],
-        },
-        {
-            id: 1,
-            coin_name: "coin2",
-            job: "프론트엔드",
-            dev_type: "희소 자산형",
-            coin_type: "안정형",
-            fluctuation_rate: -20.2,
-            current_money: 20000,
-            // badge: [],
-        },
-        {
-            id: 2,
-            coin_name: "coin3",
-            job: "프론트엔드",
-            dev_type: "희소 자산형",
-            coin_type: "안정형",
-            fluctuation_rate: -20.2,
-            current_money: 20000,
-            // badge: [],
-        },
-        {
-            id: 3,
-            coin_name: "coin4",
-            job: "프론트엔드",
-            dev_type: "희소 자산형",
-            coin_type: "안정형",
-            fluctuation_rate: -20.2,
-            current_money: 20000,
-            // badge: [],
-        },
-    ];
-
+function List<T>({ fieldList, dataList }: ListProps<T>) {
     return (
         <Div>
-            <FieldContainer>
-                {fieldList.map((field, i) => (
-                    <span key={i}>{field}</span>
+            <FieldContainer $fieldNum={fieldList.length}>
+                {fieldList.map((field) => (
+                    <span key={field.key}>{field.label}</span>
                 ))}
             </FieldContainer>
             <RowContainer>
-                {Data.map((data, i) => {
+                {dataList.map((data, i) => {
                     const RowComponent = i % 2 === 0 ? Erow : Orow;
                     return (
-                        <RowComponent key={data.id}>
-                            <span>{data.coin_name}</span>
-                            <span>{data.job}</span>
-                            <span>{data.dev_type}</span>
-                            <span>{data.coin_type}</span>
-                            <span>{data.fluctuation_rate}%</span>
-                            <span>{data.current_money.toLocaleString()}</span>
+                        <RowComponent key={i} $fieldNum={fieldList.length}>
+                            {fieldList.map((field) => (
+                                <span key={field.key}>
+                                    {(data as Record<string, any>)[field.key]}
+                                </span>
+                            ))}
                         </RowComponent>
                     );
                 })}
@@ -91,11 +33,11 @@ function List() {
     );
 }
 
-const Row = styled.div`
+const Row = styled.div<{ $fieldNum: number }>`
     width: 100%;
     height: 2.2rem;
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
     align-items: center;
     text-align: center;
     flex-shrink: 0;
@@ -108,7 +50,7 @@ const Row = styled.div`
 
 const Div = styled.div`
     display: grid;
-    grid-template-rows: 2fr 8fr;
+    grid-template-rows: 2.2rem 60%;
     gap: 0.5rem;
     width: 100%;
     height: 22rem;
@@ -117,14 +59,13 @@ const Div = styled.div`
     border-radius: 2px;
     background: rgba(255, 255, 255, 0.18);
     box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.25);
-    margin-top: 1rem;
 `;
 
-const FieldContainer = styled.div`
+const FieldContainer = styled.div<{ $fieldNum: number }>`
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
     align-items: center;
     text-align: center;
     flex-shrink: 0;
@@ -143,7 +84,7 @@ const FieldContainer = styled.div`
 
 const RowContainer = styled.div`
     width: 100%;
-    height: 100%;
+    height: 100%; // Div의 첫 행 + gap 빼기
     display: flex;
     flex-direction: column;
     overflow-y: auto;
