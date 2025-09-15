@@ -9,6 +9,8 @@
         "lint": "eslint"
     },
     "dependencies": {
+        "@iconify/json": "^2.2.384",
+        "@iconify/react": "^6.0.2",
         "echarts": "^5.6.0",
         "echarts-for-react": "^3.0.2",
         "lucide-react": "^0.542.0",
