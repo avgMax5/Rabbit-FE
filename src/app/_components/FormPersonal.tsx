@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import { Check } from 'lucide-react';
-import { useOAuthLogin } from '../_hooks/useOAuthLogin';
+import { OAuthLogin } from "@/app/_shared/service/OAuthLogin";
 
 export default function FormPersonal() {
     return (
@@ -34,16 +34,16 @@ export default function FormPersonal() {
                     <Line></Line><SnsLoginText>SNS 소셜 로그인</SnsLoginText><Line></Line>
                 </SnsLoginTitle>
                 <SnsLoginButtonContainer>
-                    <SnsLoginButton type="google" onClick={() => useOAuthLogin("google")}>
+                    <SnsLoginButton type="google" onClick={() => OAuthLogin("google")}>
                         <Image src="/images/login/google.jpg" alt="Google" width={30} height={30} />
                     </SnsLoginButton>
-                    <SnsLoginButton type="kakao" onClick={() => useOAuthLogin("kakao")}>
+                    <SnsLoginButton type="kakao" onClick={() => OAuthLogin("kakao")}>
                         <Image src="/images/login/kakao.png" alt="Kakao" width={30} height={30} />
                     </SnsLoginButton>
-                    <SnsLoginButton type="naver" onClick={() => useOAuthLogin("naver")}>
+                    <SnsLoginButton type="naver" onClick={() => OAuthLogin("naver")}>
                         <Image src="/images/login/naver.png" alt="Naver" width={30} height={30} />
                     </SnsLoginButton>
-                    <SnsLoginButton type="github" onClick={() => useOAuthLogin("github")}>
+                    <SnsLoginButton type="github" onClick={() => OAuthLogin("github")}>
                         <Image src="/images/login/github.png" alt="GitHub" width={30} height={30} />
                     </SnsLoginButton>
                 </SnsLoginButtonContainer>

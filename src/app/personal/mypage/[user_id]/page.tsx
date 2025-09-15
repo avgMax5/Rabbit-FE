@@ -7,6 +7,7 @@ import MyInfo from "./_sections/MyInfo";
 import styled from "styled-components";
 import Aside from "./_components/Aside";
 import { useRouter } from "next/navigation";
+import { Logout } from "@/app/_shared/service/OAuthLogin";
 
 function MyPage() {
     const [activeTab, setActiveTab] = useState<
@@ -19,6 +20,7 @@ function MyPage() {
         sessionStorage.removeItem("accessToken");
 
         //api 연동
+        Logout();
 
         router.replace("/"); // 로그인 페이지로 이동
     };
