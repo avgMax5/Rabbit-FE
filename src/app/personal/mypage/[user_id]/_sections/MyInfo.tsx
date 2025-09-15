@@ -1,5 +1,6 @@
 import { Certificate } from "crypto";
 import styled from "styled-components";
+import { handleMouseEnter, handleMouseLeave } from "../utils/mouse";
 
 const Skills: string[] = [
     "HTML5",
@@ -114,7 +115,20 @@ function MyInfo() {
                     <div>
                         <TitleText>스택</TitleText>
                         <PositionContainer>
-                            <PositionBtn>frontend</PositionBtn>
+                            <PositionBtn
+                                onMouseEnter={(e) =>
+                                    handleMouseEnter(
+                                        {
+                                            backgroundColor: "#fba57c",
+                                            color: "#000",
+                                        },
+                                        e
+                                    )
+                                }
+                                onMouseLeave={handleMouseLeave}
+                            >
+                                frontend
+                            </PositionBtn>
                             <PositionBtn>backend</PositionBtn>
                             <PositionBtn>fullstack</PositionBtn>
                         </PositionContainer>
@@ -163,7 +177,17 @@ function MyInfo() {
                     <img src={"/images/personal/mypage/fly_rabbit.png"} />
                     <div>저장하기를 꼬옥 눌러주세요!</div>
                 </Guide>
-                <SaveBtn>저장하기</SaveBtn>
+                <SaveBtn
+                    onMouseEnter={(e) =>
+                        handleMouseEnter(
+                            { backgroundColor: "#fac150", color: "#000" },
+                            e
+                        )
+                    }
+                    onMouseLeave={handleMouseLeave}
+                >
+                    저장하기
+                </SaveBtn>
             </Bottom>
         </>
     );
@@ -283,7 +307,7 @@ const PositionBtn = styled.div`
     border-radius: 3px;
     text-align: center;
     line-height: 2rem;
-    background-color: #fba57c;
+    background-color: #a7a7a7;
 `;
 const Array = styled.div`
     width: 100%;
@@ -339,12 +363,13 @@ const Guide = styled.div`
         height: 98%;
     }
 `;
-const SaveBtn = styled.button`
+const SaveBtn = styled.div`
     width: 8rem;
     height: 2.2rem;
-    border: none;
+    text-align: center;
+    line-height: 2.2rem;
     border-radius: 16.576px;
-    background: rgba(254, 226, 167, 0.88);
+    background-color: rgba(254, 226, 167, 0.88);
     box-shadow: -1.913px -3.825px 6.376px 0 rgba(255, 177, 14, 0.84) inset,
         5.738px 3.825px 6.376px 0 #ffefce inset;
 `;

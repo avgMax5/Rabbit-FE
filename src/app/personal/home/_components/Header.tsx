@@ -104,8 +104,7 @@ const Div = styled.div`
     justify-content: center;
     font-family: var(--font-rockstar);
     font-weight: 800;
-    /* backdrop-filter: blur(5px); */
-    background-color: #0820362d;
+    backdrop-filter: blur(5px);
 `;
 
 const Logo = styled.img`

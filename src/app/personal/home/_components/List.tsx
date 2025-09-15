@@ -53,7 +53,7 @@ const Div = styled.div`
     grid-template-rows: 2.2rem 60%;
     gap: 0.5rem;
     width: 100%;
-    height: 22rem;
+    height: 60vh;
     align-items: center;
     flex-shrink: 0;
     border-radius: 2px;

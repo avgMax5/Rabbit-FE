@@ -1,8 +1,149 @@
-import GlassBox from "@/app/personal/mypage/[user_id]/_components/GlassBox";
-import List from "@/app/personal/home/_components/List";
 import styled from "styled-components";
 import SortBigButton from "../_components/SortBigButton";
-import HistoryButton from "../_components/HistoryButton";
+import List from "@/app/personal/home/_components/List";
+import { useState } from "react";
+import ListButton from "../_components/ListButton";
+
+const historyFieldList = [
+    { key: "tradeTime", label: "체결시간" },
+    { key: "coinName", label: "코인명" },
+    { key: "quantity", label: "거래수량" },
+    { key: "price", label: "거래단가" },
+    { key: "amount", label: "거래금액" },
+    { key: "fee", label: "수수료" },
+    { key: "orderTime", label: "주문시간" },
+];
+
+const historyDataList = [
+    {
+        tradeTime: "2025-09-15 10:32:45",
+        coinName: "RAB",
+        quantity: 120,
+        price: 250,
+        amount: 30000,
+        fee: 150,
+        orderTime: "2025-09-15 10:31:10",
+    },
+    {
+        tradeTime: "2025-09-15 09:12:10",
+        coinName: "BIT",
+        quantity: 50,
+        price: 800,
+        amount: 40000,
+        fee: 200,
+        orderTime: "2025-09-15 09:10:05",
+    },
+    {
+        tradeTime: "2025-09-14 18:45:20",
+        coinName: "DEV",
+        quantity: 10,
+        price: 1500,
+        amount: 15000,
+        fee: 75,
+        orderTime: "2025-09-14 18:43:00",
+    },
+    {
+        tradeTime: "2025-09-14 16:25:31",
+        coinName: "RAB",
+        quantity: 300,
+        price: 210,
+        amount: 63000,
+        fee: 315,
+        orderTime: "2025-09-14 16:24:00",
+    },
+    {
+        tradeTime: "2025-09-14 14:02:05",
+        coinName: "BIT",
+        quantity: 80,
+        price: 780,
+        amount: 62400,
+        fee: 312,
+        orderTime: "2025-09-14 14:00:00",
+    },
+    {
+        tradeTime: "2025-09-14 12:55:42",
+        coinName: "DEV",
+        quantity: 25,
+        price: 1700,
+        amount: 42500,
+        fee: 213,
+        orderTime: "2025-09-14 12:54:10",
+    },
+    {
+        tradeTime: "2025-09-13 22:40:15",
+        coinName: "RAB",
+        quantity: 150,
+        price: 230,
+        amount: 34500,
+        fee: 173,
+        orderTime: "2025-09-13 22:38:50",
+    },
+    {
+        tradeTime: "2025-09-13 21:10:25",
+        coinName: "BIT",
+        quantity: 40,
+        price: 900,
+        amount: 36000,
+        fee: 180,
+        orderTime: "2025-09-13 21:09:00",
+    },
+    {
+        tradeTime: "2025-09-13 19:33:59",
+        coinName: "DEV",
+        quantity: 15,
+        price: 1600,
+        amount: 24000,
+        fee: 120,
+        orderTime: "2025-09-13 19:32:00",
+    },
+    {
+        tradeTime: "2025-09-13 17:22:11",
+        coinName: "RAB",
+        quantity: 500,
+        price: 205,
+        amount: 102500,
+        fee: 512,
+        orderTime: "2025-09-13 17:20:45",
+    },
+    {
+        tradeTime: "2025-09-13 15:14:37",
+        coinName: "BIT",
+        quantity: 70,
+        price: 820,
+        amount: 57400,
+        fee: 287,
+        orderTime: "2025-09-13 15:12:30",
+    },
+    {
+        tradeTime: "2025-09-13 11:05:00",
+        coinName: "DEV",
+        quantity: 5,
+        price: 2000,
+        amount: 10000,
+        fee: 50,
+        orderTime: "2025-09-13 11:03:20",
+    },
+];
+
+const jobData = [
+    { value: 40, name: "프론트엔드" },
+    { value: 38, name: "백엔드" },
+    { value: 32, name: "풀스택" },
+];
+
+const devData = [
+    { value: 40, name: "성장형" },
+    { value: 18, name: "안정형" },
+    { value: 12, name: "가치형" },
+    { value: 12, name: "인기형" },
+    { value: 12, name: "밸런스형" },
+];
+
+const coinData = [
+    { value: 40, name: "A형" },
+    { value: 68, name: "B형" },
+    { value: 32, name: "C형" },
+];
 
 const fieldList = [
     { key: "coin_name", label: "코인명" },
@@ -163,52 +304,74 @@ const dataList: DataType[] = [
 ];
 
 function MyBunnyList() {
+    const [isHistory, setIsHistory] = useState(false);
+
+    const handleGetList = () => {
+        setIsHistory(false);
+    };
+
+    const handleGetHistory = () => {
+        setIsHistory(true);
+    };
+
     return (
         <Wrapper>
             <FirstRow>
-                <SortBigButton />
-                <SortBigButton />
-                <SortBigButton />
-                <HistoryButton />
+                <SortBigButton
+                    sortTitle="직군"
+                    top1Title="frontend"
+                    top1Carrot={200000}
+                    chartData={jobData}
+                    colors={["#760578", "#bc22b4", "#e86ac4"]}
+                />
+                <SortBigButton
+                    sortTitle="개발자 유형"
+                    top1Title="성장형"
+                    top1Carrot={200000}
+                    chartData={devData}
+                    colors={["#467", "#489", "#568", "#890", "#444"]}
+                />
+                <SortBigButton
+                    sortTitle="버니 유형"
+                    top1Title="희소자산형"
+                    top1Carrot={200000}
+                    chartData={coinData}
+                    colors={["#052368", "#0a4e91", "#759af1"]}
+                />
+                <ButtonContainer>
+                    <ListButton
+                        onGetList={handleGetList}
+                        totalLength={dataList.length}
+                        content="보유 내역 보기"
+                    />
+                    <ListButton
+                        onGetList={handleGetHistory}
+                        totalLength={historyDataList.length}
+                        content="거래 기록 보기"
+                    />
+                </ButtonContainer>
             </FirstRow>
             <SecondRow>
                 <Div>
-                    <FieldContainer $fieldNum={fieldList.length}>
-                        {fieldList.map((field) => (
-                            <span key={field.key}>{field.label}</span>
-                        ))}
-                    </FieldContainer>
-                    <RowContainer>
-                        {dataList.map((data, i) => {
-                            const RowComponent = i % 2 === 0 ? Erow : Orow;
-                            return (
-                                <RowComponent
-                                    key={i}
-                                    $fieldNum={fieldList.length}
-                                >
-                                    {fieldList.map((field) => (
-                                        <span key={field.key}>
-                                            {
-                                                (data as Record<string, any>)[
-                                                    field.key
-                                                ]
-                                            }
-                                        </span>
-                                    ))}
-                                </RowComponent>
-                            );
-                        })}
-                    </RowContainer>
+                    {isHistory ? (
+                        <List fieldList={fieldList} dataList={dataList} />
+                    ) : (
+                        <List
+                            fieldList={historyFieldList}
+                            dataList={historyDataList}
+                        />
+                    )}
                 </Div>
             </SecondRow>
         </Wrapper>
     );
 }
+
 const Wrapper = styled.div`
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-rows: 10rem 1fr;
+    grid-template-rows: 12rem 1fr;
     gap: 1rem;
     box-sizing: border-box;
 `;
@@ -220,34 +383,8 @@ const Div = styled.div`
     display: grid;
     grid-template-rows: 3rem 37vh;
     gap: 0.5rem;
-`;
-const FieldContainer = styled.div<{ $fieldNum: number }>`
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
-    align-items: center;
-    text-align: center;
-    flex-shrink: 0;
 
-    font-family: var(--font-nanum-squar);
-    font-weight: 900;
-    font-size: 14px;
-    color: #ddd;
-
-    & span {
-        flex: 1;
-        text-align: center;
-    }
-`;
-const RowContainer = styled.div`
-    width: 100%;
-    height: 100%;
-    padding-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    overflow-y: auto;
+    font-family: var(--font-);
 `;
 
 const Row = styled.div<{ $fieldNum: number }>`
@@ -265,17 +402,6 @@ const Row = styled.div<{ $fieldNum: number }>`
     font-size: 12px;
 `;
 
-const Erow = styled(Row)`
-    background: #fff;
-    box-shadow: 1px 1px 10px 0 rgba(204, 204, 204, 0.25) inset,
-        0 2px 2px 0 rgba(0, 0, 0, 0.25);
-`;
-
-const Orow = styled(Row)`
-    background: #f1f1f1;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
-`;
-
 const FirstRow = styled.div`
     display: grid;
     grid-row: 1;
@@ -291,6 +417,11 @@ const SecondRow = styled.div`
     width: 100%;
     height: 100%;
     padding: 0.8rem 0;
+`;
+
+const ButtonContainer = styled.div`
+    display: grid;
+    gap: 1rem;
 `;
 
 export default MyBunnyList;

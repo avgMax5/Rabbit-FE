@@ -1,61 +1,82 @@
 import styled from "styled-components";
+import { handleMouseEnter, handleMouseLeave } from "../utils/mouse";
+import NightingaleChart, { ChartData } from "./chart/NightingaleChart";
 
-function SortBigButton() {
+interface SortBigButtonProps {
+    sortTitle: string;
+    top1Title: string;
+    top1Carrot: number;
+    chartData: ChartData;
+    colors?: string[];
+}
+
+function SortBigButton({
+    sortTitle,
+    top1Title,
+    top1Carrot,
+    chartData,
+    colors,
+}: SortBigButtonProps) {
     return (
-        <Div>
-            <SortTitle>직군</SortTitle>
-            <MainSection>
-                <LeftContainer>
-                    <Top1Title>FRONTEND</Top1Title>
-                    <Top1Carrot>20,000</Top1Carrot>
-                    <GraphRatio></GraphRatio>
-                </LeftContainer>
-                <GraphContainer></GraphContainer>
-            </MainSection>
+        <Div
+            onMouseEnter={(e) =>
+                handleMouseEnter(
+                    {
+                        backgroundColor: "#30a5ff94",
+                        color: "white",
+                    },
+                    e
+                )
+            }
+            onMouseLeave={handleMouseLeave}
+        >
+            <SortTitle>{sortTitle}</SortTitle>
+            <GraphContainer>
+                <NightingaleChart
+                    data={chartData}
+                    colors={colors}
+                    inner={15}
+                    outer={60}
+                />
+            </GraphContainer>
+
+            <BottomContainer>
+                <div>
+                    <Top1Text>TOP 1</Top1Text>
+                    <Top1Title>{top1Title}</Top1Title>
+                </div>
+                <Top1Carrot>{top1Carrot}</Top1Carrot>
+            </BottomContainer>
         </Div>
     );
 }
 
 const Div = styled.div`
+    position: relative;
     width: 100%;
     height: 100%;
+    padding: 0.6rem;
     box-sizing: border-box;
     border-radius: 8px;
     display: grid;
-    grid-template-rows: 0.6fr 3fr;
-    background-color: #eaeaea4a;
+    grid-template-rows: 4fr 1fr;
+    background-color: #ffffffec;
     box-shadow: -2px -2px 4px 0 rgba(0, 0, 0, 0.14) inset,
         2px 2px 4px 0 rgba(231, 231, 231, 0.25) inset;
     filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
 `;
 
 const SortTitle = styled.div`
+    position: absolute;
+    top: -4.2rem;
+    left: 1rem;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: start;
     align-items: center;
-    padding: 0.6rem 0 0 0.6rem;
-
     font-size: 18px;
     font-weight: 700;
-`;
-
-const MainSection = styled.div`
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    padding: 0 0.8rem;
-    display: grid;
-    grid-template-columns: 4fr 4.5fr;
-`;
-
-const LeftContainer = styled.div`
-    width: 100%;
-    height: 100%;
-    padding: 0.5rem 0rem;
-    display: grid;
-    grid-template-rows: 1fr 1.5fr 3fr;
 `;
 
 const Top1Title = styled.div`
@@ -67,26 +88,30 @@ const Top1Title = styled.div`
 `;
 
 const Top1Carrot = styled.div`
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-shrink: 0;
-    justify-content: start;
-
-    font-size: 21px;
+    font-size: 16px;
     font-weight: 900;
 `;
 
-const GraphRatio = styled.div`
+const BottomContainer = styled.div`
     width: 100%;
     height: 100%;
-    background-color: #592;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    & div {
+        width: 5rem;
+        gap: 1rem;
+    }
+`;
+
+const Top1Text = styled.div`
+    margin-bottom: 0.1rem;
 `;
 
 const GraphContainer = styled.div`
     width: 100%;
     height: 100%;
-    background-color: #019;
 `;
 
 export default SortBigButton;

@@ -46,7 +46,7 @@ const Body = styled.div`
     width: 82%;
     height: 83vh;
     margin: 0 auto;
-    margin-top: 6.5rem;
+    margin-top: 10vh;
     box-sizing: border-box;
     padding: 1.2rem;
     display: grid;

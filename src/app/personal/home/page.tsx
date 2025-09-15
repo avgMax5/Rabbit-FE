@@ -244,11 +244,11 @@ export default function Personal() {
 const Wrapper = styled.div`
     width: 100%;
     min-height: 100vh;
-    margin-top: 10rem;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: 5rem;
     margin: 0 auto;
+    margin-top: 10rem;
 `;
 
 const Main = styled.div`
