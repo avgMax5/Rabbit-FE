@@ -85,7 +85,7 @@ const WhiteContainer = styled.div`
     border-radius: 36px;
     background: rgba(245, 245, 245, 0.68);
     box-shadow: 5px 5px 8px 0 rgba(130, 150, 176, 0.25),
-        6px 3px 4px 0 #f7f7f7 inset,
+        4px 3px 4px 0 #f7f7f7 inset,
         -4px -2px 15px 0 rgba(71, 87, 122, 0.67) inset;
 `;
 
@@ -99,7 +99,7 @@ const Div = styled.div`
     justify-content: space-between;
     gap: auto;
     width: 100%;
-    padding: 2rem 2rem;
+    padding: 1rem 2rem 1.6rem 2rem;
     align-items: center;
     justify-content: center;
     font-family: var(--font-rockstar);
@@ -108,7 +108,7 @@ const Div = styled.div`
 `;
 
 const Logo = styled.img`
-    width: 9.5rem;
+    width: 8.5rem;
     cursor: pointer;
 `;
 
@@ -129,8 +129,7 @@ const CarrotImg = styled.img`
 const Money = styled(WhiteContainer)`
     padding: 0.5rem 1.2rem;
     gap: 0.4rem;
-    font-size: 18px;
-    font-weight: 100;
+    font-size: 15px;
 `;
 
 export default Header;

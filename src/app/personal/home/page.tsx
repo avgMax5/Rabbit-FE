@@ -23,63 +23,127 @@ export interface BadgeType {
     raise: boolean;
 }
 
+const RankData: DataType[] = [
+    {
+        id: 0,
+        coin_name: "coin1",
+        percent: 200.3,
+    },
+    {
+        id: 1,
+        coin_name: "coin2",
+        percent: 200.3,
+    },
+    {
+        id: 2,
+        coin_name: "coin3",
+        percent: 200.3,
+    },
+    {
+        id: 3,
+        coin_name: "coin4",
+        percent: 200.3,
+    },
+    {
+        id: 4,
+        coin_name: "coin5",
+        percent: 200.3,
+    },
+];
+
+const SelectData: string[][] = [
+    ["희소자산형", "밸런스형", "단가친화형"],
+    ["프론트엔드", "백엔드", "풀스택"],
+    ["성장형", "안정형", "가치형", "인기형", "밸런스형"],
+    ["카카오", "네이버", "신한"],
+];
+
+const BadgeData: BadgeType[] = [
+    {
+        id: 0,
+        src: "/images/personal/shared/kakao-badge.png",
+        amount: 16,
+        raise: true,
+    },
+    {
+        id: 1,
+        src: "/images/personal/shared/naver-badge.png",
+        amount: 19,
+        raise: false,
+    },
+    {
+        id: 2,
+        src: "/images/personal/shared/shinhan-badge.png",
+        amount: 16,
+        raise: true,
+    },
+];
+
+const fieldList = [
+    { key: "coin_name", label: "코인명" },
+    { key: "job", label: "직군" },
+    { key: "dev_type", label: "개발자유형" },
+    { key: "coin_type", label: "코인유형" },
+    { key: "fluctuation_rate", label: "등락률" },
+    { key: "current_price", label: "현재가" },
+    { key: "badge", label: "뱃지" },
+];
+
+interface ListDataType {
+    id: number;
+    coin_name: string;
+    job: string;
+    dev_type: string;
+    coin_type: string;
+    fluctuation_rate: number;
+    current_money: number;
+    // badge: string[];
+}
+
+const Data: ListDataType[] = [
+    {
+        id: 0,
+        coin_name: "coin1",
+        job: "프론트엔드",
+        dev_type: "희소 자산형",
+        coin_type: "안정형",
+        fluctuation_rate: -20.2,
+        current_money: 20000,
+        // badge: [],
+    },
+    {
+        id: 1,
+        coin_name: "coin2",
+        job: "프론트엔드",
+        dev_type: "희소 자산형",
+        coin_type: "안정형",
+        fluctuation_rate: -20.2,
+        current_money: 20000,
+        // badge: [],
+    },
+    {
+        id: 2,
+        coin_name: "coin3",
+        job: "프론트엔드",
+        dev_type: "희소 자산형",
+        coin_type: "안정형",
+        fluctuation_rate: -20.2,
+        current_money: 20000,
+        // badge: [],
+    },
+    {
+        id: 3,
+        coin_name: "coin4",
+        job: "프론트엔드",
+        dev_type: "희소 자산형",
+        coin_type: "안정형",
+        fluctuation_rate: -20.2,
+        current_money: 20000,
+        // badge: [],
+    },
+];
+
 export default function Personal() {
-    const RankData: DataType[] = [
-        {
-            id: 0,
-            coin_name: "coin1",
-            percent: 200.3,
-        },
-        {
-            id: 1,
-            coin_name: "coin2",
-            percent: 200.3,
-        },
-        {
-            id: 2,
-            coin_name: "coin3",
-            percent: 200.3,
-        },
-        {
-            id: 3,
-            coin_name: "coin4",
-            percent: 200.3,
-        },
-        {
-            id: 4,
-            coin_name: "coin5",
-            percent: 200.3,
-        },
-    ];
-
-    const SelectData: string[][] = [
-        ["희소자산형", "밸런스형", "단가친화형"],
-        ["프론트엔드", "백엔드", "풀스택"],
-        ["성장형", "안정형", "가치형", "인기형", "밸런스형"],
-        ["카카오", "네이버", "신한"],
-    ];
-
-    const BadgeData: BadgeType[] = [
-        {
-            id: 0,
-            src: "/images/personal/shared/kakao-badge.png",
-            amount: 16,
-            raise: true,
-        },
-        {
-            id: 1,
-            src: "/images/personal/shared/naver-badge.png",
-            amount: 19,
-            raise: false,
-        },
-        {
-            id: 2,
-            src: "/images/personal/shared/shinhan-badge.png",
-            amount: 16,
-            raise: true,
-        },
-    ];
-
     return (
         <>
             <Wrapper>
@@ -90,7 +154,11 @@ export default function Personal() {
                         {/* 갓 상장한 버니들 */}
                         <Container>
                             <LongTitle content={"GOT 탑승한 버니들"} />
-                            <List />
+                            <List
+                                fieldList={fieldList}
+                                height="22rem"
+                                dataList={Data}
+                            />
                         </Container>
 
                         <Container>
@@ -119,7 +187,7 @@ export default function Personal() {
                                     isMulti={true}
                                 />
                             </SortButtons>
-                            <List />
+                            <List fieldList={fieldList} dataList={Data} />
                         </Container>
                     </LeftSection>
 
@@ -176,6 +244,7 @@ export default function Personal() {
 const Wrapper = styled.div`
     width: 100%;
     min-height: 100vh;
+    margin-top: 10rem;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: 5rem;
@@ -185,7 +254,7 @@ const Wrapper = styled.div`
 const Main = styled.div`
     width: 100%;
     height: 100%;
-    padding: 1.5rem 0 rem;
+    padding: 0rem 2rem;
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 2rem;
@@ -201,6 +270,7 @@ const LeftSection = styled.div`
 const SortButtons = styled.div`
     width: 100%;
     height: 3rem;
+    margin-bottom: 1rem;
     display: flex;
     gap: 1rem;
     margin-top: 2.2rem;
