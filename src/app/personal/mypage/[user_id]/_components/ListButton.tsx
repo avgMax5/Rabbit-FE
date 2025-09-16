@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { handleMouseEnter, handleMouseLeave } from "../utils/mouse";
+import { handleEnterBackground, handleLeaveBackground } from "../utils/mouse";
 
 interface ListButtonProps {
     onGetList: () => void;
@@ -12,12 +12,12 @@ function ListButton({ onGetList, totalLength, content }: ListButtonProps) {
         <Div>
             <Main
                 onMouseEnter={(e) =>
-                    handleMouseEnter(
-                        { backgroundColor: "#2f2f2f36", color: "#fff" },
+                    handleEnterBackground(
+                        { backgroundColor: "#2f2f2f5b", color: "#fff" },
                         e
                     )
                 }
-                onMouseLeave={handleMouseLeave}
+                onMouseLeave={handleLeaveBackground}
                 onClick={onGetList}
                 $content={content}
             >

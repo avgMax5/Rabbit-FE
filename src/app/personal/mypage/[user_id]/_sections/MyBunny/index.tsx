@@ -7,6 +7,37 @@ import RadialGraph from "./RadialGraph";
 import CoinType from "./CoinType";
 import AiSummarize from "@/app/_shared/components/AiSummarize";
 import CustomerHold from "./CustomerHold";
+import { BubbleDataItem } from "../../_components/chart/BubbleChart";
+
+const reliavilityData = [
+    { value: 60, name: "점수" },
+    { value: 40, name: "남은 점수" },
+];
+
+const petagonData = [
+    { name: "성장형", value: 82 },
+    { name: "밸런스형", value: 47 },
+    { name: "인기형", value: 95 },
+    { name: "가치형", value: 63 },
+    { name: "안정형", value: 71 },
+];
+
+const sampleData: BubbleDataItem[] = [
+    //내림차순으로 하기!!
+    [25, 30, 70, "Label D"],
+    [35, 20, 50, "Label E"],
+    [10, 20, 40, "Label A"], // x=10, y=20, size=30
+    [20, 14, 30, "Label B"],
+    [28, 12, 20, "Label C"],
+];
+
+const progressData = [
+    { label: "성장형", value: 200 },
+    { label: "안정형", value: 150 },
+    { label: "가치형", value: 110 },
+    { label: "인기형", value: 90 },
+    { label: "기본형", value: 10 },
+];
 
 function MyBunny() {
     return (
@@ -14,15 +45,18 @@ function MyBunny() {
             <FirstRow>
                 <Col>
                     <MarketCap />
-                    <Reliavility />
+                    <Reliavility data={reliavilityData} />
                 </Col>
                 <GrowthRate />
-                <RadialGraph />
+                <RadialGraph data={petagonData} devType="안정형" />
             </FirstRow>
             <SecondRow>
-                <CoinType />
+                <CoinType type="A" />
                 <AiSummarize />
-                <CustomerHold />
+                <CustomerHold
+                    bubbleData={sampleData}
+                    progressData={progressData}
+                />
             </SecondRow>
         </Wrapper>
     );
@@ -31,7 +65,7 @@ const Wrapper = styled.div`
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-rows: 4fr 4fr;
+    grid-template-rows: 1fr 1fr;
     gap: 0.8rem;
 `;
 const Row = styled.div`
@@ -49,7 +83,7 @@ const FirstRow = styled(Row)`
 const Col = styled.div`
     display: grid;
     gap: 0.8rem;
-    grid-template-rows: 1fr 1.5fr;
+    grid-template-rows: 1fr 1.2fr;
 `;
 
 const SecondRow = styled(Row)`

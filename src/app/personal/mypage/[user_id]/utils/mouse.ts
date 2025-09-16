@@ -1,4 +1,4 @@
-export const handleMouseEnter = (
+export const handleEnterBackground = (
     options: { backgroundColor: string; color: string },
     e: React.MouseEvent<HTMLDivElement>
 ) => {
@@ -7,7 +7,7 @@ export const handleMouseEnter = (
     e.currentTarget.style.cursor = "pointer";
 };
 
-export const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+export const handleLeaveBackground = (e: React.MouseEvent<HTMLDivElement>) => {
     e.currentTarget.style.backgroundColor = "";
     e.currentTarget.style.color = "";
 };

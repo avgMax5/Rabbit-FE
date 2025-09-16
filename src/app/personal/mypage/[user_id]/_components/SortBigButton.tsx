@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { handleMouseEnter, handleMouseLeave } from "../utils/mouse";
+import { handleLeaveBackground, handleEnterBackground } from "../utils/mouse";
 import NightingaleChart, { ChartData } from "./chart/NightingaleChart";
 
 interface SortBigButtonProps {
@@ -20,7 +20,7 @@ function SortBigButton({
     return (
         <Div
             onMouseEnter={(e) =>
-                handleMouseEnter(
+                handleEnterBackground(
                     {
                         backgroundColor: "#30a5ff94",
                         color: "white",
@@ -28,7 +28,7 @@ function SortBigButton({
                     e
                 )
             }
-            onMouseLeave={handleMouseLeave}
+            onMouseLeave={handleLeaveBackground}
         >
             <SortTitle>{sortTitle}</SortTitle>
             <GraphContainer>
