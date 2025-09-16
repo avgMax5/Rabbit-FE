@@ -79,11 +79,11 @@ const MainSection = styled.div`
     grid-column: 2;
     margin-top: 1rem;
     width: 100%;
-    height: 97%;
+    height: 78vh;
     //max-height: 42rem;
     display: grid;
-    grid-template-rows: 0.5fr 7fr;
-    gap: 0.5rem;
+    grid-template-rows: 2.3rem 1fr;
+    gap: 1rem;
     box-sizing: border-box;
     padding: 1rem;
     flex-shrink: 0;
@@ -103,10 +103,11 @@ const TopContainer = styled.div`
 
 const Main = styled.div`
     width: 100%;
-    height: 65vh;
+    height: 100%;
     box-sizing: border-box;
     overflow: hidden;
     grid-row: 2;
+    overflow: hidden;
 `;
 
 const Rabbit = styled.img`

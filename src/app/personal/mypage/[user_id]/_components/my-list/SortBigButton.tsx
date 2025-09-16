@@ -1,6 +1,9 @@
 import styled from "styled-components";
-import { handleLeaveBackground, handleEnterBackground } from "../utils/mouse";
-import NightingaleChart, { ChartData } from "./chart/NightingaleChart";
+import {
+    handleLeaveBackground,
+    handleEnterBackground,
+} from "../../_utils/mouse";
+import NightingaleChart, { ChartData } from "../chart/NightingaleChart";
 
 interface SortBigButtonProps {
     sortTitle: string;
