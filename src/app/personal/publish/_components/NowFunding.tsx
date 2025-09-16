@@ -1,53 +1,34 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import FundBunnyCard from './FundBunnyCard';
+import { FundBunny } from '../../../_store/fundingStore';
 
-interface FundingData {
-  fund_bunny_id: number;
-  bunny_name: string;
-  bunny_type: string;
-  end_at: string | null;
-  collected_bny: number;
-  target_bny: number;
-  avatarSrc: string;
+interface NowFundingProps {
+  bunnies: FundBunny[];
 }
 
-export default function NowFunding() {
+export default function NowFunding({ bunnies }: NowFundingProps) {
   const router = useRouter();
   
-  // 더미 데이터 배열
-  const fundingData: FundingData[] = [
-    {
-      fund_bunny_id: 4,
-      bunny_name: "코인명1",
-      bunny_type: "😀",
-      end_at: null,
-      collected_bny: 8000000,
-      target_bny: 12000000,
-      avatarSrc: "/images/personal/publish/astronaut.png"
-    },
-    {
-      fund_bunny_id: 5,
-      bunny_name: "코인명2", 
-      bunny_type: "😀",
-      end_at: null,
-      collected_bny: 15000000,
-      target_bny: 20000000,
-      avatarSrc: "/images/personal/publish/astronaut.png"
-    },
-    {
-      fund_bunny_id: 6,
-      bunny_name: "코인명3",
-      bunny_type: "😀", 
-      end_at: null,
-      collected_bny: 9000000,
-      target_bny: 20000000,
-      avatarSrc: "/images/personal/publish/astronaut.png"
-    }
-  ];
+  const nowFundingBunnies = useMemo(() => {
+    const bunniesArray = Array.isArray(bunnies) ? bunnies : [];
+    
+    return bunniesArray
+      .filter(bunny => !bunny.end_at)
+      .slice(0, 3)
+      .map(bunny => ({
+        fund_bunny_id: bunny.fund_bunny_id,
+        bunny_name: bunny.bunny_name,
+        bunny_type: bunny.bunny_type,
+        end_at: bunny.end_at,
+        collected_bny: bunny.collected_bny,
+        target_bny: bunny.target_bny,
+        avatarSrc: "/images/personal/publish/astronaut.png"
+      }));
+  }, [bunnies]);
 
   return (
     <NowFundingContainer>
@@ -60,17 +41,21 @@ export default function NowFunding() {
       </HeaderSection>
       
       <CardsContainer>
-        {fundingData.map((data) => (
-          <FundBunnyCard 
-            key={data.fund_bunny_id}
-            coinName={data.bunny_name}
-            coinType={data.bunny_type}
-            timeLeft={data.end_at}
-            currentAmount={data.collected_bny}
-            targetAmount={data.target_bny}
-            avatarSrc={data.avatarSrc}
-          />
-        ))}
+        {nowFundingBunnies.length > 0 ? (
+          nowFundingBunnies.map((data) => (
+            <FundBunnyCard 
+              key={data.fund_bunny_id}
+              coinName={data.bunny_name}
+              coinType={data.bunny_type}
+              timeLeft={data.end_at}
+              currentAmount={data.collected_bny}
+              targetAmount={data.target_bny}
+              avatarSrc={data.avatarSrc}
+            />
+          ))
+        ) : (
+          <NoDataText>현재 펀딩 중인 버니가 없습니다.</NoDataText>
+        )}
       </CardsContainer>
     </NowFundingContainer>
   );
@@ -133,7 +118,7 @@ const ViewAllLink = styled.div`
 
 const CardsContainer = styled.div`
   display: flex;
-  gap: 1.5rem;
+  gap: 5rem;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -142,4 +127,12 @@ const CardsContainer = styled.div`
   margin-bottom: 6.25rem;
   width: 100%;
   max-width: 75rem;
+`;
+
+const NoDataText = styled.div`
+  color: #cccccc;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  padding: 2rem;
 `;

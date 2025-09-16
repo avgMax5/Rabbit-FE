@@ -1,7 +1,8 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import { getBunniesCount, FundingCount } from '../../../_api/fundingAPI'
 
 interface CoinStateItem {
   title: string
@@ -9,10 +10,34 @@ interface CoinStateItem {
 }
 
 export default function CoinState() {
-  const coinStates: CoinStateItem[] = [
-    { title: "펀딩중인 코인 수", value: "4개" },
-    { title: "상장된 코인 수", value: "12개" },
-    { title: "마감 임박", value: "2개" }
+  const [fundingData, setFundingData] = useState<FundingCount | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getBunniesCount();
+        if (data) {
+          setFundingData(data);
+        }
+      } catch (error) {
+        console.error('펀딩 데이터를 가져오는데 실패했습니다:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const coinStates: CoinStateItem[] = fundingData ? [
+    { title: "펀딩중인 코인 수", value: `${fundingData.fund_bunny_count}개` },
+    { title: "상장된 코인 수", value: `${fundingData.listed_bunny_count}개` },
+    { title: "마감 임박", value: `${fundingData.closing_soon_bunny_count}개` }
+  ] : [
+    { title: "펀딩중인 코인 수", value: "로딩중..." },
+    { title: "상장된 코인 수", value: "로딩중..." },
+    { title: "마감 임박", value: "로딩중..." }
   ];
 
   return (

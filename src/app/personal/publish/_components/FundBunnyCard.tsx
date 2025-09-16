@@ -165,9 +165,7 @@ const CardContainer = styled.div`
   border-radius: 0.375rem;
   padding: 1.5rem;
   box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 20rem;
-  min-width: 18rem;
+  min-width: 25rem;
   min-height: 15rem;
   display: flex;
   flex-direction: column;

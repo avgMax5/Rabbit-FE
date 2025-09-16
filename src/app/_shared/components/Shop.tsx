@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
-// 애니메이션 정의
 const fadeIn = keyframes`
   from {
     opacity: 0;

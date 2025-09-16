@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -11,10 +11,17 @@ import CreateBunnyModal from "./_modal/CreateBunnyModal";
 import Button from "@/app/_shared/components/Button";
 import Header from "@/app/_shared/components/Header";
 import SloganContainer from "./_components/SloganContainer";
+import { useFundingStore } from "../../_store/fundingStore";
 
 export default function Publish() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
+    
+    const { bunnies, isLoading, error, fetchBunnies, clearError } = useFundingStore();
+
+    useEffect(() => {
+        fetchBunnies();
+    }, [fetchBunnies]);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -46,6 +53,39 @@ export default function Publish() {
             buttonText: "상장심사 받기",
         },
     ];
+
+    // 로딩 상태 처리
+    if (isLoading) {
+        return (
+            <>
+                <MainContainer />
+                <ContentContainer>
+                    <Header />
+                    <LoadingContainer>
+                        <LoadingText>펀딩 버니 데이터를 불러오는 중...</LoadingText>
+                    </LoadingContainer>
+                </ContentContainer>
+            </>
+        );
+    }
+
+    // 에러 상태 처리
+    if (error) {
+        return (
+            <>
+                <MainContainer />
+                <ContentContainer>
+                    <Header />
+                    <ErrorContainer>
+                        <ErrorText>오류가 발생했습니다: {error}</ErrorText>
+                        <Button onClick={() => fetchBunnies()} variant="primary" size="medium">
+                            다시 시도
+                        </Button>
+                    </ErrorContainer>
+                </ContentContainer>
+            </>
+        );
+    }
 
     return (
         <>
@@ -128,8 +168,8 @@ export default function Publish() {
                         </BottomRightImageContainer>
                     </BottomTop>
 
-                    <EndingSoon />
-                    <NowFunding />
+                    <EndingSoon bunnies={bunnies} />
+                    <NowFunding bunnies={bunnies} />
                 </SectionBottom>
             </ContentContainer>
 
@@ -170,7 +210,7 @@ const SectionTop = styled.div`
     position: relative;
     width: 100%;
     height: auto;
-    margin-top: 100px;
+    margin-top: 185px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -180,18 +220,18 @@ const SectionTop = styled.div`
 const TopImageContainer = styled.div`
     position: absolute;
     top: -20px;
-    right: 135px;
+    right: 100px;
     width: 100%;
     height: 100%;
     z-index: 1;
 `;
 
 const MoonImage = styled(Image)`
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     position: absolute;
     top: 10%;
-    right: 15%;
+    right: 10%;
     z-index: 1;
 `;
 
@@ -200,7 +240,7 @@ const AstronautImage = styled(Image)`
     height: 99px;
     position: absolute;
     top: 5%;
-    right: 25%;
+    right: 23%;
     z-index: 2;
 `;
 
@@ -216,7 +256,7 @@ const ButtonContainer = styled.div`
 const SectionBottom = styled.div`
     width: 100%;
     height: 100%;
-    margin-top: 200px;
+    margin-top: 400px;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -269,4 +309,35 @@ const BottomRightImageContainer = styled.div`
         right: 1%;
         gap: 12px;
     }
+`;
+
+const LoadingContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    gap: 20px;
+`;
+
+const LoadingText = styled.p`
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+`;
+
+const ErrorContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    gap: 20px;
+`;
+
+const ErrorText = styled.p`
+    color: #ff6b6b;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
 `;

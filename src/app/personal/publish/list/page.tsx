@@ -4,43 +4,14 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '@/app/_shared/components/Header';
 import FundBunnyCard from '../_components/FundBunnyCard';
+import { dummyBunnies, FundBunny } from '@/app/_api/dummyData';
 
 // 정렬 타입 정의
 type SortType = 'latest' | 'oldest' | 'highInvestment' | 'lowInvestment';
 
-// 목 데이터 생성
-const generateMockData = () => {
-  const coinNames = ['비트코인', '이더리움', '리플', '도지코인', '카르다노', '솔라나', '폴리곤', '체인링크', '유니스왑', '아발란체'];
-  const coinTypes = ['BTC', 'ETH', 'XRP', 'DOGE', 'ADA', 'SOL', 'MATIC', 'LINK', 'UNI', 'AVAX'];
-  const avatars = [
-    '/images/login/personalProfile.png',
-    '/images/login/personalProfile.png',
-    '/images/login/personalProfile.png',
-    '/images/login/personalProfile.png',
-    '/images/login/personalProfile.png'
-  ];
-
-  return Array.from({ length: 20 }, (_, index) => {
-    const targetAmount = Math.floor(Math.random() * 10000000) + 1000000; // 100만~1000만
-    const currentAmount = Math.floor(Math.random() * targetAmount);
-    const timeLeft = Math.random() > 0.5 ? `${Math.floor(Math.random() * 7) + 1}일 남음` : null;
-    
-    return {
-      id: index + 1,
-      coinName: coinNames[index % coinNames.length],
-      coinType: coinTypes[index % coinTypes.length],
-      timeLeft,
-      currentAmount,
-      targetAmount,
-      avatarSrc: avatars[index % avatars.length],
-      createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000) // 최근 30일 내
-    };
-  });
-};
-
 export default function List() {
   const [sortType, setSortType] = useState<SortType>('latest');
-  const [mockData, setMockData] = useState(generateMockData());
+  const [bunnyData, setBunnyData] = useState<FundBunny[]>(dummyBunnies);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -50,22 +21,22 @@ export default function List() {
   const handleSort = (type: SortType) => {
     setSortType(type);
     
-    const sortedData = [...mockData].sort((a, b) => {
+    const sortedData = [...bunnyData].sort((a, b) => {
       switch (type) {
         case 'latest':
-          return b.createdAt.getTime() - a.createdAt.getTime();
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         case 'oldest':
-          return a.createdAt.getTime() - b.createdAt.getTime();
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
         case 'highInvestment':
-          return b.currentAmount - a.currentAmount;
+          return b.collected_bny - a.collected_bny;
         case 'lowInvestment':
-          return a.currentAmount - b.currentAmount;
+          return a.collected_bny - b.collected_bny;
         default:
           return 0;
       }
     });
     
-    setMockData(sortedData);
+    setBunnyData(sortedData);
   };
 
   if (!mounted) {
@@ -119,15 +90,15 @@ export default function List() {
       <MainContent>
 
         <GridContainer>
-          {mockData.map((item) => (
+          {bunnyData.map((item) => (
             <FundBunnyCard
-              key={item.id}
-              coinName={item.coinName}
-              coinType={item.coinType}
-              timeLeft={item.timeLeft}
-              currentAmount={item.currentAmount}
-              targetAmount={item.targetAmount}
-              avatarSrc={item.avatarSrc}
+              key={item.fund_bunny_id}
+              coinName={item.bunny_name}
+              coinType={item.bunny_type}
+              timeLeft={item.end_at ? `${item.end_at} 남음` : null}
+              currentAmount={item.collected_bny}
+              targetAmount={item.target_bny}
+              avatarSrc="/images/login/personalProfile.png"
             />
           ))}
         </GridContainer>

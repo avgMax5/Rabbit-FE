@@ -1,53 +1,56 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import FundBunnyCard from './FundBunnyCard';
+import { FundBunny } from '../../../_store/fundingStore';
 
-interface FundBunnyData {
-  fund_bunny_id: number;
-  bunny_name: string;
-  bunny_type: string;
-  end_at: string | null;
-  collected_bny: number;
-  target_bny: number;
-  avatarSrc: string;
+interface EndingSoonProps {
+  bunnies: FundBunny[];
 }
 
-export default function EndingSoon() {
+export default function EndingSoon({ bunnies }: EndingSoonProps) {
   const router = useRouter();
   
-  // 더미 데이터 배열
-  const fundBunnyData: FundBunnyData[] = [
-    {
-      fund_bunny_id: 1,
-      bunny_name: "코인명1",
-      bunny_type: "😀",
-      end_at: "23 : 56 : 43",
-      collected_bny: 11000000,
-      target_bny: 12000000,
-      avatarSrc: "/images/personal/publish/astronaut.png"
-    },
-    {
-      fund_bunny_id: 2,
-      bunny_name: "코인명2", 
-      bunny_type: "😀",
-      end_at: "12 : 30 : 15",
-      collected_bny: 15000000,
-      target_bny: 20000000,
-      avatarSrc: "/images/personal/publish/astronaut.png"
-    },
-    {
-      fund_bunny_id: 3,
-      bunny_name: "코인명3",
-      bunny_type: "😀", 
-      end_at: "05 : 15 : 22",
-      collected_bny: 9000000,
-      target_bny: 20000000,
-      avatarSrc: "/images/personal/publish/astronaut.png"
-    }
-  ];
+  const endingSoonBunnies = useMemo(() => {
+    const bunniesArray = Array.isArray(bunnies) ? bunnies : [];
+    
+    const bunniesWithTimeLeft = bunniesArray
+      .filter(bunny => bunny.end_at && bunny.end_at.trim() !== '')
+      .map(bunny => {
+        const now = new Date();
+        const [hours, minutes, seconds] = bunny.end_at.split(':').map(Number);
+        
+        const endTime = new Date();
+        endTime.setHours(hours, minutes, seconds, 0);
+        
+        if (endTime <= now) {
+          endTime.setDate(endTime.getDate() + 1);
+        }
+        
+        const timeLeft = endTime.getTime() - now.getTime();
+        
+        return {
+          ...bunny,
+          timeLeftMs: timeLeft,
+          timeLeftFormatted: bunny.end_at
+        };
+      })
+      .sort((a, b) => a.timeLeftMs - b.timeLeftMs)
+      .slice(0, 3)
+      .map(bunny => ({
+        fund_bunny_id: bunny.fund_bunny_id,
+        bunny_name: bunny.bunny_name,
+        bunny_type: bunny.bunny_type,
+        end_at: bunny.timeLeftFormatted,
+        collected_bny: bunny.collected_bny,
+        target_bny: bunny.target_bny,
+        avatarSrc: "/images/personal/publish/astronaut.png"
+      }));
+    
+    return bunniesWithTimeLeft;
+  }, [bunnies]);
   return (
     <EndingSoonContainer>
       <HeaderSection>
@@ -57,17 +60,21 @@ export default function EndingSoon() {
       <EndingSoonDesc>아직 상장되지 못한 버니들이 당신을 기다리고 있어요</EndingSoonDesc>
       
       <CardsContainer>
-        {fundBunnyData.map((data) => (
-          <FundBunnyCard 
-            key={data.fund_bunny_id}
-            coinName={data.bunny_name}
-            coinType={data.bunny_type}
-            timeLeft={data.end_at}
-            currentAmount={data.collected_bny}
-            targetAmount={data.target_bny}
-            avatarSrc={data.avatarSrc}
-          />
-        ))}
+        {endingSoonBunnies.length > 0 ? (
+          endingSoonBunnies.map((data) => (
+            <FundBunnyCard 
+              key={data.fund_bunny_id}
+              coinName={data.bunny_name}
+              coinType={data.bunny_type}
+              timeLeft={data.end_at}
+              currentAmount={data.collected_bny}
+              targetAmount={data.target_bny}
+              avatarSrc={data.avatarSrc}
+            />
+          ))
+        ) : (
+          <NoDataText>마감 임박한 버니가 없습니다.</NoDataText>
+        )}
       </CardsContainer>
     </EndingSoonContainer>
   );
@@ -129,7 +136,7 @@ const ViewAllLink = styled.div`
 
 const CardsContainer = styled.div`
   display: flex;
-  gap: 1.5rem;
+  gap: 5rem;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -137,4 +144,12 @@ const CardsContainer = styled.div`
   z-index: 3;
   width: 100%;
   max-width: 75rem;
+`;
+
+const NoDataText = styled.div`
+  color: #cccccc;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  padding: 2rem;
 `;
