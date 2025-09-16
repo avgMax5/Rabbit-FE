@@ -1,6 +1,6 @@
 import { Certificate } from "crypto";
 import styled from "styled-components";
-import { handleMouseEnter, handleMouseLeave } from "../utils/mouse";
+import { handleEnterBackground, handleLeaveBackground } from "../utils/mouse";
 
 const Skills: string[] = [
     "HTML5",
@@ -117,7 +117,7 @@ function MyInfo() {
                         <PositionContainer>
                             <PositionBtn
                                 onMouseEnter={(e) =>
-                                    handleMouseEnter(
+                                    handleEnterBackground(
                                         {
                                             backgroundColor: "#fba57c",
                                             color: "#000",
@@ -125,7 +125,7 @@ function MyInfo() {
                                         e
                                     )
                                 }
-                                onMouseLeave={handleMouseLeave}
+                                onMouseLeave={handleLeaveBackground}
                             >
                                 frontend
                             </PositionBtn>
@@ -179,12 +179,12 @@ function MyInfo() {
                 </Guide>
                 <SaveBtn
                     onMouseEnter={(e) =>
-                        handleMouseEnter(
+                        handleEnterBackground(
                             { backgroundColor: "#fac150", color: "#000" },
                             e
                         )
                     }
-                    onMouseLeave={handleMouseLeave}
+                    onMouseLeave={handleLeaveBackground}
                 >
                     저장하기
                 </SaveBtn>
