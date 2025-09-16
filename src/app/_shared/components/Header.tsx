@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import ShopModal from "./Shop";
 
 function Header() {
     const [mouseEnter, setMouseEnter] = useState(false);
@@ -23,6 +24,14 @@ function Header() {
     };
     const handleMouseLeave = () => {
         setMouseEnter(false);
+    };
+
+    const [isShopModalOpen, setIsShopModalOpen] = useState(false);
+    const handleMoneyClick = () => {
+        setIsShopModalOpen(true);
+    };
+    const handleCloseModal = () => {
+        setIsShopModalOpen(false);
     };
 
     return (
@@ -50,10 +59,14 @@ function Header() {
                     <Funding $activate={activate === "funding"}>펀딩</Funding>
                 </Link>
             </Navigate>
-            <Money>
+            <Money onClick={handleMoneyClick}>
                 <CarrotImg src="/images/personal/home/carrot.png" alt="당근" />
                 233,000,000
             </Money>
+            <ShopModal 
+                isOpen={isShopModalOpen} 
+                onClose={handleCloseModal} 
+            />
         </Div>
     );
 }
@@ -130,6 +143,8 @@ const Money = styled(WhiteContainer)`
     padding: 0.5rem 1.2rem;
     gap: 0.4rem;
     font-size: 15px;
+    cursor: pointer;
+    color: #000;
 `;
 
 export default Header;
