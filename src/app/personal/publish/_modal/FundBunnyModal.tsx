@@ -5,6 +5,7 @@ import Button from '../../../_shared/components/Button';
 import FundingRate from '../_components/FundingRate';
 import Portfolio from '../../../_shared/components/Portfolio';
 
+import { postFundBunny } from '../../../_api/fundingAPI';
 interface FundBunnyModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,7 +30,6 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({ isOpen, onClose }) => {
                 </ProgressBar>
               </TopBar>
 
-               {/* Middle Row */}
                <MiddleRow>
                  <MiddleBlock>
                    <FundingRate />
@@ -37,7 +37,6 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({ isOpen, onClose }) => {
                  <MiddleBlock />
                </MiddleRow>
 
-              {/* Input Block */}
               <InputBlock>
                 <AvailableBunny>투자 가능한 버니 수: 100 BNY</AvailableBunny>
                 <InputContainer>
@@ -51,7 +50,6 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({ isOpen, onClose }) => {
                 <MyAccount>내 계좌: 110,000 BNY (233,000,000 C)</MyAccount>
               </InputBlock>
 
-              {/* Agreement Block */}
               <AgreeBlock>
                 <CheckboxContainer>
                   <CheckboxInput
@@ -76,6 +74,7 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({ isOpen, onClose }) => {
                variant="primary" 
                size="large"
                disabled={!isAgreed}
+               onClick={postFundBunny}
              >
                펀딩 참여하기
              </Button>

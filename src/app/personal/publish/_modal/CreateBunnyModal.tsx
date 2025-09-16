@@ -16,6 +16,7 @@ export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalPr
   const [selectedType, setSelectedType] = useState<'A' | 'B' | 'C'>('B');
   const [agreement1, setAgreement1] = useState(false);
   const [agreement2, setAgreement2] = useState(false);
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
 
   React.useEffect(() => {
     if (!isOpen) {
@@ -23,6 +24,7 @@ export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalPr
       setSelectedType('B');
       setAgreement1(false);
       setAgreement2(false);
+      setIsCheckingDuplicate(false);
     }
   }, [!isOpen]);
 
@@ -30,11 +32,11 @@ export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalPr
 
   const getTypeValues = (type: 'A' | 'B' | 'C') => {
     switch (type) {
-      case 'A': // 희소 자산형
+      case 'A':
         return { issuance: 1000, unitPrice: 100000 };
-      case 'B': // 밸런스형
+      case 'B':
         return { issuance: 100000, unitPrice: 1000 };
-      case 'C': // 단가 친화형
+      case 'C':
         return { issuance: 1000000, unitPrice: 100 };
       default:
         return { issuance: 100000, unitPrice: 1000 };
@@ -49,6 +51,33 @@ export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalPr
 
   const handleSubmit = () => {
     // 제출 로직 후에 services에 구현
+  };
+
+  const handleCheckDuplicate = async () => {
+    if (!bunnyName.trim()) {
+      alert('버니 이름을 입력해주세요.');
+      return;
+    }
+    
+    setIsCheckingDuplicate(true);
+    try {
+      // TODO: API 호출로 중복 체크 구현
+      // const response = await checkBunnyNameDuplicate(bunnyName);
+      // if (response.isDuplicate) {
+      //   alert('이미 사용 중인 버니 이름입니다.');
+      // } else {
+      //   alert('사용 가능한 버니 이름입니다.');
+      // }
+      
+      // 임시로 성공 메시지 표시
+      setTimeout(() => {
+        alert('사용 가능한 버니 이름입니다.');
+        setIsCheckingDuplicate(false);
+      }, 1000);
+    } catch (error) {
+      alert('중복 체크 중 오류가 발생했습니다.');
+      setIsCheckingDuplicate(false);
+    }
   };
 
   return (
@@ -66,14 +95,20 @@ export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalPr
           <Section>
             <InputRow>
               <InputLabel>버니 이름</InputLabel>
-              <InputWithUnit>
+              <InputWithButton>
                 <NameInput
                   type="text"
                   value={bunnyName}
                   onChange={(e) => setBunnyName(e.target.value)}
                   placeholder="버니 이름을 입력하세요"
                 />
-              </InputWithUnit>
+                <CheckDuplicateButton 
+                  onClick={handleCheckDuplicate}
+                  disabled={isCheckingDuplicate}
+                >
+                  {isCheckingDuplicate ? '확인중...' : '중복체크'}
+                </CheckDuplicateButton>
+              </InputWithButton>
             </InputRow>
             <InputDescription>
               이름은 영어 소문자, 숫자, 하이픈(연속, 시작/끝 위치 불가)으로 이루어진 3~20 자리 이름만 가능합니다.
@@ -348,6 +383,44 @@ const InputWithUnit = styled.div`
   align-items: center;
   gap: 0.625rem;
   flex: 1;
+`;
+
+const InputWithButton = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+`;
+
+const CheckDuplicateButton = styled.button`
+  background: #FEE2A7;
+  box-shadow: inset -0.125rem -0.25rem 0.625rem #FFC54A, inset 0.125rem 0.125rem 0.125rem #fffbf2, 0.125rem 0.0625rem 0.25rem rgba(254, 226, 167, 0.3);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  color: #FFA629;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 5rem;
+  
+  &:hover:not(:disabled) {
+    background: #ffed4e;
+    transform: translateY(-0.0625rem);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: inset 0.125rem 0.25rem 0.625rem #FFC54A, inset -0.125rem -0.125rem 0.125rem #fffbf2, 0.0625rem 0.03125rem 0.125rem rgba(254, 226, 167, 0.3);
+  }
 `;
 
 const NumberInput = styled.input`

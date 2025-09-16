@@ -10,6 +10,9 @@
     },
     "dependencies": {
         "@iconify/json": "^2.2.384",
+        "@iconify/react": "^6.0.2",
+        "axios": "^1.12.2",
+        "critters": "^0.0.23",
         "echarts": "^5.6.0",
         "echarts-for-react": "^3.0.2",
         "lucide-react": "^0.542.0",
@@ -18,7 +21,8 @@
         "react": "19.1.0",
         "react-dom": "19.1.0",
         "styled-components": "^6.1.19",
-        "swiper": "^11.2.10"
+        "swiper": "^11.2.10",
+        "zustand": "^5.0.8"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
