@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import SortBigButton from "../_components/SortBigButton";
+import SortBigButton from "../_components/my-list/SortBigButton";
 import List from "@/app/personal/home/_components/List";
 import { useState } from "react";
-import ListButton from "../_components/ListButton";
+import ListButton from "../_components/my-list/ListButton";
 
 const historyFieldList = [
     { key: "tradeTime", label: "체결시간" },

@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 import React, { ReactNode, useState } from "react";
-import Notification from "./Notification";
-import { handleEnterBackground, handleLeaveBackground } from "../utils/mouse";
+import Notification from "./my-list/Notification";
+import { handleEnterBackground, handleLeaveBackground } from "../_utils/mouse";
 import { Icon } from "@iconify/react";
 
 interface GlassBoxProps {
