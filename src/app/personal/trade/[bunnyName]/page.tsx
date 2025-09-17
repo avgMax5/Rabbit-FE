@@ -147,7 +147,13 @@ export default function Trade() {
               <LeftSection>
                 <TopRow>
                   <TopLeftBlock>
-                    <PentagonChart />
+                    <PentagonChart data={[
+                        { value: 80, name: 'A' },
+                        { value: 60, name: 'B' },
+                        { value: 70, name: 'C' },
+                        { value: 60, name: 'D' },
+                        { value: 50, name: 'E' }
+                      ]} />
                   </TopLeftBlock>
                   <TopRightBlock>
                     <DashboardContent>

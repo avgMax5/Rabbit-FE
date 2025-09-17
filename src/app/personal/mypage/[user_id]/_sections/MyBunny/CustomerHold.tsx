@@ -3,7 +3,7 @@ import BubbleChart, {
     BubbleDataItem,
 } from "../../_components/chart/BubbleChart";
 import styled from "styled-components";
-import ProgressContainer, { ProgressData } from "../../_components/ProgressBar";
+import ProgressContainer, { ProgressData } from "../../_components/my-bunny/ProgressBar";
 
 interface CustomerHoldProps {
     bubbleData: BubbleDataItem[];
