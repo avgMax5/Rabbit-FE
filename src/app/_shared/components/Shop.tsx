@@ -31,7 +31,7 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -39,8 +39,8 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContainer = styled.div`
-  background: linear-gradient(135deg, #e0f2fe 0%, #0ea5e9 30%, #1e40af 70%, #1e3a8a 100%);
-  border-radius: 24px;
+  background: linear-gradient(135deg, #164E79 0%, #031D31 100%);
+  border-radius: 10px;
   padding: 32px;
   max-width: 480px;
   width: 90%;
@@ -48,8 +48,8 @@ const ModalContainer = styled.div`
   overflow-y: auto;
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.15),
-    inset 8px 8px 10px rgba(255, 255, 255, 0.5),
-    inset -8px -8px 10px rgba(0, 0, 0, 0.5);
+    inset 8px 8px 8px rgba(136, 135, 135, 0.2),
+    inset -8px -8px 8px rgba(0, 0, 0, 0.5);
   position: absolute;
   top: 20vh;
   left: 50% - 240px;
@@ -58,29 +58,24 @@ const ModalContainer = styled.div`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 1rem;
+  right: 1rem;
+  background: #FEE2A7;
+  box-shadow: inset -0.125rem -0.25rem 0.625rem #FFC54A, inset 0.125rem 0.125rem 0.125rem #fffbf2, 0.125rem 0.0625rem 0.25rem rgba(254, 226, 167, 0.3);
+  border: none;
+  border-radius: 50%;
   width: 2rem;
   height: 2rem;
-  border: none;
-  background: linear-gradient(145deg, #f0f8ff, #ddeeff);
-  border-radius: 50%;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1), 0 0  6px rgba(255, 255, 255, 0.8);
-  transition: all 0.2s ease;
-  font-size: 0.7rem;
-  color: #64748b;
-
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #FFA629;
+  
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15), 0 0 8px rgba(255, 255, 255, 0.9);
-  }
-
-  &:active {
-    transform: scale(0.95);
+    background: #ffed4e;
+    transform: scale(1.1);
   }
 `;
 
@@ -103,24 +98,12 @@ const CarrotIcon = styled.img`
   height: 4rem;
   position: relative;
   animation: ${bounce} 2s infinite;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 16px;
-    height: 12px;
-    background: linear-gradient(135deg, #4ade80, #22c55e);
-    border-radius: 0 0 8px 8px;
-  }
 `;
 
 const TabContainer = styled.div`
   display: flex;
   margin-bottom: 24px;
-  border-radius: 16px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.7);
   padding: 4px;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -133,9 +116,8 @@ const TabSlider = styled.div<{ $activeIndex: number }>`
   left: 4px;
   width: calc(25% - 3px);
   height: calc(100% - 8px);
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #164E79, #031D31);
+  border-radius: 8px;
   transition: transform 0.3s ease;
   transform: translateX(${({ $activeIndex }) => $activeIndex * 100}%);
 `;
@@ -144,7 +126,7 @@ const Tab = styled.button<{ $active?: boolean }>`
   flex: 1;
   padding: 12px 16px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: color 0.3s ease;
@@ -154,7 +136,7 @@ const Tab = styled.button<{ $active?: boolean }>`
   z-index: 1;
 
   &:hover {
-    color: ${({ $active }) => $active ? 'white' : '#1d3abc'};
+    color: ${({ $active }) => $active ? 'white' : '#031D31'};
   }
 `;
 
@@ -166,7 +148,7 @@ const ItemGrid = styled.div`
 
 const ItemCard = styled.div`
   background: linear-gradient(135deg, #e7e7e7, #f8fafc);
-  border-radius: 16px;
+  border-radius: 10px;
   padding: 20px;
   display: flex;
   justify-content: space-between;
@@ -177,6 +159,7 @@ const ItemCard = styled.div`
     inset -2px -2px 4px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(59, 130, 246, 0.1);
   transition: all 0.3s ease;
+  font-family: var(--font-nanum-square);
 
   &:hover {
     transform: translateY(-2px);
@@ -196,7 +179,7 @@ const IconWrapper = styled.div`
 const CurrencyIcon = styled.div`
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: rgba(16, 185, 129, 0.3);
   border-radius: 8px;
   margin-right: 16px;
   display: flex;
@@ -209,7 +192,7 @@ const CurrencyIcon = styled.div`
 const TicketIcon = styled.div`
   width: 32px;
   height: 32px;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  background: rgba(184, 227, 255, 0.5);
   border-radius: 8px;
   margin-right: 16px;
   display: flex;
@@ -227,7 +210,7 @@ const ItemName = styled.h3`
   margin: 0 0 8px 0;
   color: #1e293b;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 800;
 `;
 
 const ItemPrice = styled.p`
@@ -238,30 +221,31 @@ const ItemPrice = styled.p`
 
 const DiscountPrice = styled.span`
   color: #ef4444;
-  font-weight: 600;
+  font-weight: 800;
   margin-right: 8px;
 `;
 
 const OriginalPrice = styled.span`
   text-decoration: line-through;
   color: #94a3b8;
+  font-weight: 600;
 `;
 
 const PurchaseButton = styled.button`
   padding: 10px 20px;
   border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: white;
-  font-weight: 600;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ffd49a, #ffa34e);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  color: #3e1b00;
+  font-weight: 900;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3);
   white-space: nowrap;
 
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #ffd49a, #ffd49a);
+    transition: all 0.3s ease;
   }
 
   &:active {
@@ -317,19 +301,19 @@ const ShopModal: React.FC<ShopModalProps> = ({ isOpen, onClose }) => {
   const sellOptions = [
     {
       id: 1,
-      name: '1억 캐럿 판매',
+      name: '1억 캐럿 환전',
       carrot: '1억C',
       price: '1만₩'
     },
     {
       id: 2,
-      name: '2억 캐럿 판매',
+      name: '2억 캐럿 환전',
       carrot: '2억C',
       price: '2만₩'
     },
     {
       id: 3,
-      name: '3억 캐럿 판매',
+      name: '3억 캐럿 환전',
       carrot: '3억C',
       price: '3만₩'
     }
@@ -363,8 +347,8 @@ const ShopModal: React.FC<ShopModalProps> = ({ isOpen, onClose }) => {
     },
     {
       id: 3,
-      name: '교촌치킨 허니콤보 웨지감자 센트',
-      price: '2억5천만C'
+      name: '교촌치킨 허니콤보',
+      price: '2억2천만C'
     }
   ];
 
@@ -378,7 +362,7 @@ const ShopModal: React.FC<ShopModalProps> = ({ isOpen, onClose }) => {
     <ModalOverlay onClick={onClose}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <CloseButton onClick={onClose}>
-          ✕
+          X
         </CloseButton>
         
         <Title>
@@ -399,7 +383,7 @@ const ShopModal: React.FC<ShopModalProps> = ({ isOpen, onClose }) => {
             $active={activeTab === 'sell'}
             onClick={() => setActiveTab('sell')}
           >
-            캐럿 판매
+            캐럿 환전
           </Tab>
           <Tab 
             $active={activeTab === 'tickets'}
@@ -419,7 +403,7 @@ const ShopModal: React.FC<ShopModalProps> = ({ isOpen, onClose }) => {
           {activeTab === 'buy' && buyOptions.map(item => (
             <ItemCard key={item.id}>
               <IconWrapper>
-                <CurrencyIcon>💰</CurrencyIcon>
+                <CurrencyIcon>🥕</CurrencyIcon>
                 <ItemInfo>
                   <ItemName>{item.name}</ItemName>
                   <ItemPrice>
@@ -450,7 +434,7 @@ const ShopModal: React.FC<ShopModalProps> = ({ isOpen, onClose }) => {
                 </ItemInfo>
               </IconWrapper>
               <PurchaseButton onClick={() => handlePurchase(item)}>
-                판매하기
+                환전하기
               </PurchaseButton>
             </ItemCard>
           ))}
