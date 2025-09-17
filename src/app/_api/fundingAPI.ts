@@ -1,7 +1,7 @@
 import { dummyBunnies } from './dummyData';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const AUTH_TOKEN = 'Bearer accessToken';
+const API_BASE_URL = 'https://rabbit.avgmax.team/api';
+const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
 
 export interface FundingCount {
     listed_bunny_count: number;
@@ -77,13 +77,17 @@ export interface FundBunnyDetail {
 
 export const getBunniesCount = async () => {
     try {
+        if (!API_BASE_URL) {
+            throw new Error('API_BASE_URL이 설정되지 않았습니다.');
+        }
+        
         const url = new URL(`${API_BASE_URL}/fund-bunnies/count`);
         
         const response = await fetch(url.toString(), {
             method: 'GET',
             headers: {
-                'Authorization': AUTH_TOKEN,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${TEST_TOKEN}`
             }
         });
         
@@ -97,17 +101,23 @@ export const getBunniesCount = async () => {
         return data;
     } catch (error) {
         console.warn('API 호출 실패, 더미 데이터를 사용합니다:', error);
+        // 더미 데이터 반환 로직 추가 필요
+        return null;
     }
 }
 
 export const postFundBunny = async () => {
     try{
+        if (!API_BASE_URL) {
+            throw new Error('API_BASE_URL이 설정되지 않았습니다.');
+        }
+        
         const url = new URL(`${API_BASE_URL}/fund-bunnies`);
 
         const response = await fetch(url.toString(), {
             method: 'POST',
+            credentials: 'include',
             headers: {
-                'Authorization': AUTH_TOKEN,
                 'Content-Type': 'application/json'
             }
         });

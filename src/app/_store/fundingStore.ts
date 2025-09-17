@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { dummyBunnies } from '../_api/dummyData';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const AUTH_TOKEN = 'Bearer accessToken';
+const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
 
 export interface FetchBunniesParams {
     sortType?: string;
@@ -40,7 +40,9 @@ export const useFundingStore = create<FundingState>((set, get) => ({
         set({ isLoading: true, error: null });
         
         try {
+            console.log(`${API_BASE_URL}/fund-bunnies`);
             const url = new URL(`${API_BASE_URL}/fund-bunnies`);
+            console.log(url);
             url.searchParams.append('page', page.toString());
             url.searchParams.append('size', size.toString());
             url.searchParams.append('sortType', sortType);
@@ -48,8 +50,8 @@ export const useFundingStore = create<FundingState>((set, get) => ({
             const response = await fetch(url.toString(), {
                 method: 'GET',
                 headers: {
-                    'Authorization': AUTH_TOKEN,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${TEST_TOKEN}`
                 }
             });
             
