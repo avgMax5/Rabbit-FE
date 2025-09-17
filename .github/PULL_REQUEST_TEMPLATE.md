@@ -6,7 +6,7 @@
 - 포함된 변경 사항들을 모두 포함합니다.
 
 ## 🎫 관련 이슈
-- [RABBIT-1](https://www.notion.so/263c4f6364d08017b51ef4ad95faa272?source=copy_link)
+- [RABBIT-1](https://dssw5.atlassian.net/browse/RABBIT-1)
 
 ## 🎬 참고 이미지
 - (테스트 성공한 이미지 첨부)
