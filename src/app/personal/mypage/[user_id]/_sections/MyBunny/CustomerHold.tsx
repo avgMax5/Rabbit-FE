@@ -12,7 +12,7 @@ interface CustomerHoldProps {
 
 function CustomerHold({ bubbleData, progressData }: CustomerHoldProps) {
     return (
-        <GlassBox text="보유자" isNoti={false}>
+        <GlassBox text="보유자" isNoti={false} color="#fff" backgroundColor="linear-gradient(135deg, rgb(41, 59, 90) 0%, rgb(0, 16, 57) 70%)">
             <SubTitle>나의 코인 보유자 비율 : 개발자 유형 기준</SubTitle>
             <Container>
                 <BubbleChart data={bubbleData} />
@@ -24,10 +24,11 @@ function CustomerHold({ bubbleData, progressData }: CustomerHoldProps) {
 
 const SubTitle = styled.div`
     width: 100%;
-    height: 1rem;
+    height: 1rem;   
     display: flex;
     justify-content: start;
     font-size: 13px;
+    color: #fff;
 `;
 
 const Container = styled.div`

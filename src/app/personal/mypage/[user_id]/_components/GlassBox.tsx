@@ -1,18 +1,17 @@
 import styled from "styled-components";
-
 import React, { ReactNode, useState } from "react";
 import Notification from "./my-list/Notification";
-import { handleEnterBackground, handleLeaveBackground } from "../_utils/mouse";
-import { Icon } from "@iconify/react";
 
 interface GlassBoxProps {
     children?: ReactNode;
     text: string;
     isNoti: boolean;
     notification?: string;
+    color?: string;
+    backgroundColor?: string;
 }
 
-function GlassBox({ children, text, isNoti, notification }: GlassBoxProps) {
+function GlassBox({ children, text, isNoti, notification, color = "#000", backgroundColor = "#e5f0faa1" }: GlassBoxProps) {
     const [mouseEnter, setMouseEnter] = useState(false);
     const getNotiModal = () => {
         setMouseEnter(true);
@@ -22,20 +21,9 @@ function GlassBox({ children, text, isNoti, notification }: GlassBoxProps) {
     };
 
     return (
-        <Div
-            onMouseEnter={(e) =>
-                handleEnterBackground(
-                    {
-                        backgroundColor: "#51515184",
-                        color: "#fff",
-                    },
-                    e
-                )
-            }
-            onMouseLeave={handleLeaveBackground}
-        >
+        <Div $backgroundColor={backgroundColor}>
             <Top>
-                <Title>{text}</Title>
+                <Title $color={color}>{text}</Title>
                 {isNoti && (
                     <IconContainer>
                         <svg
@@ -63,7 +51,7 @@ function GlassBox({ children, text, isNoti, notification }: GlassBoxProps) {
     );
 }
 
-const Div = styled.div`
+const Div = styled.div<{ $backgroundColor: string }>`
     width: 100%;
     height: 100%;
     padding: 0.6rem;
@@ -71,10 +59,16 @@ const Div = styled.div`
     grid-template-rows: 1.6rem 1fr;
     text-align: center;
     border-radius: 12px;
-    background-color: #e5f0faa1;
+    background: ${({ $backgroundColor }) => $backgroundColor};
     box-shadow: -2px -2px 4px 0 rgba(0, 0, 0, 0.14) inset,
         2px 2px 4px 0 rgba(231, 231, 231, 0.25) inset;
     filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    
+    &:hover {
+        transform: translateY(-2px);
+    }
 `;
 
 const Top = styled.div`
@@ -91,9 +85,10 @@ const IconContainer = styled.div`
     height: 1rem;
 `;
 
-const Title = styled.div`
+const Title = styled.div<{ $color: string }>`
     font-size: 16px;
     font-weight: 800;
+    color: ${({ $color }) => $color};
 `;
 
 const Main = styled.div`

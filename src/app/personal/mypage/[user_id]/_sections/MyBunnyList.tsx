@@ -322,21 +322,21 @@ function MyBunnyList() {
                     top1Title="frontend"
                     top1Carrot={200000}
                     chartData={jobData}
-                    colors={["#760578", "#bc22b4", "#e86ac4"]}
+                    colors={["#ff9e30", "#ffbb6e", "#ffd8ac"]}
                 />
                 <SortBigButton
                     sortTitle="개발자 유형"
                     top1Title="성장형"
                     top1Carrot={200000}
                     chartData={devData}
-                    colors={["#467", "#489", "#568", "#890", "#444"]}
+                    colors={["#008b61", "#33a280", "#66b9a0", "#99d0bf", "#cce7df"]}
                 />
                 <SortBigButton
                     sortTitle="버니 유형"
                     top1Title="희소자산형"
                     top1Carrot={200000}
                     chartData={coinData}
-                    colors={["#052368", "#0a4e91", "#759af1"]}
+                    colors={["#9d00a0", "#ba4cbc", "#d799d9"]}
                 />
                 <ButtonContainer>
                     <ListButton
@@ -377,14 +377,15 @@ const Wrapper = styled.div`
 `;
 
 const Div = styled.div`
-    background-color: #8ea8bf81;
+    background: rgba(15, 23, 42);
+    border-radius: 16px;
     width: 100%;
     height: 100%;
     display: grid;
     grid-template-rows: 3rem 37vh;
     gap: 0.5rem;
 
-    font-family: var(--font-);
+    font-family: var(--font-nanum-square);
 `;
 
 const Row = styled.div<{ $fieldNum: number }>`
@@ -397,7 +398,7 @@ const Row = styled.div<{ $fieldNum: number }>`
     flex-shrink: 0;
     padding: 0.7rem 0rem;
 
-    font-family: var(--font-nanum-squar);
+    font-family: var(--font-nanum-square);
     font-weight: 800;
     font-size: 12px;
 `;

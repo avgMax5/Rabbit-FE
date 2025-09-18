@@ -38,7 +38,7 @@ function CoinType({ type }: CoinTypeProps) {
     const typeInfo = getTypeInfo(type);
 
     return (
-        <GlassBox text="코인 유형" isNoti={true} notification="">
+        <GlassBox text="코인 유형" isNoti={true} notification="" color="#fff" backgroundColor="#000000">
             <TitleIconContainer>
                 <TypeIcon src={typeInfo.icon} />
                 <TypeTitle>{typeInfo.title}</TypeTitle>
@@ -107,7 +107,7 @@ const AttributeRow = styled.div`
 
 const AttributeLabel = styled.span`
     color: #ffffff;
-    font-size: 14px;
+    font-size: 0.7rem;
     font-weight: 600;
 `;
 
@@ -127,7 +127,7 @@ const Bar = styled.div.withConfig({
 
 const AttributeText = styled.span`
     color: #225dfd;
-    font-size: 14px;
+    font-size: 0.7rem;
     font-weight: 600;
 `;
 
