@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import Button from '../../../_shared/components/Button';
 import TypeCard from '../_components/TypeCard';
+import { checkBunnyName, postFundBunny } from '../../../_api/fundingAPI';
 
 interface CreateBunnyModalProps {
   isOpen: boolean;
@@ -49,8 +50,15 @@ export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalPr
 
   if (!isOpen) return null;
 
-  const handleSubmit = () => {
-    // 제출 로직 후에 services에 구현
+  const handleSubmit = async () => {
+    try {
+      await postFundBunny(bunnyName, selectedType);
+      alert('상장심사 신청이 완료되었습니다.');
+      onClose();
+    } catch (error) {
+      console.error('상장심사 신청 오류:', error);
+      alert('상장심사 신청 중 오류가 발생했습니다.');
+    }
   };
 
   const handleCheckDuplicate = async () => {
@@ -61,21 +69,17 @@ export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalPr
     
     setIsCheckingDuplicate(true);
     try {
-      // TODO: API 호출로 중복 체크 구현
-      // const response = await checkBunnyNameDuplicate(bunnyName);
-      // if (response.isDuplicate) {
-      //   alert('이미 사용 중인 버니 이름입니다.');
-      // } else {
-      //   alert('사용 가능한 버니 이름입니다.');
-      // }
+      const response = await checkBunnyName(bunnyName);
       
-      // 임시로 성공 메시지 표시
-      setTimeout(() => {
+      if (response?.isDuplicate) {
+        alert('이미 사용 중인 버니 이름입니다.');
+      } else {
         alert('사용 가능한 버니 이름입니다.');
-        setIsCheckingDuplicate(false);
-      }, 1000);
+      }
     } catch (error) {
+      console.error('중복 체크 오류:', error);
       alert('중복 체크 중 오류가 발생했습니다.');
+    } finally {
       setIsCheckingDuplicate(false);
     }
   };

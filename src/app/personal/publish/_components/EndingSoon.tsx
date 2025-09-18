@@ -93,7 +93,7 @@ const EndingSoonContainer = styled.div`
 const HeaderSection = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
   max-width: 75rem;
   padding: 0 1.25rem;
@@ -127,8 +127,6 @@ const ViewAllLink = styled.div`
   font-weight: 400;
   color: #ffffff;
   cursor: pointer;
-  position: absolute;
-  right: 1.25rem;
   &:hover {
     opacity: 0.8;
   }
