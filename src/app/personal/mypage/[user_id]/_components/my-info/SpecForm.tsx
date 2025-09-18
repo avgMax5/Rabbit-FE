@@ -10,7 +10,7 @@ interface fieldDataType {
     type: "string" | "select" | "date" | "file";
 }
 
-interface rowDataType {
+export interface rowDataType {
     id: string;
     [key: string]: string | number | boolean;
 }
@@ -102,7 +102,7 @@ function SpecForm({ title, fieldData, rowData, icon, name }: SpecFormProps) {
                         <Row key={row.id} $fieldNum={fieldData.length}>
                             {fieldData.map((field, j) => {
                                 const inputName = `${name}[${i}].${field.key}`;
-                                const value = row[field.key];
+                                const value = (row as rowDataType)[field.key];
                                 const fieldType = field.type;
 
                                 return renderField({
