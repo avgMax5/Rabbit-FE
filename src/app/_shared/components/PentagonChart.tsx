@@ -48,25 +48,25 @@ const PentagonChart = ({ data }: PentagonChartProps) => {
                 center: ["50%", "50%"],
                 radius: "65%",
                 axisName: {
-                    color: "#000",
+                    color: "#000000",
                     fontSize: 12,
                     fontWeight: "bold",
                 },
                 splitLine: {
                     lineStyle: {
-                        color: "rgba(255, 255, 255, 0.3)",
+                        color: "rgba(65, 65, 65, 0.3)",
                         width: 1,
                     },
                 },
                 splitArea: {
                     areaStyle: {
-                        color: ["rgba(255, 255, 255, 0.05)", "transparent"],
+                        color: ["rgba(65, 65, 65, 0.05)", "transparent"],
                         opacity: 0.3,
                     },
                 },
                 axisLine: {
                     lineStyle: {
-                        color: "rgba(255, 255, 255, 0.4)",
+                        color: "rgba(65, 65, 65, 0.4)",
                     },
                 },
             },
@@ -90,7 +90,7 @@ const PentagonChart = ({ data }: PentagonChartProps) => {
                         color: "#a017a0bd",
                     },
                     itemStyle: {
-                        color: "#FFD700",
+                        color: "#008b61",
                     },
                 },
             ],

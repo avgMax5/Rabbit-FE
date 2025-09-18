@@ -42,10 +42,19 @@ const Row = styled.div<{ $fieldNum: number }>`
     text-align: center;
     flex-shrink: 0;
     padding: 0.7rem 0rem;
+    border-radius: 3px;
 
     font-family: var(--font-nanum-squar);
-    font-weight: 800;
-    font-size: 12px;
+    font-weight: 600;
+    font-size: 0.6rem;
+    
+    & span {
+        border-right: 1px solid rgba(148, 163, 184, 0.2);
+        
+        &:last-child {
+            border-right: none;
+        }
+    }
 `;
 
 const Div = styled.div`
@@ -56,9 +65,11 @@ const Div = styled.div`
     height: 60vh;
     align-items: center;
     flex-shrink: 0;
-    border-radius: 2px;
-    background: rgba(255, 255, 255, 0.18);
-    box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
 `;
 
 const FieldContainer = styled.div<{ $fieldNum: number }>`
@@ -70,15 +81,25 @@ const FieldContainer = styled.div<{ $fieldNum: number }>`
     text-align: center;
     flex-shrink: 0;
     padding: 0.7rem 0rem;
+    background: linear-gradient(135deg, 
+        rgba(59, 130, 246, 0.1) 0%, 
+        rgba(99, 102, 241, 0.08) 100%);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    position: relative;
 
     font-family: var(--font-nanum-squar);
-    font-weight: 900;
-    font-size: 14px;
-    color: #ddd;
-
+    font-weight: 700;
+    font-size: 13px;
+    color: rgba(226, 232, 240);
+    
     & span {
         flex: 1;
         text-align: center;
+        border-right: 1px solid rgba(148, 163, 184, 0.2);
+        
+        &:last-child {
+            border-right: none;
+        }
     }
 `;
 
@@ -88,7 +109,26 @@ const RowContainer = styled.div`
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    gap: 0.6rem;
+    gap: 0.4rem;
+    padding: 0.5rem;
+    
+    /* Custom scrollbar */
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.3);
+        border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, 
+            rgba(108, 158, 238, 0.6) 0%, 
+            rgba(40, 43, 202, 0.6) 100%);
+        border-radius: 3px;
+    
+    }
 `;
 
 const Erow = styled(Row)`

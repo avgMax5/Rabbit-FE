@@ -3,11 +3,12 @@
 import styled from "styled-components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ShopModal from "./Shop";
 
 function Header() {
     const [mouseEnter, setMouseEnter] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
     const pathname = usePathname();
 
     const getActive = () => {
@@ -18,6 +19,14 @@ function Header() {
     };
 
     const activate = getActive();
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoaded(true);
+        }, 100);
+        
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleMouseEnter = () => {
         setMouseEnter(true);
@@ -43,6 +52,7 @@ function Header() {
                 <Link href={`/personal/home`}>
                     <Home
                         $activate={activate === "home"}
+                        $isLoaded={isLoaded}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                     >
@@ -51,12 +61,12 @@ function Header() {
                 </Link>
                 {/* <Link href={`/personal/mypage/${user_id}`}> */}
                 <Link href={"/personal/mypage/${user_id}"}>
-                    <MyPage $activate={activate === "mypage"}>
+                    <MyPage $activate={activate === "mypage"} $isLoaded={isLoaded}>
                         마이페이지
                     </MyPage>
                 </Link>
                 <Link href={`/personal/publish`}>
-                    <Funding $activate={activate === "funding"}>펀딩</Funding>
+                    <Funding $activate={activate === "funding"} $isLoaded={isLoaded}>펀딩</Funding>
                 </Link>
             </Navigate>
             <Money onClick={handleMoneyClick}>
@@ -71,21 +81,27 @@ function Header() {
     );
 }
 
-const NavButton = styled.div<{ $activate?: boolean }>`
+const NavButton = styled.div<{ $activate?: boolean; $isLoaded?: boolean }>`
     width: 7rem;
     height: 2rem;
-    border-radius: 20px;
+    border-radius: 10px;
     text-align: center;
     line-height: 2rem;
-
+    transition: all 0.5s ease-in-out;
+    
     color: ${({ $activate }) => ($activate ? "#000" : "#454545")};
-    background: ${({ $activate }) => ($activate ? "#f8b2a3" : "none")};
-    box-shadow: ${({ $activate }) =>
-        $activate
+    background: ${({ $activate, $isLoaded }) => {
+        if (!$isLoaded) return "none";
+        return $activate ? "#ffbb6e" : "none";
+    }};
+    box-shadow: ${({ $activate, $isLoaded }) => {
+        if (!$isLoaded) return "none";
+        return $activate
             ? `-2px -4px 10px 0 #d7654d inset, 
          6px 4px 10px 0 #ffd6cd inset,
          4px 4px 10px 0 rgba(255, 181, 166, 0.64)`
-            : "none"};
+            : "none";
+    }};
 `;
 
 const WhiteContainer = styled.div`
@@ -95,7 +111,7 @@ const WhiteContainer = styled.div`
     padding: 0.5rem;
     align-items: center;
     flex-shrink: 0;
-    border-radius: 36px;
+    border-radius: 18px;
     background: rgba(245, 245, 245, 0.68);
     box-shadow: 5px 5px 8px 0 rgba(130, 150, 176, 0.25),
         4px 3px 4px 0 #f7f7f7 inset,

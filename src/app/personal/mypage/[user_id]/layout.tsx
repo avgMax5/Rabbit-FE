@@ -15,7 +15,6 @@ function MyPageLayout({ children }: MyPageLayoutProps) {
             <Header />
             <Body>
                 <ProfileLogoSection>
-                    <SmallLogo src={"/images/personal/shared/small_logo.png"} />
                     <Profile />
                 </ProfileLogoSection>
                 <MainSection>
@@ -67,12 +66,8 @@ const ProfileLogoSection = styled.div`
     grid-column: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
-`;
-const SmallLogo = styled.img`
-    width: 2rem;
-    height: auto;
 `;
 
 const MainSection = styled.div`
@@ -104,10 +99,10 @@ const TopContainer = styled.div`
 const Main = styled.div`
     width: 100%;
     height: 100%;
+    padding-top: 0.2rem;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
     grid-row: 2;
-    overflow: hidden;
 `;
 
 const Rabbit = styled.img`

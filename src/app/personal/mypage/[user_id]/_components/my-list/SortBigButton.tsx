@@ -1,8 +1,4 @@
 import styled from "styled-components";
-import {
-    handleLeaveBackground,
-    handleEnterBackground,
-} from "../../_utils/mouse";
 import NightingaleChart, { ChartData } from "../chart/NightingaleChart";
 
 interface SortBigButtonProps {
@@ -20,20 +16,21 @@ function SortBigButton({
     chartData,
     colors,
 }: SortBigButtonProps) {
+    // 직군별 호버 배경색 결정
+    const getHoverBackgroundColor = (title: string) => {
+        if (title.includes('직군')) {
+            return 'rgb(251, 244, 237)';
+        } else if (title.includes('개발자 유형')) {
+            return 'rgb(235, 247, 244)';
+        } else if (title.includes('버니 유형')) {
+            return 'rgb(246, 236, 246)';
+        }
+        return 'rgba(223, 223, 223)';
+    };
+
     return (
-        <Div
-            onMouseEnter={(e) =>
-                handleEnterBackground(
-                    {
-                        backgroundColor: "#30a5ff94",
-                        color: "white",
-                    },
-                    e
-                )
-            }
-            onMouseLeave={handleLeaveBackground}
-        >
-            <SortTitle>{sortTitle}</SortTitle>
+        <Div $hoverColor={getHoverBackgroundColor(sortTitle)}>
+            <SortTitle className="sort-title">{sortTitle}</SortTitle>
             <GraphContainer>
                 <NightingaleChart
                     data={chartData}
@@ -54,7 +51,7 @@ function SortBigButton({
     );
 }
 
-const Div = styled.div`
+const Div = styled.div<{ $hoverColor: string }>`
     position: relative;
     width: 100%;
     height: 100%;
@@ -63,10 +60,22 @@ const Div = styled.div`
     border-radius: 8px;
     display: grid;
     grid-template-rows: 4fr 1fr;
-    background-color: #ffffffec;
+    background: #ffffffec;
     box-shadow: -2px -2px 4px 0 rgba(0, 0, 0, 0.14) inset,
         2px 2px 4px 0 rgba(231, 231, 231, 0.25) inset;
     filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: scale(1.02);
+        background: ${props => props.$hoverColor};
+        filter: drop-shadow(4px 8px 12px rgba(0, 0, 0, 0.2));
+        z-index: 10;
+        
+        .sort-title {
+            font-weight: 800;
+        }
+    }
 `;
 
 const SortTitle = styled.div`
@@ -85,7 +94,6 @@ const SortTitle = styled.div`
 const Top1Title = styled.div`
     width: 100%;
     height: 100%;
-
     font-size: 10px;
     font-weight: 500;
 `;

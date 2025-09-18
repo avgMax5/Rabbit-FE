@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 function MarketCap() {
     return (
-        <GlassBox text="시가총액" isNoti={true} notification="시가총액계산">
+        <GlassBox text="시가총액" isNoti={true} notification="시가총액계산" color="#000" backgroundColor="#F0F0F0">
             <TotalContainer>
                 <Total>20,000</Total>
                 <CarrotImg src="/images/personal/home/carrot.png" />
