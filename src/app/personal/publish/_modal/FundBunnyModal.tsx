@@ -74,7 +74,7 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({ isOpen, onClose }) => {
                variant="primary" 
                size="large"
                disabled={!isAgreed}
-               onClick={postFundBunny}
+               onClick={() => postFundBunny("bunnyName", "bunnyType")}
              >
                펀딩 참여하기
              </Button>

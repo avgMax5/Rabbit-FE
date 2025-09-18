@@ -169,7 +169,7 @@ export default function Publish() {
                     </BottomTop>
 
                     <EndingSoon bunnies={bunnies} />
-                    <NowFunding bunnies={bunnies} />
+                    <NowFunding />
                 </SectionBottom>
             </ContentContainer>
 
