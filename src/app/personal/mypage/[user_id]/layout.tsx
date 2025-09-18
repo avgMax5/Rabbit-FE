@@ -45,7 +45,7 @@ const Body = styled.div`
     width: 82%;
     height: 83vh;
     margin: 0 auto;
-    margin-top: 10vh;
+    margin-top: 11vh;
     box-sizing: border-box;
     padding: 1.2rem;
     display: grid;
@@ -74,7 +74,7 @@ const MainSection = styled.div`
     grid-column: 2;
     margin-top: 1rem;
     width: 100%;
-    height: 78vh;
+    height: 77vh;
     //max-height: 42rem;
     display: grid;
     grid-template-rows: 2.3rem 1fr;
