@@ -45,6 +45,7 @@ const MyData = {
     position: "BACKEND",
     education: [
         {
+            id: "0",
             school_name: "신한고등학교",
             status: "GRADUATED",
             major: "자연계",
@@ -53,6 +54,7 @@ const MyData = {
             end_date: "2023-06-30",
         },
         {
+            id: "1",
             school_name: "신한대학교",
             status: "ENROLLED",
             major: "컴퓨터공학과",
@@ -61,6 +63,7 @@ const MyData = {
             end_date: "2023-06-30",
         },
         {
+            id: "2",
             school_name: "신한대학교",
             status: "GRADUATED",
             major: "컴퓨터공학과",
@@ -69,6 +72,7 @@ const MyData = {
             end_date: "2023-06-30",
         },
         {
+            id: "3",
             school_name: "신한대학교",
             status: "ENROLLED",
             major: "컴퓨터공학과",
@@ -79,6 +83,7 @@ const MyData = {
     ],
     career: [
         {
+            id: "0",
             company_name: "신한은행",
             status: "UNEMPLOYED",
             position: "마케터",
@@ -87,6 +92,7 @@ const MyData = {
             end_date: "2025-12-31",
         },
         {
+            id: "1",
             company_name: "신한DS",
             status: "EMPLOYED",
             position: "백엔드 엔지니어",
@@ -97,6 +103,7 @@ const MyData = {
     ],
     certification: [
         {
+            id: "0",
             certification_id: "01HZXCERTIFICATION00000000000000001",
             certificate_url: "https://fileurl.com",
             name: "정보처리기사",
@@ -104,6 +111,7 @@ const MyData = {
             cdate: "2015-09-01",
         },
         {
+            id: "1",
             certification_id: "01HZXCERTIFICATION00000000000000002",
             certificate_url: "https://fileurl.com",
             name: "SQLD",
@@ -217,7 +225,7 @@ function MyInfo() {
 
                         <InfoForm>
                             {infoField.map((field, i) => (
-                                <InfoRow field={field} rowIndex={i} />
+                                <InfoRow key={i} field={field} rowIndex={i} />
                             ))}
                         </InfoForm>
 
