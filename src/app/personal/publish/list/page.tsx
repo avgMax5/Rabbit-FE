@@ -4,48 +4,65 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '@/app/_shared/components/Header';
 import FundBunnyCard from '../_components/FundBunnyCard';
-import { dummyBunnies, FundBunny } from '@/app/_api/dummyData';
+import { useFundingStore, FundBunny } from '@/app/_store/fundingStore';
 
 // 정렬 타입 정의
 type SortType = 'latest' | 'oldest' | 'highInvestment' | 'lowInvestment';
 
 export default function List() {
   const [sortType, setSortType] = useState<SortType>('latest');
-  const [bunnyData, setBunnyData] = useState<FundBunny[]>(dummyBunnies);
   const [mounted, setMounted] = useState(false);
+  const { bunnies, isLoading, error, fetchBunnies } = useFundingStore();
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    fetchBunnies({ sortType: 'newest', page: 0, size: 50 });
+  }, [fetchBunnies]);
 
   const handleSort = (type: SortType) => {
     setSortType(type);
     
-    const sortedData = [...bunnyData].sort((a, b) => {
-      switch (type) {
-        case 'latest':
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        case 'oldest':
-          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-        case 'highInvestment':
-          return b.collected_bny - a.collected_bny;
-        case 'lowInvestment':
-          return a.collected_bny - b.collected_bny;
-        default:
-          return 0;
-      }
-    });
+    let apiSortType: string;
+    switch (type) {
+      case 'latest':
+        apiSortType = 'newest';
+        break;
+      case 'oldest':
+        apiSortType = 'oldest';
+        break;
+      case 'highInvestment':
+        apiSortType = 'high_investment';
+        break;
+      case 'lowInvestment':
+        apiSortType = 'low_investment';
+        break;
+      default:
+        apiSortType = 'newest';
+    }
     
-    setBunnyData(sortedData);
+    fetchBunnies({ sortType: apiSortType, page: 0, size: 50 });
   };
 
-  if (!mounted) {
+  if (!mounted || isLoading) {
     return (
       <Container>
         <Header />
         <MainContent>
           <div style={{ textAlign: 'center', padding: '2rem' }}>
             로딩 중...
+          </div>
+        </MainContent>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Header />
+        <MainContent>
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#ff6b6b' }}>
+            오류가 발생했습니다: {error}
           </div>
         </MainContent>
       </Container>
@@ -90,17 +107,28 @@ export default function List() {
       <MainContent>
 
         <GridContainer>
-          {bunnyData.map((item) => (
-            <FundBunnyCard
-              key={item.fund_bunny_id}
-              coinName={item.bunny_name}
-              coinType={item.bunny_type}
-              timeLeft={item.end_at ? `${item.end_at} 남음` : null}
-              currentAmount={item.collected_bny}
-              targetAmount={item.target_bny}
-              avatarSrc="/images/login/personalProfile.png"
-            />
-          ))}
+          {bunnies.length === 0 ? (
+            <div style={{ 
+              gridColumn: '1 / -1', 
+              textAlign: 'center', 
+              padding: '3rem',
+              color: '#B8B8B8'
+            }}>
+              등록된 펀드 버니가 없습니다.
+            </div>
+          ) : (
+            bunnies.map((item) => (
+              <FundBunnyCard
+                key={item.fund_bunny_id}
+                coinName={item.bunny_name}
+                coinType={item.bunny_type}
+                timeLeft={item.end_at}
+                currentAmount={item.collected_bny}
+                targetAmount={item.target_bny}
+                avatarSrc="/images/login/personalProfile.png"
+              />
+            ))
+          )}
         </GridContainer>
       </MainContent>
     </Container>

@@ -89,6 +89,7 @@ const SloganText = styled.div`
 const SloganDesc = styled.div`
     font-size: 72px;
     font-weight: 800;
+    color: #fff;
 `;
 
 const CustomPagination = styled.div`

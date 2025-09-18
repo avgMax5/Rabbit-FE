@@ -4,20 +4,16 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import FundBunnyCard from './FundBunnyCard';
-import { FundBunny } from '../../../_store/fundingStore';
+import { useFundingStore } from '../../../_store/fundingStore';
 
-interface NowFundingProps {
-  bunnies: FundBunny[];
-}
-
-export default function NowFunding({ bunnies }: NowFundingProps) {
+export default function NowFunding() {
   const router = useRouter();
+  const { bunnies } = useFundingStore();
   
   const nowFundingBunnies = useMemo(() => {
     const bunniesArray = Array.isArray(bunnies) ? bunnies : [];
     
     return bunniesArray
-      .filter(bunny => !bunny.end_at)
       .slice(0, 3)
       .map(bunny => ({
         fund_bunny_id: bunny.fund_bunny_id,
@@ -75,7 +71,7 @@ const NowFundingContainer = styled.div`
 const HeaderSection = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
   max-width: 75rem;
   padding: 0 1.25rem;
@@ -107,10 +103,9 @@ const DescriptionText = styled.div`
 const ViewAllLink = styled.div`
   font-size: 16px;
   font-weight: 400;
+  padding-left: 2rem;
   color: #ffffff;
   cursor: pointer;
-  position: absolute;
-  right: 1.25rem;
   &:hover {
     opacity: 0.8;
   }

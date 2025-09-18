@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import styled, { keyframes } from 'styled-components'
 import FundBunnyModal from '../_modal/FundBunnyModal'
+import { updateCountdown } from '../_utils/countdown'
 
 export default function FundBunnyCard({ 
   coinName, 
@@ -22,10 +23,23 @@ export default function FundBunnyCard({
   const progress = Math.round((currentAmount / targetAmount) * 100 * 10) / 10;
   const [mounted, setMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [countdown, setCountdown] = useState<string>('');
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!timeLeft) return;
+
+    updateCountdown(timeLeft, setCountdown);
+
+    const interval = setInterval(() => {
+      updateCountdown(timeLeft, setCountdown);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft]);
 
   const handleCardClick = () => {
     setIsModalOpen(true);
@@ -66,7 +80,7 @@ export default function FundBunnyCard({
         
         {timeLeft && (
           <CountdownSection>
-            <CountdownText>{timeLeft}</CountdownText>
+            <CountdownText>{countdown}</CountdownText>
           </CountdownSection>
         )}
         
@@ -90,14 +104,13 @@ export default function FundBunnyCard({
       </CardContainer>
 
       <FundBunnyModal 
-        isOpen={isModalOpen} 
+        isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
     </>
   )
 }
 
-// CSS Keyframes 정의
 const fadeInUp = keyframes`
   from {
     opacity: 0;

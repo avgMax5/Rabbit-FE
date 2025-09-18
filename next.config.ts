@@ -23,6 +23,41 @@ const nextConfig: NextConfig = {
   // FOUC 방지를 위한 추가 설정
   poweredByHeader: false,
   compress: true,
+  // 환경 변수 설정
+  env: {
+    API_BASE_URL: 'https://rabbit.avgmax.team/api',
+  },
+  // API 라우트 설정
+  async rewrites() {
+    return [
+      {
+        source: '/api/proxy/:path*',
+        destination: 'https://rabbit.avgmax.team/api/:path*',
+      },
+    ];
+  },
+  // 헤더 설정 (CORS 관련)
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

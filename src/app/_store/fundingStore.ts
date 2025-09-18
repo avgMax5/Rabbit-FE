@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { dummyBunnies } from '../_api/dummyData';
+import axios from 'axios';
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
@@ -40,40 +41,29 @@ export const useFundingStore = create<FundingState>((set, get) => ({
         set({ isLoading: true, error: null });
         
         try {
-            console.log(`${API_BASE_URL}/fund-bunnies`);
-            const url = new URL(`${API_BASE_URL}/fund-bunnies`);
-            console.log(url);
+            const url = new URL(`${API_BASE_URL}/fund-bunnies`, window.location.origin);
             url.searchParams.append('page', page.toString());
             url.searchParams.append('size', size.toString());
             url.searchParams.append('sortType', sortType);
             
-            const response = await fetch(url.toString(), {
-                method: 'GET',
+            console.log('API 호출 URL:', url.toString());
+            
+            const response = await axios.get(url.toString(), {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${TEST_TOKEN}`
+
                 }
             });
             
-            if (!response.ok) {
-                console.log(response);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            const bunnies = data?.fund_bunnies || [];
+            const bunnies = response.data.fund_bunnies;
 
-            if (bunnies.length === 0) {
-                console.log('데이터 없어서 더미 사용');
-                set({ bunnies: dummyBunnies, isLoading: false });
-                return;
-            }
+            console.log('받은 데이터:', bunnies);
             
             set({ bunnies, isLoading: false });
         } catch (error) {
             console.warn('API 호출 실패, 더미 데이터를 사용합니다:', error);
             set({ 
-                bunnies: dummyBunnies, 
                 isLoading: false, 
                 error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.' 
             });
