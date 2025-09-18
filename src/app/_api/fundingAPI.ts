@@ -1,4 +1,3 @@
-import { dummyBunnies } from './dummyData';
 import axios from 'axios';
 
 const API_BASE_URL = 'https://rabbit.avgmax.team/api';
