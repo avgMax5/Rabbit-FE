@@ -8,8 +8,8 @@ export type ChartData = { value: number; name: string }[];
 interface NightingaleChartProps {
     data: ChartData;
     colors?: string[];
-    inner?: number;
-    outer?: number;
+    inner?: number | string;
+    outer?: number | string;
 }
 
 function NightingaleChart({
@@ -42,7 +42,7 @@ function NightingaleChart({
                     name: "Access From",
                     type: "pie",
                     radius: [inner ?? 15, outer ?? 60],
-                    center: ["70%", "50%"],
+                    center: ["72%", "50%"],
                     avoidLabelOverlap: false,
                     padAngle: 3,
                     itemStyle: {
@@ -69,9 +69,9 @@ function NightingaleChart({
                 show: true,
                 orient: "vertical", // 세로로 나열
                 left: 0, // 오른쪽에 배치
-                top: "38%", // 세로 중앙 정렬
-                itemWidth: 20, // 범례 아이콘 너비
-                itemHeight: 14, // 범례 아이콘 높이
+                top: "30%", // 세로 중앙 정렬
+                itemWidth: 14, // 범례 아이콘 너비
+                itemHeight: 8, // 범례 아이콘 높이
                 textStyle: {
                     fontSize: "10px",
                     color: "#000", // 글씨 색상

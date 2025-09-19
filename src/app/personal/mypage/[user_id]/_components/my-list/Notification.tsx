@@ -14,10 +14,12 @@ const Div = styled.div`
     left: 0.2rem;
     width: 10rem;
     height: auto;
-    border-radius: 6px;
+    border-radius: 3px;
+    padding: 6px;
     display: flex;
     flex-wrap: wrap;
     background-color: #c2d6fd;
+    box-shadow: 2px 2px 4px #00000076;
 `;
 
 export default Notification;

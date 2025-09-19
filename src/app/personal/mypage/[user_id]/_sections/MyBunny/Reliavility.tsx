@@ -10,7 +10,13 @@ function Reliavility({ data }: ReliavilityProps) {
     const score = data.find((item) => item.name === "점수")?.value;
 
     return (
-        <GlassBox text="신뢰도" isNoti={true} notification="신뢰도 계산법" color="#fff" backgroundColor="#001035">
+        <GlassBox
+            text="신뢰도"
+            isNoti={true}
+            notification="신뢰도 계산법"
+            color="#fff"
+            backgroundColor="#001035a4"
+        >
             <Number>{score}</Number>
             <HalfChart colors={["#f2ad23", "#8c8c8c"]} data={data} />
         </GlassBox>
@@ -19,12 +25,12 @@ function Reliavility({ data }: ReliavilityProps) {
 
 const Number = styled.div`
     position: absolute;
+    left: 42%;
     z-index: 998;
-    bottom: 46%;
-    left: 43%;
     font-family: var(--font-rockstar);
     font-size: 34px;
     color: #fff;
+    text-shadow: 1px 1px 2px #060606;
 `;
 
 export default Reliavility;

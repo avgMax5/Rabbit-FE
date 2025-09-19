@@ -38,7 +38,13 @@ function CoinType({ type }: CoinTypeProps) {
     const typeInfo = getTypeInfo(type);
 
     return (
-        <GlassBox text="코인 유형" isNoti={true} notification="" color="#fff" backgroundColor="#000000">
+        <GlassBox
+            text="코인 유형"
+            isNoti={true}
+            notification="코인유형에 대한 설명"
+            color="#fff"
+            backgroundImage="/images/personal/shared/space.jpeg"
+        >
             <TitleIconContainer>
                 <TypeIcon src={typeInfo.icon} />
                 <TypeTitle>{typeInfo.title}</TypeTitle>
@@ -70,10 +76,11 @@ function CoinType({ type }: CoinTypeProps) {
 }
 
 const TitleIconContainer = styled.div`
-    background-image: url("/images/personal/shared/space.jpeg");
-    height: 7rem;
+    background-color: #46464682;
+    height: 5rem;
     padding: 1rem 0;
-    margin-top: 0.6rem;
+    border-radius: 6px;
+    margin-top: 1.3rem;
     margin-bottom: 0.8rem;
     box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.25);
 `;
@@ -85,15 +92,17 @@ const TypeIcon = styled.img`
 
 const TypeTitle = styled.h3`
     color: #fff;
-    font-size: 23px;
+    font-size: 22px;
     font-weight: 900;
     text-align: center;
     margin: 0.5rem 0 0 0;
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.281);
 `;
 
 const TypeAttributes = styled.div`
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
+    margin-top: 3rem;
     display: flex;
     flex-direction: column;
     gap: 0.625rem;
@@ -122,13 +131,13 @@ const Bar = styled.div.withConfig({
     width: 0.75rem;
     height: 0.75rem;
     border-radius: 50%;
-    background: ${(props) => (props.filled ? "#0044e4" : "#555")};
+    background: ${(props) => (props.filled ? "#0d01ed" : "#a4a3a3b6")};
 `;
 
 const AttributeText = styled.span`
-    color: #225dfd;
+    color: #cddafc;
     font-size: 0.7rem;
-    font-weight: 600;
+    font-weight: 800;
 `;
 
 export default CoinType;
