@@ -5,11 +5,25 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import ShopModal from "./Shop";
+import { useUserStore } from "@/app/_store/userStore";
 
 function Header() {
     const [mouseEnter, setMouseEnter] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const pathname = usePathname();
+    
+    const userInfo = useUserStore((state) => state.user);
+    const fetchUser = useUserStore((state) => state.fetchUser);
+    const isLoading = useUserStore((state) => state.isLoading);
+    
+    useEffect(() => {
+        if (!userInfo && !isLoading) {
+            fetchUser();
+        }
+    }, [userInfo, isLoading, fetchUser]);
+    console.log("userInfo", userInfo);
+    const user_id = userInfo?.user_id;
+    const carrot = userInfo?.carrot;
 
     const getActive = () => {
         if (pathname === "/personal/home") return "home";
@@ -17,7 +31,6 @@ function Header() {
         if (pathname === "/personal/publish") return "funding";
         return null;
     };
-
     const activate = getActive();
 
     useEffect(() => {
@@ -60,7 +73,7 @@ function Header() {
                     </Home>
                 </Link>
                 {/* <Link href={`/personal/mypage/${user_id}`}> */}
-                <Link href={"/personal/mypage/${user_id}"}>
+                <Link href={`/personal/mypage/${user_id}`}>
                     <MyPage $activate={activate === "mypage"} $isLoaded={isLoaded}>
                         마이페이지
                     </MyPage>
@@ -71,7 +84,7 @@ function Header() {
             </Navigate>
             <Money onClick={handleMoneyClick}>
                 <CarrotImg src="/images/personal/home/carrot.png" alt="당근" />
-                233,000,000
+                {carrot}
             </Money>
             <ShopModal 
                 isOpen={isShopModalOpen} 
