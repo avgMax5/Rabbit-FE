@@ -53,10 +53,10 @@ function MyBunny() {
             <SecondRow>
                 <CoinType type="A" />
                 <AiSummarize />
-                <CustomerHold
+                {/* <CustomerHold
                     bubbleData={sampleData}
                     progressData={progressData}
-                />
+                /> */}
             </SecondRow>
         </Wrapper>
     );
@@ -65,24 +65,25 @@ const Wrapper = styled.div`
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-rows: 1fr 1fr;
-    gap: 0.8rem;
+    grid-template-rows: 16rem 1fr;
+    gap: 1rem;
 `;
 const Row = styled.div`
     display: grid;
-    gap: 0.8rem;
+    gap: 1rem;
     width: 100%;
+    height: 100%;
 `;
 
 const FirstRow = styled(Row)`
-    grid-row: 1;
     width: 100%;
+    height: 16rem;
     grid-template-columns: 2fr 4fr 2.5fr;
 `;
 
 const Col = styled.div`
     display: grid;
-    gap: 0.8rem;
+    gap: 1rem;
     grid-template-rows: 1fr 1.2fr;
 `;
 

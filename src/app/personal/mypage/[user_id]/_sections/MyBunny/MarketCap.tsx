@@ -3,7 +3,13 @@ import styled from "styled-components";
 
 function MarketCap() {
     return (
-        <GlassBox text="시가총액" isNoti={true} notification="시가총액계산" color="#000" backgroundColor="#F0F0F0">
+        <GlassBox
+            text="시가총액"
+            isNoti={true}
+            notification="시가총액계산"
+            color="#000"
+            iconColor="#000"
+        >
             <TotalContainer>
                 <Total>20,000</Total>
                 <CarrotImg src="/images/personal/home/carrot.png" />
@@ -19,6 +25,7 @@ function MarketCap() {
 const TotalContainer = styled.div`
     width: 100%;
     height: 3rem;
+
     display: flex;
     gap: 0.8rem;
     align-items: center;
@@ -31,19 +38,17 @@ const Total = styled.div`
 `;
 
 const CarrotImg = styled.img`
-    width: 18px;
+    width: 22px;
     height: auto;
 `;
 
 const Bny = styled.div`
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
     display: flex;
     align-items: center;
     justify-content: end;
     gap: 0.3rem;
     font-size: 12px;
+    font-weight: 700;
     color: #373737;
 `;
 

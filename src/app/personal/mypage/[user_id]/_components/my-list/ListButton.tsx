@@ -16,7 +16,7 @@ function ListButton({ onGetList, totalLength, content }: ListButtonProps) {
             <Main
                 onMouseEnter={(e) =>
                     handleEnterBackground(
-                        { backgroundColor: "#2f2f2f5b", color: "#fff" },
+                        { backgroundColor: "#2f2f2f73", color: "#fff" },
                         e
                     )
                 }
@@ -35,7 +35,7 @@ function ListButton({ onGetList, totalLength, content }: ListButtonProps) {
 }
 
 const Div = styled.div`
-    width: 98%;
+    width: 100%;
     height: 100%;
 `;
 
@@ -43,7 +43,7 @@ const Main = styled.div<{ $content: string }>`
     position: relative;
     padding: 1rem;
     width: 100%;
-    height: 5.4rem;
+    height: 100%;
     background-image: ${({ $content }) =>
         $content === "거래 기록 보기"
             ? `url("/images/personal/mypage/earth.png")`
@@ -56,8 +56,8 @@ const Main = styled.div<{ $content: string }>`
     box-shadow: 4px 4px 4px 0 rgba(0, 0, 0, 0.25);
 
     font-weight: 800;
-
     color: #fff;
+    cursor: pointer;
 `;
 const TotalLength = styled.span`
     color: #fcd676;

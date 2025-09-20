@@ -122,7 +122,7 @@ function SpecForm({ title, fieldData, rowData, icon, name }: SpecFormProps) {
 
 const FormWrapper = styled.div`
     width: 100%;
-    height: 100%;
+    height: 15rem;
 `;
 
 const Title = styled.div`
@@ -158,15 +158,16 @@ const AddRowBtn = styled.button`
 
 const Container = styled.div`
     width: 100%;
-    background-color: #999;
 `;
 
 const FieldContainer = styled.div<{ $fieldNum: number }>`
-    background-color: #999666;
+    background: rgba(15, 23, 42, 0.718);
     width: 100%;
     height: 1.6rem;
     display: grid;
     padding: 0 0.4rem;
+    border-radius: 3px;
+    margin-bottom: 0.3rem;
     justify-content: center;
     align-items: center;
     grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
@@ -175,30 +176,31 @@ const FieldContainer = styled.div<{ $fieldNum: number }>`
 const Field = styled.div`
     text-align: center;
     width: 100%;
+    color: #fff;
     font-size: 14px;
     font-weight: 700;
 `;
 
 const Form = styled.div`
-    background-color: #a14040;
+    background-color: #0007438e;
     width: 100%;
     height: 10rem;
     padding: 0.3rem 0;
     display: flex;
     flex-shrink: 0;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 0.2rem;
     overflow-y: auto;
 `;
 
 const Row = styled.div<{ $fieldNum: number }>`
-    background-color: #461;
     box-sizing: border-box;
     padding: 0.3rem 0.4rem;
     width: 100%;
-    min-height: 2rem;
+    min-height: 2.4rem;
     display: grid;
     justify-content: center;
+
     align-items: center;
     grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
 `;

@@ -233,12 +233,12 @@ function MyInfo() {
                     </InfoSection>
 
                     <SpecSection>
-                        <div>
+                        <PositionContainer>
                             <Position
                                 position={MyData.position}
                                 name="position"
                             />
-                        </div>
+                        </PositionContainer>
 
                         {SpecFormData.map((formData, index) => (
                             <SpecForm
@@ -284,7 +284,7 @@ function MyInfo() {
 
 const Main = styled.div`
     width: 100%;
-    height: 90%;
+    height: 94%;
     padding: 0 0.2rem;
     display: grid;
     grid-template-columns: 1.5fr 5fr;
@@ -302,10 +302,10 @@ const PlainForm = styled.form`
 //나의 정보
 const Section = styled.div`
     width: 100%;
-    height: 100%;
+    height: 62vh;
     padding: 1rem;
     border-radius: 15px;
-    background: rgba(11, 8, 63, 0.15);
+    background-color: rgb(118 177 224 / 8%);
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.25);
 `;
 
@@ -351,20 +351,23 @@ const InfoForm = styled.div`
 // 나의 스펙
 const SpecSection = styled(Section)`
     width: 100%;
-    height: 100%;
     display: grid;
-    grid-template-rows: 4rem 1fr 1fr 1fr;
     gap: 1.4rem;
     overflow-y: auto;
+`;
+
+const PositionContainer = styled.div`
+    width: 100%;
+    height: 5rem;
 `;
 
 const Bottom = styled.div`
     width: 100%;
     height: 2.7rem;
-    padding: 0.2rem 1rem;
-    margin-top: 1.4rem;
+    padding: 0.1rem 1rem;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 1rem;
 `;
 
@@ -389,7 +392,7 @@ const Guide = styled.div`
 
 const SaveBtn = styled.button`
     width: 6.6rem;
-    height: 1.6rem;
+    height: 2rem;
     text-align: center;
     line-height: 1.8rem;
     border: none;

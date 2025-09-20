@@ -72,9 +72,8 @@ const ProfileLogoSection = styled.div`
 
 const MainSection = styled.div`
     grid-column: 2;
-    margin-top: 1rem;
     width: 100%;
-    height: 77vh;
+    height: 78vh;
     //max-height: 42rem;
     display: grid;
     grid-template-rows: 2.3rem 1fr;

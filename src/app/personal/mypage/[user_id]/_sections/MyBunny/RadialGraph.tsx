@@ -11,7 +11,7 @@ interface RadialGraphProps {
 
 function RadialGraph({ data, devType }: RadialGraphProps) {
     return (
-        <GlassBox text="개발자 유형" isNoti={false} color="#603F00" backgroundColor="linear-gradient(135deg, #FFF9E5 0%,rgb(214, 195, 130) 100%)">
+        <GlassBox text="개발자 유형" isNoti={false}>
             <DevType>{devType}</DevType>
             <PentagonChart data={data} />
         </GlassBox>
@@ -24,7 +24,7 @@ const DevType = styled.div`
     right: 0.6rem;
     font-size: 16px;
     font-weight: 900;
-    color: #603F00;
+    color: #603f00;
 `;
 
 export default RadialGraph;

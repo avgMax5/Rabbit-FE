@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import SortBigButton from "../_components/my-list/SortBigButton";
-import List from "@/app/personal/home/_components/List";
+import ListTable from "../_components/my-list/ListTable";
 import { useState } from "react";
 import ListButton from "../_components/my-list/ListButton";
 
@@ -329,7 +329,13 @@ function MyBunnyList() {
                     top1Title="성장형"
                     top1Carrot={200000}
                     chartData={devData}
-                    colors={["#008b61", "#33a280", "#66b9a0", "#99d0bf", "#cce7df"]}
+                    colors={[
+                        "#008b61",
+                        "#33a280",
+                        "#66b9a0",
+                        "#99d0bf",
+                        "#cce7df",
+                    ]}
                 />
                 <SortBigButton
                     sortTitle="버니 유형"
@@ -352,16 +358,14 @@ function MyBunnyList() {
                 </ButtonContainer>
             </FirstRow>
             <SecondRow>
-                <Div>
-                    {isHistory ? (
-                        <List fieldList={fieldList} dataList={dataList} />
-                    ) : (
-                        <List
-                            fieldList={historyFieldList}
-                            dataList={historyDataList}
-                        />
-                    )}
-                </Div>
+                {isHistory ? (
+                    <ListTable
+                        fieldList={historyFieldList}
+                        dataList={historyDataList}
+                    />
+                ) : (
+                    <ListTable fieldList={fieldList} dataList={dataList} />
+                )}
             </SecondRow>
         </Wrapper>
     );
@@ -371,45 +375,18 @@ const Wrapper = styled.div`
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-rows: 12rem 1fr;
+    grid-template-rows: 35% 1fr;
     gap: 1rem;
     box-sizing: border-box;
 `;
 
-const Div = styled.div`
-    background: rgba(15, 23, 42);
-    border-radius: 16px;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-rows: 3rem 37vh;
-    gap: 0.5rem;
-
-    font-family: var(--font-nanum-square);
-`;
-
-const Row = styled.div<{ $fieldNum: number }>`
-    width: 100%;
-    height: 2.2rem;
-    display: grid;
-    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
-    align-items: center;
-    text-align: center;
-    flex-shrink: 0;
-    padding: 0.7rem 0rem;
-
-    font-family: var(--font-nanum-square);
-    font-weight: 800;
-    font-size: 12px;
-`;
-
 const FirstRow = styled.div`
     display: grid;
+    gap: 0.8rem;
+    grid-template-columns: 2fr 2fr 2fr 1fr;
     grid-row: 1;
     width: 100%;
     height: 100%;
-    gap: 0.8rem;
-    grid-template-columns: 2fr 2fr 2fr 1fr;
 `;
 
 const SecondRow = styled.div`
@@ -417,12 +394,12 @@ const SecondRow = styled.div`
     grid-row: 2;
     width: 100%;
     height: 100%;
-    padding: 0.8rem 0;
 `;
 
 const ButtonContainer = styled.div`
     display: grid;
-    gap: 1rem;
+    grid-template-rows: 1fr 1fr;
+    gap: 0.8rem;
 `;
 
 export default MyBunnyList;
