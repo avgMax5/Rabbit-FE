@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 import Header from "../../_shared/components/Header";
-import { LongTitle, ShortTitle } from "./_components/Title";
+import Title from "./_components/Title";
 import List from "./_components/List";
 import SortButton from "./_components/SortButton";
 import MarketScore from "../../_shared/components/MarketScore";
@@ -10,6 +10,7 @@ import Top5 from "./_components/Top5";
 import Rank from "./_components/Rank";
 import Badge from "./_components/Badge";
 import Banner from "./_components/BannerContainer";
+import Alarm from "./_components/Alarm";
 
 export interface DataType {
     id: number;
@@ -143,21 +144,52 @@ const Data: ListDataType[] = [
     },
 ];
 
+const updateData = [
+    { coin_name: "min", fund_bunny_id: "123" },
+    { coin_name: "minwoo", fund_bunny_id: "123" },
+    { coin_name: "minw", fund_bunny_id: "125" },
+    { coin_name: "wooo", fund_bunny_id: "126" },
+    { coin_name: "woo3", fund_bunny_id: "126" },
+    { coin_name: "woo4", fund_bunny_id: "126" },
+    { coin_name: "woo5", fund_bunny_id: "126" },
+    { coin_name: "woo6", fund_bunny_id: "126" },
+    { coin_name: "woo7", fund_bunny_id: "126" },
+];
+
+const notificationData = [
+    { value: "reliavility", noti: "시장심리점수계산공식" },
+    {
+        value: "tradeStrength",
+        noti: `· 거래된 매수 체결과 매도 체결의 비율을 의미하며, 아래의 수식으로 체결강도를 계산합니다.
+
+(매수 체결량 / 매도 체결량) x 100
+
+· 체결강도는 100% 초과 시 매수세가 강하며, 100% 미만 시 매도세가 강함을 의미합니다. (최대 500%까지 표기)
+
+· 당일 매수 또는 매도가 없는 디지털 자산, 일 거래대금이 1 BTC 미만인 BTC 마켓의 디지털 자산은 체결강도 순위에 보이지 않습니다.`,
+    },
+];
+
 export default function Personal() {
     return (
         <>
             <Wrapper>
                 <Header />
                 <Banner />
+                <Alarm updateData={updateData} />
                 <Main>
                     <LeftSection>
                         {/* 갓 상장한 버니들 */}
                         <Container>
-                            <LongTitle content={"GOT 탑승한 버니들"} />
+                            <Title
+                                content={"GOT 탑승한 버니들"}
+                                isNoti={false}
+                                icon="hugeicons:start-up-02"
+                            />
                             <List
                                 fieldList={fieldList}
-                                height="22rem"
                                 dataList={Data}
+                                backgroundColor="rgba(255, 255, 255, 0.05)"
                             />
                         </Container>
 
@@ -167,7 +199,11 @@ export default function Personal() {
                                     <Badge key={badge.id} badge={badge} />
                                 ))}
                             </CorporationCotainer>
-                            <LongTitle content={"로켓에 탑승한 버니들"} />
+                            <Title
+                                content={"로켓에 탑승한 버니들"}
+                                isNoti={false}
+                                icon="flowbite:rocket-solid"
+                            />
                             <SortButtons>
                                 <SortButton
                                     text={"코인유형"}
@@ -187,18 +223,31 @@ export default function Personal() {
                                     isMulti={true}
                                 />
                             </SortButtons>
-                            <List fieldList={fieldList} dataList={Data} />
+                            <List
+                                fieldList={fieldList}
+                                dataList={Data}
+                                backgroundColor="#ffffff37"
+                            />
                         </Container>
                     </LeftSection>
 
                     <RightSection>
                         <Container>
-                            <ShortTitle content={"시장심리점수"} />
+                            <Title
+                                content={"시장심리점수"}
+                                isNoti={true}
+                                notification={notificationData[0].noti}
+                                icon="tabler:number"
+                            />
                             <MarketScore />
                         </Container>
 
                         <Container>
-                            <ShortTitle content={"TOP 5 버니들"} />
+                            <Title
+                                content={"TOP 5 버니들"}
+                                isNoti={false}
+                                icon="fluent-emoji-high-contrast:top-arrow"
+                            />
                             <RankContainer>
                                 <Top5 standard="개발자 유형별" />
                                 <Top5 standard="직군별" />
@@ -207,7 +256,12 @@ export default function Personal() {
                         </Container>
 
                         <Container>
-                            <ShortTitle content={"일 매수 체결강도 순위"} />
+                            <Title
+                                content={"일 매수 체결강도 순위"}
+                                isNoti={true}
+                                notification={notificationData[1].noti}
+                                icon="icon-park-solid:list-top"
+                            />
                             {/* 일 매수 체결강도 순위 */}
                             <RankContainer>
                                 {RankData.map((data, i) => (
@@ -217,7 +271,12 @@ export default function Personal() {
                         </Container>
 
                         <Container>
-                            <ShortTitle content={"일 매도 체결강도 순위"} />
+                            <Title
+                                content={"일 매도 체결강도 순위"}
+                                isNoti={true}
+                                notification={notificationData[1].noti}
+                                icon="icon-park-solid:list-top"
+                            />
                             {/* 일 매도 체결강도 순위 */}
                             <RankContainer>
                                 {RankData.map((data, i) => (
@@ -227,7 +286,11 @@ export default function Personal() {
                         </Container>
 
                         <Container>
-                            <ShortTitle content={"지표"} />
+                            <Title
+                                content={"지표"}
+                                isNoti={false}
+                                icon="solar:graph-new-bold"
+                            />
                             <RankContainer>
                                 <GraphContainer />
                                 <GraphContainer />
@@ -246,9 +309,9 @@ const Wrapper = styled.div`
     min-height: 100vh;
     display: grid;
     grid-template-rows: auto 1fr;
-    gap: 5rem;
+    gap: 2rem;
     margin: 0 auto;
-    margin-top: 10rem;
+    margin-top: 12rem;
 `;
 
 const Main = styled.div`
@@ -263,8 +326,8 @@ const LeftSection = styled.div`
     width: 100%;
     /* height: 80%; */
     display: grid;
-    grid-template-rows: 0.8fr 2fr;
-    gap: 4rem;
+    grid-template-rows: 0.6fr 2fr;
+    gap: 2rem;
 `;
 
 const SortButtons = styled.div`

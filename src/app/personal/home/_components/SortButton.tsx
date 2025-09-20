@@ -95,13 +95,14 @@ const Div = styled.div`
     justify-content: center;
     border-radius: 25px;
     background: #94bcf1;
-    box-shadow: -2px -4px 10px 0 #7c97cd inset, 6px 4px 10px 0 #bad0fb inset,
-        4px 4px 10px 0 rgba(162, 179, 213, 0.64);
+    box-shadow: -2px -2px 5px 0 #7c97cd inset, 2px 2px 5px 0 #bad0fb inset,
+        1px 1px 4px 0 rgba(83, 91, 107, 0.64);
 
     font-family: var(--font-nanum-squar);
     font-weight: 900;
     font-size: 16px;
     color: #fff;
+    cursor: pointer;
 `;
 
 const SelectBox = styled.div`

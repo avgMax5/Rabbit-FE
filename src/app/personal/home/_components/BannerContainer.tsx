@@ -93,9 +93,8 @@ function Banner() {
 }
 
 const Wrapper = styled.div`
-    /* 여기 해결 */
     width: 100%;
-    height: 28rem;
+    height: 31rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -108,7 +107,7 @@ const Wrapper = styled.div`
 const Rocket = styled.img`
     position: absolute;
     top: -6rem;
-    right: 8rem;
+    right: 0rem;
     z-index: 999;
     width: 33rem;
     height: auto;
@@ -118,7 +117,7 @@ const Slogan = styled.div`
     position: absolute;
     top: -3rem;
     left: 4rem;
-    width: 39rem;
+    width: 30rem;
     color: rgba(255, 255, 255, 0.81);
     text-shadow: 4.315px 4.315px 8px #738398;
     font-family: var(--font-rockstar);
@@ -127,7 +126,7 @@ const Slogan = styled.div`
 
 const BannerContent = styled.div`
     position: relative;
-    width: 97%;
+    width: 100%;
     height: 100%;
     flex-shrink: 0;
     border-radius: 16px;
@@ -144,13 +143,13 @@ const BannerContent = styled.div`
 `;
 
 const CustomPagination = styled.div`
+    text-align: center;
     .swiper-pagination-bullet {
         width: 0.7rem;
         height: 0.7rem;
         border-radius: 50%;
         background: #b6b6b6;
         opacity: 1;
-        margin-right: 0.6rem;
     }
 
     .swiper-pagination-bullet-active {
