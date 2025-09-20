@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import React, { ReactNode, useState } from "react";
 import { Icon } from "@iconify/react";
-import Notification from "./my-list/Notification";
+import Notification from "../../../../_shared/components/Notification";
 
 interface GlassBoxProps {
     children?: ReactNode;
@@ -49,7 +49,10 @@ function GlassBox({
                             onMouseLeave={handleMouseLeave}
                         />
                         {mouseEnter && notification && (
-                            <Notification notification={notification} />
+                            <Notification
+                                notification={notification}
+                                width="10px"
+                            />
                         )}
                     </IconContainer>
                 )}
