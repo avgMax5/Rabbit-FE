@@ -169,7 +169,7 @@ function Publish() {
                         </BottomRightImageContainer>
                     </BottomTop>
 
-                    <EndingSoon bunnies={bunnies} />
+                    <EndingSoon />
                     <NowFunding />
                 </SectionBottom>
             </ContentContainer>

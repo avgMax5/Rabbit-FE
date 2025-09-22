@@ -4,51 +4,59 @@ import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
 import FundBunnyCard from './FundBunnyCard';
-import { FundBunny } from '../../../_store/fundingStore';
+import { useFundingStore } from '../../../_store/fundingStore';
 
-interface EndingSoonProps {
-  bunnies: FundBunny[];
-}
-
-export default function EndingSoon({ bunnies }: EndingSoonProps) {
+export default function EndingSoon() {
   const router = useRouter();
+  const { bunnies } = useFundingStore();
   
   const endingSoonBunnies = useMemo(() => {
     const bunniesArray = Array.isArray(bunnies) ? bunnies : [];
+    const now = new Date();
     
+    console.log('=== 마감시간 디버깅 ===');
+    console.log('현재 시간:', now.toISOString());
+    
+    // end_at이 있는 모든 버니를 마감시간 순으로 정렬하여 상위 3개 선택
     const bunniesWithTimeLeft = bunniesArray
-      .filter(bunny => bunny.end_at && bunny.end_at.trim() !== '')
+      .filter(bunny => bunny.end_at && bunny.end_at.trim() !== '') // end_at이 있는 것만
       .map(bunny => {
-        const now = new Date();
-        const [hours, minutes, seconds] = bunny.end_at.split(':').map(Number);
-        
-        const endTime = new Date();
-        endTime.setHours(hours, minutes, seconds, 0);
-        
-        if (endTime <= now) {
-          endTime.setDate(endTime.getDate() + 1);
+        try {
+          const endTime = new Date(bunny.end_at);
+          const timeLeft = endTime.getTime() - now.getTime();
+          const hoursLeft = timeLeft / (1000 * 60 * 60);
+          
+          console.log(`${bunny.bunny_name}: ${hoursLeft.toFixed(1)}시간 남음 (${bunny.end_at})`);
+          
+          return {
+            ...bunny,
+            timeLeftMs: timeLeft,
+            timeLeftFormatted: bunny.end_at,
+            hoursLeft: hoursLeft
+          };
+        } catch (error) {
+          console.log(`${bunny.bunny_name}: 날짜 파싱 실패`);
+          return null;
         }
-        
-        const timeLeft = endTime.getTime() - now.getTime();
-        
-        return {
-          ...bunny,
-          timeLeftMs: timeLeft,
-          timeLeftFormatted: bunny.end_at
-        };
       })
-      .sort((a, b) => a.timeLeftMs - b.timeLeftMs)
-      .slice(0, 3)
-      .map(bunny => ({
-        fund_bunny_id: bunny.fund_bunny_id,
-        bunny_name: bunny.bunny_name,
-        bunny_type: bunny.bunny_type,
-        end_at: bunny.timeLeftFormatted,
-        collected_bny: bunny.collected_bny,
-        target_bny: bunny.target_bny,
-        avatarSrc: "/images/personal/publish/astronaut.png"
-      }));
+      .filter(bunny => bunny !== null) // 파싱 실패한 것 제거
+      .filter(bunny => bunny.timeLeftMs > 0) // 아직 마감되지 않은 것만
+      .sort((a, b) => a.timeLeftMs - b.timeLeftMs) // 마감 시간이 가까운 순
+      .slice(0, 3) // 상위 3개
+      .map(bunny => {
+        console.log(`선택된 버니: ${bunny.bunny_name} - ${bunny.hoursLeft.toFixed(1)}시간 남음`);
+        return {
+          fund_bunny_id: bunny.fund_bunny_id,
+          bunny_name: bunny.bunny_name,
+          bunny_type: bunny.bunny_type,
+          end_at: bunny.timeLeftFormatted,
+          collected_bny: bunny.collected_bny,
+          target_bny: bunny.target_bny,
+          avatarSrc: "/images/personal/publish/astronaut.png"
+        };
+      });
     
+    console.log('=== 디버깅 완료 ===');
     return bunniesWithTimeLeft;
   }, [bunnies]);
   return (
@@ -64,11 +72,12 @@ export default function EndingSoon({ bunnies }: EndingSoonProps) {
           endingSoonBunnies.map((data) => (
             <FundBunnyCard 
               key={data.fund_bunny_id}
-              coinName={data.bunny_name}
-              coinType={data.bunny_type}
-              timeLeft={data.end_at}
+              fundBunnyId={data.fund_bunny_id}
+              bunnyName={data.bunny_name}
+              bunnyType={data.bunny_type}
+              endAt={data.end_at}
               currentAmount={data.collected_bny}
-              targetAmount={data.target_bny}
+              targetBny={data.target_bny}
               avatarSrc={data.avatarSrc}
             />
           ))
@@ -93,7 +102,7 @@ const EndingSoonContainer = styled.div`
 const HeaderSection = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   max-width: 75rem;
   padding: 0 1.25rem;
@@ -123,6 +132,8 @@ const EndingSoonDesc = styled.div`
 `;
 
 const ViewAllLink = styled.div`
+  position: absolute;
+  right: 1.25rem;
   font-size: 16px;
   font-weight: 400;
   color: #ffffff;

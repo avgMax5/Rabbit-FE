@@ -120,11 +120,12 @@ export default function List() {
             bunnies.map((item) => (
               <FundBunnyCard
                 key={item.fund_bunny_id}
-                coinName={item.bunny_name}
-                coinType={item.bunny_type}
-                timeLeft={item.end_at}
+                fundBunnyId={item.fund_bunny_id}
+                bunnyName={item.bunny_name}
+                bunnyType={item.bunny_type}
+                endAt={item.end_at}
                 currentAmount={item.collected_bny}
-                targetAmount={item.target_bny}
+                targetBny={item.target_bny}
                 avatarSrc="/images/login/personalProfile.png"
               />
             ))
