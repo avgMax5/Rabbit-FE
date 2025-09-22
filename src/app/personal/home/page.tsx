@@ -11,6 +11,7 @@ import Rank from "./_components/Rank";
 import Badge from "./_components/Badge";
 import Banner from "./_components/BannerContainer";
 import Alarm from "./_components/Alarm";
+import WithAuth from "@/app/_components/WithAuth";
 
 export interface DataType {
     id: number;
@@ -170,7 +171,7 @@ const notificationData = [
     },
 ];
 
-export default function Personal() {
+function Personal() {
     return (
         <>
             <Wrapper>
@@ -385,3 +386,5 @@ const GraphContainer = styled.div`
     box-shadow: 4px 4px 4px 0 #fbfbfb inset, -4px -4px 4px 0 #d6dbdf inset,
         4px 4px 10px 0 rgba(0, 0, 0, 0.25);
 `;
+
+export default WithAuth(Personal);

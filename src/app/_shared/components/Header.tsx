@@ -73,7 +73,7 @@ function Header() {
                     </Home>
                 </Link>
                 {/* <Link href={`/personal/mypage/${user_id}`}> */}
-                <Link href={`/personal/mypage/${user_id}`}>
+                <Link href={user_id ? `/personal/mypage/${user_id}` : '#'}>
                     <MyPage $activate={activate === "mypage"} $isLoaded={isLoaded}>
                         마이페이지
                     </MyPage>
