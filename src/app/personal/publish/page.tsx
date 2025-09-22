@@ -12,8 +12,9 @@ import Button from "@/app/_shared/components/Button";
 import Header from "@/app/_shared/components/Header";
 import SloganContainer from "./_components/SloganContainer";
 import { useFundingStore } from "../../_store/fundingStore";
+import WithAuth from "@/app/_components/WithAuth";
 
-export default function Publish() {
+function Publish() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
     
@@ -341,3 +342,5 @@ const ErrorText = styled.p`
     font-weight: 500;
     text-align: center;
 `;
+
+export default WithAuth(Publish);

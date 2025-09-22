@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Badges from "@/app/_shared/components/Badges";
 import LikeBox from "@/app/_shared/components/LikeBox";
 import Profile from "./_components/Profile";
+import WithAuth from "@/app/_components/WithAuth";
 
 interface MyPageLayoutProps {
     children: React.ReactNode;
@@ -112,4 +113,5 @@ const Rabbit = styled.img`
     height: auto;
     z-index: 999;
 `;
-export default MyPageLayout;
+
+export default WithAuth(MyPageLayout);

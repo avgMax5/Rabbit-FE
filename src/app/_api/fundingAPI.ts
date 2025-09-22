@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://rabbit.avgmax.team/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
 
 export interface FundingCount {
