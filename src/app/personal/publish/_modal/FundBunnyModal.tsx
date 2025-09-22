@@ -1,18 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import Button from '../../../_shared/components/Button';
 import FundingRate from '../_components/FundingRate';
 import Portfolio from '../../../_shared/components/Portfolio';
 
-import { postFundBunny } from '../../../_api/fundingAPI';
+import { postFundBunny, getFundBunniesDetail, FundBunnyDetail, postFundBunnyFunding, FundingData } from '../../../_api/fundingAPI';
+
 interface FundBunnyModalProps {
   isOpen: boolean;
   onClose: () => void;
+  fundBunnyId: string;
 }
 
-const FundBunnyModal: React.FC<FundBunnyModalProps> = ({ isOpen, onClose }) => {
+const FundBunnyModal: React.FC<FundBunnyModalProps> = ({ isOpen, onClose, fundBunnyId }) => {
   const [isAgreed, setIsAgreed] = useState(false);
+  const [bunnyDetail, setBunnyDetail] = useState<FundBunnyDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [bnyAmount, setBnyAmount] = useState<number>(0);
+
+  useEffect(() => {
+    if (isOpen && fundBunnyId) {
+      fetchBunnyDetail();
+    }
+  }, [isOpen, fundBunnyId]);
+
+  const fetchBunnyDetail = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const detail = await getFundBunniesDetail(fundBunnyId);
+      setBunnyDetail(detail);
+    } catch (err) {
+      setError('버니 정보를 불러오는데 실패했습니다.');
+      console.error('Failed to fetch bunny detail:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFunding = async () => {
+    if (!bunnyDetail || bnyAmount <= 0) {
+      alert('투자 금액을 입력해주세요.');
+      return;
+    }
+
+    try {
+      const fundingData: FundingData = {
+        fund_bny: bnyAmount
+      };
+      
+      await postFundBunnyFunding(fundBunnyId, fundingData);
+      alert('펀딩 참여가 완료되었습니다!');
+      onClose();
+    } catch (err) {
+      console.error('펀딩 참여 실패:', err);
+      alert('펀딩 참여에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -20,65 +66,92 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({ isOpen, onClose }) => {
     <ModalOverlay>
       <Wrapper>
         <Container>
-          <GridContainer>
-            <Portfolio />
-            <RightSection>
-              <TopBar>
-                <ProgressText>펀딩 진행률: 65%</ProgressText>
-                <ProgressBar>
-                  <ProgressFill progress={65} />
-                </ProgressBar>
-              </TopBar>
+          {isLoading ? (
+            <LoadingContainer>
+              <LoadingText>버니 정보를 불러오는 중...</LoadingText>
+            </LoadingContainer>
+          ) : error ? (
+            <ErrorContainer>
+              <ErrorText>{error}</ErrorText>
+              <Button onClick={fetchBunnyDetail} variant="primary" size="medium">
+                다시 시도
+              </Button>
+            </ErrorContainer>
+          ) : bunnyDetail ? (
+            <GridContainer>
+              <Portfolio bunnyDetail={bunnyDetail} />
+              <RightSection>
+                <TopBar>
+                  <ProgressText>
+                    펀딩 진행률: {Math.round((bunnyDetail.collected_bny / bunnyDetail.target_bny) * 100)}%
+                  </ProgressText>
+                  <ProgressBar>
+                    <ProgressFill progress={Math.round((bunnyDetail.collected_bny / bunnyDetail.target_bny) * 100)} />
+                  </ProgressBar>
+                </TopBar>
 
-               <MiddleRow>
-                 <MiddleBlock>
-                   <FundingRate />
-                 </MiddleBlock>
-                 <MiddleBlock />
-               </MiddleRow>
+                <MiddleRow>
+                  <MiddleBlock>
+                    <FundingRate holdingStatus={bunnyDetail.holding_status} />
+                  </MiddleBlock>
+                  <MiddleBlock />
+                </MiddleRow>
 
-              <InputBlock>
-                <AvailableBunny>투자 가능한 버니 수: 100 BNY</AvailableBunny>
-                <InputContainer>
-                  <InputField type="number"/>
-                  <CurrencyLabel>BNY</CurrencyLabel>
-                </InputContainer>
-                <InputContainer>
-                  <InputField type="number" />
-                  <CurrencyLabel>CRT</CurrencyLabel>
-                </InputContainer>
-                <MyAccount>내 계좌: 110,000 BNY (233,000,000 C)</MyAccount>
-              </InputBlock>
+                <InputBlock>
+                  <AvailableBunny>투자 가능한 버니 수: {bunnyDetail.available_bny.toLocaleString()} BNY</AvailableBunny>
+                  <InputContainer>
+                    <InputField 
+                      type="number"
+                      value={bnyAmount || ''}
+                      onChange={(e) => setBnyAmount(Number(e.target.value) || 0)}
+                    />
+                    <CurrencyLabel>BNY</CurrencyLabel>
+                  </InputContainer>
+                  <InputContainer>
+                    <InputField 
+                      type="number" 
+                      value={bnyAmount * 1000}
+                      readOnly
+                    />
+                    <CurrencyLabel>CRT</CurrencyLabel>
+                  </InputContainer>
+                  <MyAccount>
+                    내 계좌: {bunnyDetail.my_account_bny.toLocaleString()} BNY ({bunnyDetail.my_account_c.toLocaleString()} C)
+                  </MyAccount>
+                </InputBlock>
 
-              <AgreeBlock>
-                <CheckboxContainer>
-                  <CheckboxInput
-                    type="checkbox"
-                    id="agreement"
-                    checked={isAgreed}
-                    onChange={(e) => setIsAgreed(e.target.checked)}
-                  />
-                  <CheckboxLabel htmlFor="agreement">
-                    코인은 상장되거나 폐지되기 전에는 환불할 수 없음을 확인하고 이에 동의합니다.
-                  </CheckboxLabel>
-                </CheckboxContainer>
-              </AgreeBlock>
-            </RightSection>
-          </GridContainer>
+                <AgreeBlock>
+                  <CheckboxContainer>
+                    <CheckboxInput
+                      type="checkbox"
+                      id="agreement"
+                      checked={isAgreed}
+                      onChange={(e) => setIsAgreed(e.target.checked)}
+                    />
+                    <CheckboxLabel htmlFor="agreement">
+                      코인은 상장되거나 폐지되기 전에는 환불할 수 없음을 확인하고 이에 동의합니다.
+                    </CheckboxLabel>
+                  </CheckboxContainer>
+                </AgreeBlock>
+              </RightSection>
+            </GridContainer>
+          ) : null}
           
-           <StyledButtonWrapper>
-             <Button onClick={onClose} variant="danger" size="large">
-               취소하기
-             </Button>
-             <Button 
-               variant="primary" 
-               size="large"
-               disabled={!isAgreed}
-               onClick={() => postFundBunny("bunnyName", "bunnyType")}
-             >
-               펀딩 참여하기
-             </Button>
-           </StyledButtonWrapper>
+          {!isLoading && !error && bunnyDetail && (
+            <StyledButtonWrapper>
+              <Button onClick={onClose} variant="danger" size="large">
+                취소하기
+              </Button>
+              <Button 
+                variant="primary" 
+                size="large"
+                disabled={!isAgreed || bnyAmount <= 0}
+                onClick={handleFunding}
+              >
+                펀딩 참여하기
+              </Button>
+            </StyledButtonWrapper>
+          )}
         </Container>
       </Wrapper>
     </ModalOverlay>
@@ -344,5 +417,37 @@ const StyledButtonWrapper = styled.div`
   align-items: center;
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+`;
+
+const LoadingText = styled.div`
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  text-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0, 0, 0, 0.5);
+`;
+
+const ErrorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  gap: 1rem;
+`;
+
+const ErrorText = styled.div`
+  color: #ff6b6b;
+  font-size: 16px;
+  font-weight: 600;
+  text-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0, 0, 0, 0.5);
+  text-align: center;
+`;
 
 export default FundBunnyModal;

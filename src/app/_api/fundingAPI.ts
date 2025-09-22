@@ -18,11 +18,15 @@ export interface HoldingStatus {
 }
 
 export interface SnsInfo {
+    sns_id: string;
     url: string;
-    image: string;
+    type: string;
+    favicon: string;
+    image?: string;
 }
 
 export interface Certification {
+    certification_id: string;
     certificate_url: string;
     name: string;
     ca: string;
@@ -30,6 +34,7 @@ export interface Certification {
 }
 
 export interface Career {
+    career_id: string;
     company_name: string;
     status: string;
     position: string;
@@ -39,6 +44,7 @@ export interface Career {
 }
 
 export interface Education {
+    education_id: string;
     school_name: string;
     status: string;
     major: string;
@@ -51,14 +57,18 @@ export interface Education {
 export interface Spec {
     name: string;
     birthdate: string;
+    email: string;
+    phone: string;
     image: string;
     resume: string;
     position: string;
+    link: SnsInfo[];
     sns: SnsInfo[];
     skill: string[];
     certification: Certification[];
     career: Career[];
     education: Education[];
+    ai_review: string;
 }
 
 export interface FundBunnyDetail {
@@ -75,6 +85,10 @@ export interface FundBunnyDetail {
     spec: Spec;
 }
 
+export interface FundingData {
+    fund_bny: number;
+}
+
 export const getBunniesCount = async () => {
     try {
         if (!API_BASE_URL) {
@@ -83,6 +97,7 @@ export const getBunniesCount = async () => {
         
         console.log(TEST_TOKEN);
         const response = await axios.get(`${API_BASE_URL}/fund-bunnies/count`, {
+            withCredentials: true,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${TEST_TOKEN}`
@@ -93,26 +108,6 @@ export const getBunniesCount = async () => {
     } catch (error) {
         console.warn('API 호출 실패, 더미 데이터를 사용합니다:', error);
         return null;
-    }
-}
-
-export const getFundBunnies = async (sortType: string = 'newest', page: number = 0, size: number = 1) => {
-    try {
-        const response = await axios.get('/api/fund-bunnies', {
-            params: {
-                sortType,
-                page,
-                size
-            },
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        return response.data;
-    } catch (error) {
-        console.error('API 호출 실패:', error);
-        throw error;
     }
 }
 
@@ -143,6 +138,7 @@ export const postFundBunny = async (bunnyName: string, bunnyType: string) => {
 export const checkBunnyName = async (bunnyName: string) => {
     try{
         const response = await axios.head(`${API_BASE_URL}/fund-bunnies/${bunnyName}`, {
+            withCredentials: true,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${TEST_TOKEN}`
@@ -150,20 +146,55 @@ export const checkBunnyName = async (bunnyName: string) => {
         });
         
         if (response.status === 200) {
-            console.log('버니 이름이 이미 존재합니다 (중복)');
-            return { success: true, isDuplicate: true, message: '이미 사용 중인 이름입니다.' };
-        } else {
             console.log('버니 이름 사용 가능');
             return { success: true, isDuplicate: false, message: '사용 가능한 이름입니다.' };
+        } else {
+            console.log('버니 이름이 이미 존재합니다 (중복)');
+            return { success: true, isDuplicate: true, message: '이미 사용 중인 이름입니다.' };
         }
         
     } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 404) {
-            console.log('버니 이름 사용 가능');
-            return { success: true, isDuplicate: false, message: '사용 가능한 이름입니다.' };
-        } else {
-            console.log('버니 이름이 이미 존재합니다 (중복)');
-            return { success: true, isDuplicate: true, message: '이미 사용 중인 이름입니다.' };
+    }
+}
+
+export const getFundBunniesDetail = async (fundBunnyId: string) => {
+    try {
+        if (!API_BASE_URL) {
+            throw new Error('API_BASE_URL이 설정되지 않았습니다.');
         }
+        
+        const response = await axios.get(`${API_BASE_URL}/fund-bunnies/${fundBunnyId}`, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${TEST_TOKEN}`
+            }
+        });
+        
+        return response.data;
+    } catch (error) {
+        console.error('API 호출 실패:', error);
+        throw error;
+    }
+}
+
+export const postFundBunnyFunding = async (fundBunnyId: string, fundingData: FundingData) => {
+    try {
+        if (!API_BASE_URL) {
+            throw new Error('API_BASE_URL이 설정되지 않았습니다.');
+        }
+        
+        const response = await axios.post(`${API_BASE_URL}/fund-bunnies/${fundBunnyId}/fundings`, fundingData, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${TEST_TOKEN}`
+            }
+        });
+        
+        return response.data;
+    } catch (error) {
+        console.error('펀딩 참여 API 호출 실패:', error);
+        throw error;
     }
 }

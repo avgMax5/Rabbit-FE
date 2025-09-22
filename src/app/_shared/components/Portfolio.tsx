@@ -1,40 +1,50 @@
 import React from 'react';
 import styled from 'styled-components';
+import { FundBunnyDetail } from '../../_api/fundingAPI';
 
-const Portfolio: React.FC = () => {
+interface PortfolioProps {
+  bunnyDetail?: FundBunnyDetail | null;
+}
+
+const Portfolio: React.FC<PortfolioProps> = ({ bunnyDetail }) => {
   return (
     <LeftSection>
       <LeftGridContainer>
         <BasicProfileColumn>
           <ProfileSection>
-            <ProfileImagePlaceholder />
+            {bunnyDetail?.spec.image ? (
+              <ProfileImage src={bunnyDetail.spec.image} alt="Profile" />
+            ) : (
+              <ProfileImagePlaceholder />
+            )}
             <UserInfo>
-              <Nickname>good-relation</Nickname>
-              <RealName>황호연</RealName>
+              <Nickname>{bunnyDetail?.bunny_name}</Nickname>
+              <RealName>{bunnyDetail?.spec.name}</RealName>
             </UserInfo>
           </ProfileSection>
 
           <AISummarySection>
             <SectionTitle>AI 요약</SectionTitle>
-            <SummaryText>안녕 난 대단한 AI, 지금 부터 요약을 시작하지</SummaryText>
+            <SummaryText>{bunnyDetail?.spec.ai_review}</SummaryText>
           </AISummarySection>
 
           <ContactSection>
             <ContactItem>
-              <ContactLabel>Phone</ContactLabel>
-              <ContactValue>010-1234-5678</ContactValue>
-            </ContactItem>
-            <ContactItem>
               <ContactLabel>Email</ContactLabel>
-              <ContactValue>qweasd12@gmail.com</ContactValue>
+              <ContactValue>{bunnyDetail?.spec.email}</ContactValue>
             </ContactItem>
             <ContactItem>
               <ContactLabel>Link</ContactLabel>
               <SocialIcons>
-                <SocialImage src="/images/personal/publish/github.png" alt="GitHub" />
-                <SocialImage src="/images/personal/publish/instagram.png" alt="Instagram" />
-                <SocialImage src="/images/personal/publish/velog.png" alt="Velog" />
-                <SocialImage src="/images/personal/publish/youtube.png" alt="YouTube" />
+                {bunnyDetail?.spec.link && bunnyDetail.spec.link.length > 0 && 
+                  bunnyDetail.spec.link.map((link, index) => (
+                    <SocialImage 
+                      key={index}
+                      src={link.favicon} 
+                      alt={link.type} 
+                    />
+                  ))
+                }
               </SocialIcons>
             </ContactItem>
           </ContactSection>
@@ -47,14 +57,16 @@ const Portfolio: React.FC = () => {
               <SectionTitle>경력</SectionTitle>
               <SectionLine />
             </SectionHeader>
-            <ExperienceItem>
-              <ExperiencePeriod>2025 - 2030</ExperiencePeriod>
-              <ExperienceName>신한은행</ExperienceName>
-            </ExperienceItem>
-            <ExperienceItem>
-              <ExperiencePeriod>2030 ~</ExperiencePeriod>
-              <ExperienceName>신한DS</ExperienceName>
-            </ExperienceItem>
+            {bunnyDetail?.spec.career && bunnyDetail.spec.career.length > 0 && 
+              bunnyDetail.spec.career.map((career, index) => (
+                <ExperienceItem key={index}>
+                  <ExperiencePeriod>
+                    {career.start_date} - {career.end_date || '현재'}
+                  </ExperiencePeriod>
+                  <ExperienceName>{career.company_name}</ExperienceName>
+                </ExperienceItem>
+              ))
+            }
           </ExperienceSection>
 
           <EducationSection>
@@ -63,14 +75,16 @@ const Portfolio: React.FC = () => {
               <SectionTitle>학력</SectionTitle>
               <SectionLine />
             </SectionHeader>
-            <EducationItem>
-              <EducationPeriod>2016 - 2018</EducationPeriod>
-              <EducationName>신한고등학교</EducationName>
-            </EducationItem>
-            <EducationItem>
-              <EducationPeriod>2019 - 2024</EducationPeriod>
-              <EducationName>신한대학교 컴퓨터공학 전공</EducationName>
-            </EducationItem>
+            {bunnyDetail?.spec.education && bunnyDetail.spec.education.length > 0 && 
+              bunnyDetail.spec.education.map((education, index) => (
+                <EducationItem key={index}>
+                  <EducationPeriod>
+                    {education.start_date} - {education.end_date}
+                  </EducationPeriod>
+                  <EducationName>{education.school_name}</EducationName>
+                </EducationItem>
+              ))
+            }
           </EducationSection>
 
           <CertificationSection>
@@ -79,14 +93,14 @@ const Portfolio: React.FC = () => {
               <SectionTitle>자격증</SectionTitle>
               <SectionLine />
             </SectionHeader>
-            <CertificationItem>
-              <CertificationDate>2023.03.04</CertificationDate>
-              <CertificationName>정보처리기사</CertificationName>
-            </CertificationItem>
-            <CertificationItem>
-              <CertificationDate>2023.03.04</CertificationDate>
-              <CertificationName>SQLD</CertificationName>
-            </CertificationItem>
+            {bunnyDetail?.spec.certification && bunnyDetail.spec.certification.length > 0 && 
+              bunnyDetail.spec.certification.map((certification, index) => (
+                <CertificationItem key={index}>
+                  <CertificationDate>{certification.cdate}</CertificationDate>
+                  <CertificationName>{certification.name}</CertificationName>
+                </CertificationItem>
+              ))
+            }
           </CertificationSection>
 
           <TechStackSection>
@@ -96,12 +110,11 @@ const Portfolio: React.FC = () => {
               <SectionLine />
             </SectionHeader>
             <TechStackGrid>
-              <TechItem>React</TechItem>
-              <TechItem>TypeScript</TechItem>
-              <TechItem>Node.js</TechItem>
-              <TechItem>Python</TechItem>
-              <TechItem>Java</TechItem>
-              <TechItem>MySQL</TechItem>
+              {bunnyDetail?.spec.skill && bunnyDetail.spec.skill.length > 0 && 
+                bunnyDetail.spec.skill.map((skill, index) => (
+                  <TechItem key={index}>{skill}</TechItem>
+                ))
+              }
             </TechStackGrid>
           </TechStackSection>
         </DetailedProfileColumn>
@@ -159,6 +172,15 @@ const ProfileImagePlaceholder = styled.div`
   border-radius: 0.5rem;
   border: 2px solid rgba(255, 255, 255, 0.2);
   margin-bottom: 1.25rem;
+`;
+
+const ProfileImage = styled.img`
+  width: 6rem;
+  height: 6rem;
+  border-radius: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 1.25rem;
+  object-fit: cover;
 `;
 
 const UserInfo = styled.div`

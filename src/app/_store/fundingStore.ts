@@ -36,7 +36,7 @@ export const useFundingStore = create<FundingState>((set, get) => ({
     error: null,
 
     fetchBunnies: async (params: FetchBunniesParams = {}) => {
-        const { sortType = 'newest', page = 0, size = 10 } = params;
+        const { sortType = 'newest', page = 0, size = 30 } = params;
         
         set({ isLoading: true, error: null });
         
@@ -49,6 +49,7 @@ export const useFundingStore = create<FundingState>((set, get) => ({
             console.log('API 호출 URL:', url.toString());
             
             const response = await axios.get(url.toString(), {
+                withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${TEST_TOKEN}`
