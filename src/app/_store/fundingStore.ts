@@ -23,19 +23,19 @@ export interface FundBunny {
 }
 
 interface FundingState {
-    bunnies: FundBunny[];
+    fundBunnies: FundBunny[];
     isLoading: boolean;
     error: string | null;
-    fetchBunnies: (params?: FetchBunniesParams) => Promise<void>;
+    fetchFundBunnies: (params?: FetchBunniesParams) => Promise<void>;
     clearError: () => void;
 }
 
 export const useFundingStore = create<FundingState>((set, get) => ({
-    bunnies: [],
+    fundBunnies: [],
     isLoading: false,
     error: null,
 
-    fetchBunnies: async (params: FetchBunniesParams = {}) => {
+    fetchFundBunnies: async (params: FetchBunniesParams = {}) => {
         const { sortType = 'newest', page = 0, size = 30 } = params;
         
         set({ isLoading: true, error: null });
@@ -57,11 +57,11 @@ export const useFundingStore = create<FundingState>((set, get) => ({
                 }
             });
             
-            const bunnies = response.data.fund_bunnies;
+            const fundBunnies = response.data.fund_bunnies;
 
-            console.log('받은 데이터:', bunnies);
+            console.log('받은 데이터:', fundBunnies);
             
-            set({ bunnies, isLoading: false });
+            set({ fundBunnies, isLoading: false });
         } catch (error) {
             console.warn('API 호출 실패, 더미 데이터를 사용합니다:', error);
             set({ 
