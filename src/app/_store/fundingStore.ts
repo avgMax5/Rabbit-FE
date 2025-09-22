@@ -5,7 +5,7 @@ import axios from 'axios';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
 
-export interface FetchBunniesParams {
+export interface FetchFundBunniesParams {
     sortType?: string;
     page?: number;
     size?: number;
@@ -24,18 +24,20 @@ export interface FundBunny {
 
 interface FundingState {
     fundBunnies: FundBunny[];
+    bunnies: FundBunny[]; // fetchBunnies에서 사용할 별도 상태
     isLoading: boolean;
     error: string | null;
-    fetchFundBunnies: (params?: FetchBunniesParams) => Promise<void>;
+    fetchFundBunnies: (params?: FetchFundBunniesParams) => Promise<void>;
     clearError: () => void;
 }
 
 export const useFundingStore = create<FundingState>((set, get) => ({
     fundBunnies: [],
+    bunnies: [],
     isLoading: false,
     error: null,
 
-    fetchFundBunnies: async (params: FetchBunniesParams = {}) => {
+    fetchFundBunnies: async (params: FetchFundBunniesParams = {}) => {
         const { sortType = 'newest', page = 0, size = 30 } = params;
         
         set({ isLoading: true, error: null });

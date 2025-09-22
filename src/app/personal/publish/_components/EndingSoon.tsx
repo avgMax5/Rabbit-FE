@@ -8,18 +8,17 @@ import { useFundingStore } from '../../../_store/fundingStore';
 
 export default function EndingSoon() {
   const router = useRouter();
-  const { bunnies } = useFundingStore();
+  const { fundBunnies } = useFundingStore();
   
   const endingSoonBunnies = useMemo(() => {
-    const bunniesArray = Array.isArray(bunnies) ? bunnies : [];
+    const bunniesArray = Array.isArray(fundBunnies) ? fundBunnies : [];
     const now = new Date();
     
     console.log('=== 마감시간 디버깅 ===');
     console.log('현재 시간:', now.toISOString());
     
-    // end_at이 있는 모든 버니를 마감시간 순으로 정렬하여 상위 3개 선택
     const bunniesWithTimeLeft = bunniesArray
-      .filter(bunny => bunny.end_at && bunny.end_at.trim() !== '') // end_at이 있는 것만
+      .filter(bunny => bunny.end_at && bunny.end_at.trim() !== '')
       .map(bunny => {
         try {
           const endTime = new Date(bunny.end_at);
@@ -58,7 +57,7 @@ export default function EndingSoon() {
     
     console.log('=== 디버깅 완료 ===');
     return bunniesWithTimeLeft;
-  }, [bunnies]);
+  }, [fundBunnies]);
   return (
     <EndingSoonContainer>
       <HeaderSection>

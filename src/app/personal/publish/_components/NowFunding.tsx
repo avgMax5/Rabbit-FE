@@ -8,10 +8,10 @@ import { useFundingStore } from '../../../_store/fundingStore';
 
 export default function NowFunding() {
   const router = useRouter();
-  const { bunnies } = useFundingStore();
+  const { fundBunnies } = useFundingStore();
   
   const nowFundingBunnies = useMemo(() => {
-    const bunniesArray = Array.isArray(bunnies) ? bunnies : [];
+    const bunniesArray = Array.isArray(fundBunnies) ? fundBunnies : [];
     
     return bunniesArray
       .slice(0, 3)
@@ -24,7 +24,7 @@ export default function NowFunding() {
         target_bny: bunny.target_bny,
         avatarSrc: "/images/personal/publish/astronaut.png"
       }));
-  }, [bunnies]);
+  }, [fundBunnies]);
 
   return (
     <NowFundingContainer>

@@ -10,6 +10,7 @@ import NowFunding from "./_components/NowFunding";
 import CreateBunnyModal from "./_modal/CreateBunnyModal";
 import Button from "@/app/_shared/components/Button";
 import Header from "@/app/_shared/components/Header";
+import Loading from "@/app/_shared/components/Loading";
 import SloganContainer from "./_components/SloganContainer";
 import { useFundingStore } from "../../_store/fundingStore";
 import WithAuth from "@/app/_components/WithAuth";
@@ -18,11 +19,11 @@ function Publish() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
     
-    const { bunnies, isLoading, error, fetchBunnies, clearError } = useFundingStore();
+    const { fundBunnies, isLoading, error, fetchFundBunnies, clearError } = useFundingStore();
 
     useEffect(() => {
-        fetchBunnies();
-    }, [fetchBunnies]);
+        fetchFundBunnies();
+    }, [fetchFundBunnies]);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -63,7 +64,11 @@ function Publish() {
                 <ContentContainer>
                     <Header />
                     <LoadingContainer>
-                        <LoadingText>펀딩 버니 데이터를 불러오는 중...</LoadingText>
+                        <Loading 
+                            variant="bunny" 
+                            size="large" 
+                            text="펀딩 버니 데이터를 불러오는 중..." 
+                        />
                     </LoadingContainer>
                 </ContentContainer>
             </>
@@ -79,7 +84,7 @@ function Publish() {
                     <Header />
                     <ErrorContainer>
                         <ErrorText>오류가 발생했습니다: {error}</ErrorText>
-                        <Button onClick={() => fetchBunnies()} variant="primary" size="medium">
+                        <Button onClick={() => fetchFundBunnies()} variant="primary" size="medium">
                             다시 시도
                         </Button>
                     </ErrorContainer>

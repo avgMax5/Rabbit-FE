@@ -26,13 +26,18 @@ export interface Bunny {
     created_at: string;
 }
 
+export interface FetchBunniesParams {
+    sortType?: string;
+    page?: number;
+    size?: number;
+}
 
 interface BunnyState {
     bunnies: Bunny[];
     isLoading: boolean;
     error: string | null;
     
-    fetchBunnies: () => Promise<void>;
+    fetchBunnies: (params?: FetchBunniesParams) => Promise<void>;
     clearError: () => void;
 }
 
@@ -41,11 +46,16 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
     isLoading: false,
     error: null,
 
-    fetchBunnies: async () => {
+    fetchBunnies: async (params: FetchBunniesParams = {}) => {
+        const { sortType = 'newest', page = 0, size = 30 } = params;
+        
         set({ isLoading: true, error: null });
         
         try {
-            const url = new URL(`${API_BASE_URL}/bunnies`);
+            const url = new URL(`${API_BASE_URL}/bunnies`, window.location.origin);
+            url.searchParams.append('page', page.toString());
+            url.searchParams.append('size', size.toString());
+            url.searchParams.append('sortType', sortType);
             
             console.log('Bunnies API 호출 URL:', url.toString());
             
