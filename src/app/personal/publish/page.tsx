@@ -10,18 +10,20 @@ import NowFunding from "./_components/NowFunding";
 import CreateBunnyModal from "./_modal/CreateBunnyModal";
 import Button from "@/app/_shared/components/Button";
 import Header from "@/app/_shared/components/Header";
+import Loading from "@/app/_shared/components/Loading";
 import SloganContainer from "./_components/SloganContainer";
 import { useFundingStore } from "../../_store/fundingStore";
+import WithAuth from "@/app/_components/WithAuth";
 
-export default function Publish() {
+function Publish() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
     
-    const { bunnies, isLoading, error, fetchBunnies, clearError } = useFundingStore();
+    const { fundBunnies, isLoading, error, fetchFundBunnies, clearError } = useFundingStore();
 
     useEffect(() => {
-        fetchBunnies();
-    }, [fetchBunnies]);
+        fetchFundBunnies();
+    }, [fetchFundBunnies]);
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -62,7 +64,11 @@ export default function Publish() {
                 <ContentContainer>
                     <Header />
                     <LoadingContainer>
-                        <LoadingText>펀딩 버니 데이터를 불러오는 중...</LoadingText>
+                        <Loading 
+                            variant="bunny" 
+                            size="large" 
+                            text="펀딩 버니 데이터를 불러오는 중..." 
+                        />
                     </LoadingContainer>
                 </ContentContainer>
             </>
@@ -78,7 +84,7 @@ export default function Publish() {
                     <Header />
                     <ErrorContainer>
                         <ErrorText>오류가 발생했습니다: {error}</ErrorText>
-                        <Button onClick={() => fetchBunnies()} variant="primary" size="medium">
+                        <Button onClick={() => fetchFundBunnies()} variant="primary" size="medium">
                             다시 시도
                         </Button>
                     </ErrorContainer>
@@ -168,7 +174,7 @@ export default function Publish() {
                         </BottomRightImageContainer>
                     </BottomTop>
 
-                    <EndingSoon bunnies={bunnies} />
+                    <EndingSoon />
                     <NowFunding />
                 </SectionBottom>
             </ContentContainer>
@@ -341,3 +347,5 @@ const ErrorText = styled.p`
     font-weight: 500;
     text-align: center;
 `;
+
+export default WithAuth(Publish);

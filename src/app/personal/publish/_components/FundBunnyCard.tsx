@@ -6,21 +6,25 @@ import FundBunnyModal from '../_modal/FundBunnyModal'
 import { updateCountdown } from '../_utils/countdown'
 
 export default function FundBunnyCard({ 
-  coinName, 
-  coinType, 
-  timeLeft, 
+  fundBunnyId,
+  bunnyName, 
+  bunnyType, 
+  endAt, 
   currentAmount, 
-  targetAmount,
+  targetBny,
   avatarSrc 
 }: {
-  coinName: string
-  coinType: string
-  timeLeft: string | null
+  fundBunnyId: string
+  bunnyName: string
+  bunnyType: string
+  endAt: string | null
   currentAmount: number
-  targetAmount: number
+  targetBny: number
   avatarSrc: string
 }) {
-  const progress = Math.round((currentAmount / targetAmount) * 100 * 10) / 10;
+  const safeCurrentAmount = currentAmount ?? 0;
+  const safeTargetBny = targetBny ?? 1;
+  const progress = Math.round((safeCurrentAmount / safeTargetBny) * 100 * 10) / 10;
   const [mounted, setMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [countdown, setCountdown] = useState<string>('');
@@ -30,16 +34,16 @@ export default function FundBunnyCard({
   }, []);
 
   useEffect(() => {
-    if (!timeLeft) return;
+    if (!endAt) return;
 
-    updateCountdown(timeLeft, setCountdown);
+    updateCountdown(endAt, setCountdown);
 
     const interval = setInterval(() => {
-      updateCountdown(timeLeft, setCountdown);
+      updateCountdown(endAt, setCountdown);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeLeft]);
+  }, [endAt]);
 
   const handleCardClick = () => {
     setIsModalOpen(true);
@@ -67,8 +71,8 @@ export default function FundBunnyCard({
               />
             </AvatarContainer>
             <CoinInfo>
-              <CoinName>{coinName}</CoinName>
-              <CoinType>{coinType}</CoinType>
+              <CoinName>{bunnyName}</CoinName>
+              <CoinType>{bunnyType}</CoinType>
             </CoinInfo>
           </LeftGroup>
           <ProgressCircle progress={progress}>
@@ -78,7 +82,7 @@ export default function FundBunnyCard({
           </ProgressCircle>
         </TopSection>
         
-        {timeLeft && (
+        {endAt && (
           <CountdownSection>
             <CountdownText>{countdown}</CountdownText>
           </CountdownSection>
@@ -93,11 +97,11 @@ export default function FundBunnyCard({
             </ProgressBar>
             
             <AmountBubble progress={progress}>
-              {currentAmount.toLocaleString()}
+              {safeCurrentAmount.toLocaleString()}
             </AmountBubble>
             
             <TotalAmount>
-              {targetAmount.toLocaleString()}
+              {safeTargetBny.toLocaleString()}
             </TotalAmount>
           </ProgressBarContainer>
         </BottomSection>
@@ -106,6 +110,7 @@ export default function FundBunnyCard({
       <FundBunnyModal 
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+        fundBunnyId={fundBunnyId}
       />
     </>
   )

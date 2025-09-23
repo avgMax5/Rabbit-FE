@@ -2,8 +2,13 @@
 
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
+import { HoldingStatus } from '../../../_api/fundingAPI';
 
-const FundingRate: React.FC = () => {
+interface FundingRateProps {
+  holdingStatus?: HoldingStatus;
+}
+
+const FundingRate: React.FC<FundingRateProps> = ({ holdingStatus }) => {
   const option = {
     backgroundColor: 'rgba(234, 234, 234, 0)',
     title: {
@@ -31,15 +36,17 @@ const FundingRate: React.FC = () => {
         type: 'pie',
         radius: '55%',
         center: ['50%', '50%'],
-        data: [
-          { value: 335, name: '민우핑' },
-          { value: 310, name: '재웅핑' },
-          { value: 274, name: '하진핑' },
-          { value: 235, name: '호연핑' },
-          { value: 400, name: '재환핑' }
-        ].sort(function (a, b) {
+        data: holdingStatus ? [
+          { value: holdingStatus.top1, name: '1위' },
+          { value: holdingStatus.top2, name: '2위' },
+          { value: holdingStatus.top3, name: '3위' },
+          { value: holdingStatus.others, name: '기타' },
+          { value: holdingStatus.remaining, name: '잔여' }
+        ].filter(item => item.value > 0).sort(function (a, b) {
           return a.value - b.value;
-        }),
+        }) : [
+          { value: 0, name: '데이터 없음' }
+        ],
         roseType: 'radius',
         label: {
           color: 'rgba(255, 255, 255, 0.3)'

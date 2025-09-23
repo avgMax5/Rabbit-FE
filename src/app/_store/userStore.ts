@@ -30,7 +30,7 @@ interface UserState {
 
 export const useUserStore = create<UserState>((set, get) => ({
     user: null,
-    isLoading: false,
+    isLoading: true,
     error: null,
 
     fetchUser: async () => {
@@ -41,8 +41,13 @@ export const useUserStore = create<UserState>((set, get) => ({
                     Authorization: `Bearer ${TEST_TOKEN}`,
                     "Content-Type": "application/json",
                 },
+                withCredentials: true,
             });
-            //console.log("fetc hUser", response.data);
+
+            if (!response.data || !response.data.user_id) {
+                throw new Error("유효한 사용자 데이터가 아닙니다.");
+            }
+
             set({ user: response.data, isLoading: false });
         } catch (error) {
             set({
@@ -51,6 +56,7 @@ export const useUserStore = create<UserState>((set, get) => ({
                         ? error.message
                         : "사용자 정보를 가져오는데 실패했습니다.",
                 isLoading: false,
+                user: null,
             });
         }
     },

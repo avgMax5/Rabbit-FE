@@ -8,10 +8,10 @@ import { useFundingStore } from '../../../_store/fundingStore';
 
 export default function NowFunding() {
   const router = useRouter();
-  const { bunnies } = useFundingStore();
+  const { fundBunnies } = useFundingStore();
   
   const nowFundingBunnies = useMemo(() => {
-    const bunniesArray = Array.isArray(bunnies) ? bunnies : [];
+    const bunniesArray = Array.isArray(fundBunnies) ? fundBunnies : [];
     
     return bunniesArray
       .slice(0, 3)
@@ -24,7 +24,7 @@ export default function NowFunding() {
         target_bny: bunny.target_bny,
         avatarSrc: "/images/personal/publish/astronaut.png"
       }));
-  }, [bunnies]);
+  }, [fundBunnies]);
 
   return (
     <NowFundingContainer>
@@ -41,11 +41,12 @@ export default function NowFunding() {
           nowFundingBunnies.map((data) => (
             <FundBunnyCard 
               key={data.fund_bunny_id}
-              coinName={data.bunny_name}
-              coinType={data.bunny_type}
-              timeLeft={data.end_at}
+              fundBunnyId={data.fund_bunny_id}
+              bunnyName={data.bunny_name}
+              bunnyType={data.bunny_type}
+              endAt={data.end_at}
               currentAmount={data.collected_bny}
-              targetAmount={data.target_bny}
+              targetBny={data.target_bny}
               avatarSrc={data.avatarSrc}
             />
           ))
@@ -71,7 +72,7 @@ const NowFundingContainer = styled.div`
 const HeaderSection = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   max-width: 75rem;
   padding: 0 1.25rem;
@@ -87,23 +88,23 @@ const TitleContainer = styled.div`
 
 const NowFundingText = styled.div`
   font-size: 50px;
-  font-weight: 800;
+  font-weight: 700;
   color: #ffffff;
-  font-family: 'rockstar';
-  text-shadow: 0.125rem 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+  text-align: center;
 `;
 
 const DescriptionText = styled.div`
   font-size: 16px;
   font-weight: 400;
   color: #cccccc;
-  text-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0, 0, 0, 0.3);
+  text-align: center;
 `;
 
 const ViewAllLink = styled.div`
+  position: absolute;
+  right: 1.25rem;
   font-size: 16px;
   font-weight: 400;
-  padding-left: 2rem;
   color: #ffffff;
   cursor: pointer;
   &:hover {

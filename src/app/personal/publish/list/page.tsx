@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Header from '@/app/_shared/components/Header';
+import Loading from '@/app/_shared/components/Loading';
 import FundBunnyCard from '../_components/FundBunnyCard';
 import { useFundingStore, FundBunny } from '@/app/_store/fundingStore';
 
@@ -12,12 +13,12 @@ type SortType = 'latest' | 'oldest' | 'highInvestment' | 'lowInvestment';
 export default function List() {
   const [sortType, setSortType] = useState<SortType>('latest');
   const [mounted, setMounted] = useState(false);
-  const { bunnies, isLoading, error, fetchBunnies } = useFundingStore();
+  const { fundBunnies, isLoading, error, fetchFundBunnies } = useFundingStore();
 
   useEffect(() => {
     setMounted(true);
-    fetchBunnies({ sortType: 'newest', page: 0, size: 50 });
-  }, [fetchBunnies]);
+    fetchFundBunnies({ sortType: 'newest', page: 0, size: 50 });
+  }, [fetchFundBunnies]);
 
   const handleSort = (type: SortType) => {
     setSortType(type);
@@ -40,7 +41,7 @@ export default function List() {
         apiSortType = 'newest';
     }
     
-    fetchBunnies({ sortType: apiSortType, page: 0, size: 50 });
+    fetchFundBunnies({ sortType: apiSortType, page: 0, size: 50 });
   };
 
   if (!mounted || isLoading) {
@@ -48,9 +49,13 @@ export default function List() {
       <Container>
         <Header />
         <MainContent>
-          <div style={{ textAlign: 'center', padding: '2rem' }}>
-            로딩 중...
-          </div>
+          <LoadingContainer>
+            <Loading 
+              variant="dots" 
+              size="large" 
+              text="펀딩 목록을 불러오는 중..." 
+            />
+          </LoadingContainer>
         </MainContent>
       </Container>
     );
@@ -107,7 +112,7 @@ export default function List() {
       <MainContent>
 
         <GridContainer>
-          {bunnies.length === 0 ? (
+          {fundBunnies.length === 0 ? (
             <div style={{ 
               gridColumn: '1 / -1', 
               textAlign: 'center', 
@@ -117,14 +122,15 @@ export default function List() {
               등록된 펀드 버니가 없습니다.
             </div>
           ) : (
-            bunnies.map((item) => (
+            fundBunnies.map((item) => (
               <FundBunnyCard
                 key={item.fund_bunny_id}
-                coinName={item.bunny_name}
-                coinType={item.bunny_type}
-                timeLeft={item.end_at}
+                fundBunnyId={item.fund_bunny_id}
+                bunnyName={item.bunny_name}
+                bunnyType={item.bunny_type}
+                endAt={item.end_at}
                 currentAmount={item.collected_bny}
-                targetAmount={item.target_bny}
+                targetBny={item.target_bny}
                 avatarSrc="/images/login/personalProfile.png"
               />
             ))
@@ -246,6 +252,14 @@ const SortButton = styled.button.withConfig({
     padding: 0.75rem 1.25rem;
     font-size: 13px;
   }
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 2rem;
 `;
 
 const GridContainer = styled.div`

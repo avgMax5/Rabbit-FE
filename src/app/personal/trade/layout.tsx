@@ -1,18 +1,13 @@
 "use client";
 
 import styled from 'styled-components';
+import WithAuth from "@/app/_components/WithAuth";
 
-export default function TradeLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <TradeLayoutWrapper>
-      {children}
-    </TradeLayoutWrapper>
-  );
+function TradeLayout({ children }: { children: React.ReactNode }) {
+  return <TradeLayoutWrapper>{children}</TradeLayoutWrapper>;
 }
+
+export default WithAuth(TradeLayout);
 
 const TradeLayoutWrapper = styled.div`
   background-image: url('/images/personal/shared/background.png');
