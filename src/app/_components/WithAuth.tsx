@@ -4,6 +4,7 @@ import { useUserStore } from "@/app/_store/userStore";
 import { useRouter } from "next/navigation";
 import { useEffect, ComponentType } from "react";
 import styled from "styled-components";
+import Loading from "@/app/_shared/components/Loading";
 
 const WithAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
     const AuthComponent = (props: P) => {
@@ -24,7 +25,16 @@ const WithAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
         }, [isLoading, error, user, router]);
 
         if (isLoading || !user) {
-            return <LoadingWrapper>Loading...</LoadingWrapper>;
+            return (
+                <LoadingWrapper>
+                    <Loading 
+                        variant="bunny" 
+                        size="large" 
+                        text="사용자 정보를 불러오는 중..." 
+                        fullScreen={true}
+                    />
+                </LoadingWrapper>
+            );
         }
 
         return <WrappedComponent {...props} />;
@@ -39,9 +49,13 @@ const LoadingWrapper = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2rem;
-    background-color: #0a1a2e;
-    color: white;
+    background: linear-gradient(
+        to bottom,
+        rgba(7, 14, 25, 0.9) 0%,
+        rgba(44, 107, 192, 0.9) 33%,
+        rgba(145, 176, 217, 0.72) 66%,
+        rgba(243, 241, 235, 1) 100%
+    );
 `;
 
 export default WithAuth;

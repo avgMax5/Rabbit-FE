@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { getBunniesCount, FundingCount } from '../../../_api/fundingAPI'
+import Loading from '../../../_shared/components/Loading'
 
 interface CoinStateItem {
   title: string
@@ -30,14 +31,20 @@ export default function CoinState() {
     fetchData();
   }, []);
 
-  const coinStates: CoinStateItem[] = fundingData ? [
-    { title: "펀딩중인 코인 수", value: `${fundingData.fund_bunny_count}개` },
-    { title: "상장된 코인 수", value: `${fundingData.listed_bunny_count}개` },
-    { title: "마감 임박", value: `${fundingData.closing_soon_bunny_count}개` }
-  ] : [
-    { title: "펀딩중인 코인 수", value: "로딩중..." },
-    { title: "상장된 코인 수", value: "로딩중..." },
-    { title: "마감 임박", value: "로딩중..." }
+  if (loading) {
+    return (
+      <BottomCoinStatus>
+        <LoadingContainer>
+          <Loading variant="pulse" size="small" text="데이터 로딩 중..." />
+        </LoadingContainer>
+      </BottomCoinStatus>
+    );
+  }
+
+  const coinStates: CoinStateItem[] = [
+    { title: "펀딩중인 코인 수", value: `${fundingData?.fund_bunny_count || 0}개` },
+    { title: "상장된 코인 수", value: `${fundingData?.listed_bunny_count || 0}개` },
+    { title: "마감 임박", value: `${fundingData?.closing_soon_bunny_count || 0}개` }
   ];
 
   return (
@@ -88,5 +95,14 @@ const BottomCoinStateValue = styled.div`
   font-weight: 700;
   color: #000000;
   text-align: center;
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
 `;
 
