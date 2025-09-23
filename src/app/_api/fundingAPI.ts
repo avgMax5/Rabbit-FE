@@ -147,7 +147,7 @@ export const checkBunnyName = async (bunnyName: string) => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${TEST_TOKEN}`
             }
-        );
+        });
 
         if (response.status === 200) {
             console.log('버니 이름 사용 가능');
