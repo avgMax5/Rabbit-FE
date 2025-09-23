@@ -1,152 +1,32 @@
 import styled from "styled-components";
 import SortBigButton from "../_components/my-list/SortBigButton";
 import ListTable from "../_components/my-list/ListTable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ListButton from "../_components/my-list/ListButton";
+import {
+    BunnyStats,
+    getHoldBunnies,
+    getHoldBunniesStats,
+    getMatches,
+    getOrders,
+    HoldBunny,
+    MatchBunny,
+    OrderBunny,
+} from "@/app/_api/userAPI";
 
 const historyFieldList = [
-    { key: "tradeTime", label: "체결시간" },
-    { key: "coinName", label: "코인명" },
+    { key: "matched_at", label: "체결시간" },
+    { key: "ordered_at", label: "주문시간" },
+    { key: "bunny_name", label: "코인명" },
     { key: "quantity", label: "거래수량" },
     { key: "price", label: "거래단가" },
-    { key: "amount", label: "거래금액" },
     { key: "fee", label: "수수료" },
-    { key: "orderTime", label: "주문시간" },
-];
-
-const historyDataList = [
-    {
-        tradeTime: "2025-09-15 10:32:45",
-        coinName: "RAB",
-        quantity: 120,
-        price: 250,
-        amount: 30000,
-        fee: 150,
-        orderTime: "2025-09-15 10:31:10",
-    },
-    {
-        tradeTime: "2025-09-15 09:12:10",
-        coinName: "BIT",
-        quantity: 50,
-        price: 800,
-        amount: 40000,
-        fee: 200,
-        orderTime: "2025-09-15 09:10:05",
-    },
-    {
-        tradeTime: "2025-09-14 18:45:20",
-        coinName: "DEV",
-        quantity: 10,
-        price: 1500,
-        amount: 15000,
-        fee: 75,
-        orderTime: "2025-09-14 18:43:00",
-    },
-    {
-        tradeTime: "2025-09-14 16:25:31",
-        coinName: "RAB",
-        quantity: 300,
-        price: 210,
-        amount: 63000,
-        fee: 315,
-        orderTime: "2025-09-14 16:24:00",
-    },
-    {
-        tradeTime: "2025-09-14 14:02:05",
-        coinName: "BIT",
-        quantity: 80,
-        price: 780,
-        amount: 62400,
-        fee: 312,
-        orderTime: "2025-09-14 14:00:00",
-    },
-    {
-        tradeTime: "2025-09-14 12:55:42",
-        coinName: "DEV",
-        quantity: 25,
-        price: 1700,
-        amount: 42500,
-        fee: 213,
-        orderTime: "2025-09-14 12:54:10",
-    },
-    {
-        tradeTime: "2025-09-13 22:40:15",
-        coinName: "RAB",
-        quantity: 150,
-        price: 230,
-        amount: 34500,
-        fee: 173,
-        orderTime: "2025-09-13 22:38:50",
-    },
-    {
-        tradeTime: "2025-09-13 21:10:25",
-        coinName: "BIT",
-        quantity: 40,
-        price: 900,
-        amount: 36000,
-        fee: 180,
-        orderTime: "2025-09-13 21:09:00",
-    },
-    {
-        tradeTime: "2025-09-13 19:33:59",
-        coinName: "DEV",
-        quantity: 15,
-        price: 1600,
-        amount: 24000,
-        fee: 120,
-        orderTime: "2025-09-13 19:32:00",
-    },
-    {
-        tradeTime: "2025-09-13 17:22:11",
-        coinName: "RAB",
-        quantity: 500,
-        price: 205,
-        amount: 102500,
-        fee: 512,
-        orderTime: "2025-09-13 17:20:45",
-    },
-    {
-        tradeTime: "2025-09-13 15:14:37",
-        coinName: "BIT",
-        quantity: 70,
-        price: 820,
-        amount: 57400,
-        fee: 287,
-        orderTime: "2025-09-13 15:12:30",
-    },
-    {
-        tradeTime: "2025-09-13 11:05:00",
-        coinName: "DEV",
-        quantity: 5,
-        price: 2000,
-        amount: 10000,
-        fee: 50,
-        orderTime: "2025-09-13 11:03:20",
-    },
-];
-
-const jobData = [
-    { value: 40, name: "프론트엔드" },
-    { value: 38, name: "백엔드" },
-    { value: 32, name: "풀스택" },
-];
-
-const devData = [
-    { value: 40, name: "성장형" },
-    { value: 18, name: "안정형" },
-    { value: 12, name: "가치형" },
-    { value: 12, name: "인기형" },
-    { value: 12, name: "밸런스형" },
-];
-
-const coinData = [
-    { value: 40, name: "A형" },
-    { value: 68, name: "B형" },
-    { value: 32, name: "C형" },
+    { key: "amount", label: "거래금액" },
+    { key: "order_type", label: "거래타입" },
 ];
 
 const fieldList = [
-    { key: "coin_name", label: "코인명" },
+    { key: "bunny_name", label: "코인명" },
     { key: "profit_loss", label: "평가손익" },
     { key: "yield", label: "수익률" },
     { key: "valuation_amount", label: "평가금액" },
@@ -156,155 +36,46 @@ const fieldList = [
     { key: "change_from_yesterday", label: "전일비" },
 ];
 
-interface DataType {
-    id: number;
-    coin_name: string;
-    profit_loss: number; // 평가손익
-    profit_rate: number; // 수익률 (%)
-    evaluation_amount: number; // 평가금액
-    current_price: number; // 현재가
-    purchase_price: number; // 매입가
-    average_price: number; // 평균단가
-    change_from_yesterday: number; // 전일비
+interface HistoryItem {
+    matched_at?: string;
+    ordered_at?: string;
+    bunny_name: string;
+    quantity: number;
+    price: number;
+    fee: number;
+    amount: number;
+    order_type: string;
 }
-
-const dataList: DataType[] = [
-    {
-        id: 0,
-        coin_name: "Bitcoin",
-        profit_loss: 1500000,
-        profit_rate: 12.5,
-        evaluation_amount: 13500000,
-        current_price: 45000000,
-        purchase_price: 40000000,
-        average_price: 42000000,
-        change_from_yesterday: 500000,
-    },
-    {
-        id: 1,
-        coin_name: "Ethereum",
-        profit_loss: -500000,
-        profit_rate: -3.2,
-        evaluation_amount: 15000000,
-        current_price: 3000000,
-        purchase_price: 3150000,
-        average_price: 3100000,
-        change_from_yesterday: -100000,
-    },
-    {
-        id: 2,
-        coin_name: "Ripple",
-        profit_loss: 250000,
-        profit_rate: 8.0,
-        evaluation_amount: 3400000,
-        current_price: 1200,
-        purchase_price: 1100,
-        average_price: 1150,
-        change_from_yesterday: 50,
-    },
-    {
-        id: 3,
-        coin_name: "Cardano",
-        profit_loss: 100000,
-        profit_rate: 5.0,
-        evaluation_amount: 2100000,
-        current_price: 900,
-        purchase_price: 850,
-        average_price: 870,
-        change_from_yesterday: 20,
-    },
-    {
-        id: 4,
-        coin_name: "Solana",
-        profit_loss: -80000,
-        profit_rate: -2.5,
-        evaluation_amount: 1200000,
-        current_price: 48000,
-        purchase_price: 50000,
-        average_price: 49000,
-        change_from_yesterday: -500,
-    },
-    {
-        id: 5,
-        coin_name: "Polkadot",
-        profit_loss: 50000,
-        profit_rate: 4.0,
-        evaluation_amount: 1300000,
-        current_price: 35000,
-        purchase_price: 33000,
-        average_price: 34000,
-        change_from_yesterday: 200,
-    },
-    {
-        id: 6,
-        coin_name: "Dogecoin",
-        profit_loss: -30000,
-        profit_rate: -1.5,
-        evaluation_amount: 1950000,
-        current_price: 130,
-        purchase_price: 132,
-        average_price: 131,
-        change_from_yesterday: -2,
-    },
-    {
-        id: 7,
-        coin_name: "Shiba Inu",
-        profit_loss: 10000,
-        profit_rate: 2.0,
-        evaluation_amount: 510000,
-        current_price: 0.028,
-        purchase_price: 0.027,
-        average_price: 0.0275,
-        change_from_yesterday: 0.001,
-    },
-    {
-        id: 8,
-        coin_name: "Litecoin",
-        profit_loss: 70000,
-        profit_rate: 3.5,
-        evaluation_amount: 2100000,
-        current_price: 95000,
-        purchase_price: 90000,
-        average_price: 92000,
-        change_from_yesterday: 2000,
-    },
-    {
-        id: 9,
-        coin_name: "Chainlink",
-        profit_loss: 120000,
-        profit_rate: 6.0,
-        evaluation_amount: 2120000,
-        current_price: 4200,
-        purchase_price: 3950,
-        average_price: 4075,
-        change_from_yesterday: 50,
-    },
-    {
-        id: 10,
-        coin_name: "Chainlink",
-        profit_loss: 120000,
-        profit_rate: 6.0,
-        evaluation_amount: 2120000,
-        current_price: 4200,
-        purchase_price: 3950,
-        average_price: 4075,
-        change_from_yesterday: 50,
-    },
-    {
-        id: 11,
-        coin_name: "Chainlink",
-        profit_loss: 120000,
-        profit_rate: 6.0,
-        evaluation_amount: 2120000,
-        current_price: 4200,
-        purchase_price: 3950,
-        average_price: 4075,
-        change_from_yesterday: 50,
-    },
-];
 
 function MyBunnyList() {
     const [isHistory, setIsHistory] = useState(false);
+    const [holdDataList, setHoldDataList] = useState<HoldBunny[]>([]);
+    const [historyDataList, setHistoryDataList] = useState<HistoryItem[]>([]);
+    const [bunnyStats, setBunnyStats] = useState<BunnyStats>();
+
+    const position = bunnyStats?.position;
+    const developer = bunnyStats?.developer_type;
+    const coin = bunnyStats?.coin_type;
+    //이렇게 직접 넣으면 안됨..
+    const posData = [
+        { value: position?.frontend ?? 0, name: "프론트엔드" },
+        { value: position?.backend ?? 0, name: "백엔드" },
+        { value: position?.fullstack ?? 0, name: "풀스택" },
+    ];
+
+    const devData = [
+        { value: developer?.growth ?? 0, name: "성장형" },
+        { value: developer?.stable ?? 0, name: "안정형" },
+        { value: developer?.value ?? 0, name: "가치형" },
+        { value: developer?.popular ?? 0, name: "인기형" },
+        { value: developer?.balance ?? 0, name: "밸런스형" },
+    ];
+
+    const coinData = [
+        { value: coin?.a ?? 0, name: "희소자산형" },
+        { value: coin?.b ?? 0, name: "밸런스형" },
+        { value: coin?.c ?? 0, name: "단가친화형" },
+    ];
 
     const handleGetList = () => {
         setIsHistory(false);
@@ -314,20 +85,89 @@ function MyBunnyList() {
         setIsHistory(true);
     };
 
+    useEffect(() => {
+        const fetchBunnyStats = async () => {
+            try {
+                const data = await getHoldBunniesStats();
+                setBunnyStats(data);
+                console.log("fetchData에서 받아온 holdBunnyStats", data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchBunnyStats();
+    }, []);
+
+    useEffect(() => {
+        const fetchHoldBunnies = async () => {
+            try {
+                const data = await getHoldBunnies();
+                setHoldDataList(data.hold_bunnies);
+                console.log(
+                    "fetchData에서 받아온 holdBunny",
+                    data.hold_bunnies
+                );
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchHoldBunnies();
+    }, []);
+
+    useEffect(() => {
+        const fetchHistoryBunnies = async () => {
+            try {
+                const orderData = await getOrders();
+                const matchData = await getMatches();
+
+                const orderItems: HistoryItem[] = orderData.orders.map(
+                    (order: OrderBunny) => ({
+                        matched_at: "-",
+                        ordered_at: order.ordered_at,
+                        bunny_name: order.bunny_name,
+                        quantity: order.quantity,
+                        price: order.unit_price,
+                        fee: order.fee,
+                        amount: order.total_amount,
+                        order_type: order.order_type,
+                    })
+                );
+
+                const matchItems: HistoryItem[] = matchData.matches.map(
+                    (match: MatchBunny) => ({
+                        matched_at: match.matched_at,
+                        ordered_at: "-",
+                        bunny_name: match.bunny_name,
+                        quantity: match.quantity,
+                        price: match.unit_price,
+                        fee: match.fee,
+                        amount: match.total_amount,
+                        order_type: match.order_type,
+                    })
+                );
+
+                setHistoryDataList([...orderItems, ...matchItems]);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchHistoryBunnies();
+    }, []);
+
     return (
         <Wrapper>
             <FirstRow>
                 <SortBigButton
                     sortTitle="직군"
-                    top1Title="frontend"
-                    top1Carrot={200000}
-                    chartData={jobData}
+                    top1Title={position?.top.type}
+                    top1Carrot={position?.top.total_market_cap}
+                    chartData={posData}
                     colors={["#ff9e30", "#ffbb6e", "#ffd8ac"]}
                 />
                 <SortBigButton
                     sortTitle="개발자 유형"
-                    top1Title="성장형"
-                    top1Carrot={200000}
+                    top1Title={developer?.top.type}
+                    top1Carrot={developer?.top.total_market_cap}
                     chartData={devData}
                     colors={[
                         "#008b61",
@@ -347,13 +187,13 @@ function MyBunnyList() {
                 <ButtonContainer>
                     <ListButton
                         onGetList={handleGetList}
-                        totalLength={dataList.length}
+                        totalLength={holdDataList.length}
                         content="보유 내역 보기"
                     />
                     <ListButton
                         onGetList={handleGetHistory}
                         totalLength={historyDataList.length}
-                        content="거래 기록 보기"
+                        content="주문 내역 보기"
                     />
                 </ButtonContainer>
             </FirstRow>
@@ -362,9 +202,14 @@ function MyBunnyList() {
                     <ListTable
                         fieldList={historyFieldList}
                         dataList={historyDataList}
+                        title="주문"
                     />
                 ) : (
-                    <ListTable fieldList={fieldList} dataList={dataList} />
+                    <ListTable
+                        fieldList={fieldList}
+                        dataList={holdDataList}
+                        title="보유"
+                    />
                 )}
             </SecondRow>
         </Wrapper>

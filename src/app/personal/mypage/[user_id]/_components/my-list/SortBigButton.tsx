@@ -3,8 +3,8 @@ import NightingaleChart, { ChartData } from "../chart/NightingaleChart";
 
 interface SortBigButtonProps {
     sortTitle: string;
-    top1Title: string;
-    top1Carrot: number;
+    top1Title?: string;
+    top1Carrot?: number;
     chartData: ChartData;
     colors?: string[];
 }
@@ -47,7 +47,7 @@ function SortBigButton({
                     <Top1Text>TOP 1</Top1Text>
                     <Top1Title>{top1Title}</Top1Title>
                 </TextBox>
-                <Top1Carrot>{top1Carrot}</Top1Carrot>
+                <Top1Carrot>{top1Carrot?.toLocaleString()}</Top1Carrot>
             </BottomContainer>
         </Div>
     );

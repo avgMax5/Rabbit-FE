@@ -1,7 +1,7 @@
 import axios from "axios";
 import { rowDataType } from "../personal/mypage/[user_id]/_components/my-info/SpecForm";
 
-const API_BASE_URL = "https://rabbit.avgmax.team/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
 
 export interface SnsInfo {
@@ -52,6 +52,80 @@ export interface MyInfo {
     career: Career[];
     certification: Certification[];
     skill: string[];
+}
+
+export interface HoldBunny {
+    bunny_id: string;
+    bunny_name: string;
+    hold_quantity: string; //보유랑
+    profit_loss: string; //평가손익
+    profit_rate: string; //수익률
+    evaluation_amount: number; // 평가금액
+    current_price: number; // 현재가
+    purchase_price: number; // 매입가
+    average_price: number; // 평균단가
+    change_from_yesterday: number; // 전일비
+}
+
+export interface MatchBunny {
+    match_id: string;
+    bunny_name: string;
+    quantity: number;
+    unit_price: number;
+    total_amount: number; //거래금액
+    fee: number;
+    order_type: string;
+    matched_at: string;
+}
+
+export interface OrderBunny {
+    order_id: string;
+    bunny_name: string;
+    bunny_id: string;
+    quantity: number;
+    unit_price: number;
+    total_amount: number; //거래금액
+    final_amount: number;
+    fee: number;
+    order_type: string;
+    ordered_at: string;
+}
+
+type Top = {
+    type: string;
+    total_market_cap: number;
+};
+
+export interface Position {
+    frontend: number;
+    backend: number;
+    fullstack: number;
+    top: Top;
+}
+
+export interface DeveloperType {
+    basic: number;
+    growth: number;
+    stable: number;
+    value: number;
+    popular: number;
+    balance: number;
+    top: Top;
+}
+
+export interface CoinType {
+    a: number;
+    b: number;
+    c: number;
+    top: Top;
+}
+
+export interface BunnyStats {
+    timestamp: string;
+    total_market_cap: string;
+    position: Position;
+    developer_type: DeveloperType;
+    coin_type: CoinType;
 }
 
 export const getInfo = async () => {
