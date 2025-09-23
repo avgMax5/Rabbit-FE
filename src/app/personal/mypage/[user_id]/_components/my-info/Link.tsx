@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import styled from "styled-components";
 
@@ -15,12 +15,27 @@ interface LinkProps {
     name: string;
 }
 
+const findSvg = (type: string) => {
+    const allowed = [
+        "github",
+        "instagram",
+        "naver",
+        "tistory",
+        "velog",
+        "youtube",
+    ];
+    return allowed.includes(type)
+        ? `/images/favicon/${type}.svg`
+        : "/images/favicon/etc.svg";
+};
+
 function Link({ linkData, name }: LinkProps) {
     const { control } = useFormContext();
     const { fields, append, remove } = useFieldArray({
         control,
         name,
     });
+    const mounted = useRef(false);
     const emptyLink: linkDatatype = {
         sns_id: "",
         url: "",
@@ -29,16 +44,18 @@ function Link({ linkData, name }: LinkProps) {
     };
 
     useEffect(() => {
-        if (fields.length === 0 && linkData.length > 0) {
+        if (!mounted.current && linkData.length > 0) {
             append(linkData);
+            mounted.current = true;
         }
-    }, []); // 초기 마운트 시 한번만 실행
+    }, [append, linkData]);
 
     useEffect(() => {
-        console.log(fields, "이건 필드"); // append 후 fields 확인
+        console.log(fields, "이건 필드");
     }, [fields]);
+
     return (
-        <>
+        <Wrapper>
             <Title>
                 <LeftDiv>
                     <Icon
@@ -57,17 +74,20 @@ function Link({ linkData, name }: LinkProps) {
             <Form>
                 {fields.map((link, i) => {
                     const typedLink = link as unknown as linkDatatype; //수정필요
+                    const faviconSrc = findSvg(typedLink.type.toLowerCase());
                     return (
                         <Row key={i}>
-                            <Favicon src={typedLink.favicon} />
+                            <Favicon $src={faviconSrc} />
                             <LinkInput defaultValue={typedLink.url} />
                         </Row>
                     );
                 })}
             </Form>
-        </>
+        </Wrapper>
     );
 }
+
+const Wrapper = styled.div``;
 
 const Title = styled.div`
     display: flex;
@@ -118,11 +138,15 @@ const Row = styled.div`
     padding: 0 0.2rem;
 `;
 
-const Favicon = styled.img`
-    background-color: #262;
+const Favicon = styled.div<{ $src: string }>`
+    background-image: url(${(props) => props.$src});
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
     width: 1.4rem;
     height: 1.4rem;
-    border-radius: 5px;
+
+    object-fit: cover;
 `;
 
 const LinkInput = styled.input`
@@ -134,6 +158,7 @@ const LinkInput = styled.input`
     text-overflow: ellipsis;
 
     background-color: #e7e7e765;
+    color: #041c84;
 
     &:focus {
         border: 1px solid #0558f4; /* 원하는 border */

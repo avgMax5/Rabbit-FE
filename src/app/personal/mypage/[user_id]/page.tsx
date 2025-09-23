@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MyBunny from "./_sections/MyBunny";
 import MyBunnyList from "./_sections/MyBunnyList";
 import MyInfo from "./_sections/MyInfo";

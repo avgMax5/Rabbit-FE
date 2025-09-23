@@ -2,7 +2,8 @@ import { Icon } from "@iconify/react";
 import styled from "styled-components";
 import { DateInput, FileInput, SelectInput, StringInput } from "./Input";
 import { useFormContext, useFieldArray } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+//import { console } from "inspector";
 
 interface fieldDataType {
     key: string;
@@ -11,8 +12,8 @@ interface fieldDataType {
 }
 
 export interface rowDataType {
-    id: string;
-    [key: string]: string | number | boolean;
+    //id: string;
+    [key: string]: any;
 }
 
 interface SpecFormProps {
@@ -28,6 +29,7 @@ interface renderFieldProps {
     value: any;
     key: number;
     inputName: string;
+    name: string;
 }
 
 const renderField = ({
@@ -35,6 +37,7 @@ const renderField = ({
     value,
     key,
     inputName,
+    name,
 }: renderFieldProps) => {
     switch (fieldType) {
         case "string":
@@ -43,7 +46,12 @@ const renderField = ({
             );
         case "select":
             return (
-                <SelectInput key={key} value={value} inputName={inputName} />
+                <SelectInput
+                    key={key}
+                    value={value}
+                    inputName={inputName}
+                    name={name}
+                />
             );
         case "date":
             return <DateInput key={key} value={value} inputName={inputName} />;
@@ -54,23 +62,32 @@ const renderField = ({
     }
 };
 
+const changeName = (name: string) => {
+    switch (name) {
+        case "career":
+            return "경력";
+        case "education":
+            return "학력";
+        case "certification":
+            return "자격증";
+    }
+};
+
 function SpecForm({ title, fieldData, rowData, icon, name }: SpecFormProps) {
-    const { control } = useFormContext();
+    const { control, reset, getValues } = useFormContext();
     const { fields, append, remove } = useFieldArray({
         control,
         name,
     });
+    const mounted = useRef(false);
 
     useEffect(() => {
-        if (fields.length === 0 && rowData.length > 0) {
+        if (!mounted.current && rowData.length > 0) {
             append(rowData);
+            mounted.current = true;
         }
-    }, []); // 초기 마운트 시 한번만 실행
-
-    useEffect(() => {
-        console.log(fields, "이건 필드"); // append 후 fields 확인
-    }, [fields]);
-
+    }, [append, rowData]);
+    console.log(fieldData, rowData);
     return (
         <FormWrapper>
             <Title>
@@ -79,41 +96,65 @@ function SpecForm({ title, fieldData, rowData, icon, name }: SpecFormProps) {
                     {title}
                 </LeftDiv>
                 <AddRowBtn
+                    type="button"
                     onClick={() => {
-                        append(
-                            fieldData.reduce((acc, f) => {
-                                acc[f.key] = "";
-                                return acc;
-                            }, {} as any)
-                        );
-                        console.log("클릭");
+                        const newRow = fieldData.reduce((acc, f) => {
+                            acc[f.key] = "";
+                            return acc;
+                        }, {} as any);
+
+                        append(newRow);
+
+                        const currentValues = getValues();
+                        reset(currentValues);
                     }}
                 />
             </Title>
             <Container>
-                <FieldContainer $fieldNum={fieldData.length}>
+                <FieldContainer $fieldNum={fieldData.length} $name={name}>
                     {fieldData.map((field, i) => (
                         <Field key={i}>{field.value}</Field>
                     ))}
                 </FieldContainer>
                 <Form>
-                    {/* fields == rowData */}
-                    {fields.map((row, i) => (
-                        <Row key={row.id} $fieldNum={fieldData.length}>
-                            {fieldData.map((field, j) => {
-                                const inputName = `${name}[${i}].${field.key}`;
-                                const value = (row as rowDataType)[field.key];
-                                const fieldType = field.type;
+                    {fields.length === 0 ? (
+                        <NoContentDiv>
+                            <span>{changeName(name)}</span>
+                            <span>을</span> <span>추가</span> 해주세요 !
+                        </NoContentDiv>
+                    ) : (
+                        fields.map((row, i) => (
+                            <Row
+                                key={row.id}
+                                $fieldNum={fieldData.length}
+                                $name={name}
+                            >
+                                {fieldData.map((field, j) => {
+                                    const inputName = `${name}[${i}].${field.key}`;
+                                    const value = (row as rowDataType)[
+                                        field.key
+                                    ];
+                                    const fieldType = field.type;
 
-                                return renderField({
-                                    fieldType,
-                                    value,
-                                    key: j,
-                                    inputName,
-                                });
-                            })}
-                        </Row>
-                    ))}
+                                    return renderField({
+                                        fieldType,
+                                        value,
+                                        key: j,
+                                        inputName,
+                                        name,
+                                    });
+                                })}
+
+                                <DeleteBtn
+                                    onClick={() => {
+                                        remove(i);
+                                    }}
+                                >
+                                    삭제
+                                </DeleteBtn>
+                            </Row>
+                        ))
+                    )}
                 </Form>
             </Container>
         </FormWrapper>
@@ -160,17 +201,21 @@ const Container = styled.div`
     width: 100%;
 `;
 
-const FieldContainer = styled.div<{ $fieldNum: number }>`
-    background: rgba(15, 23, 42, 0.718);
+const FieldContainer = styled.div<{ $fieldNum: number; $name: string }>`
+    background: rgba(5, 42, 129, 0.718);
     width: 100%;
     height: 1.6rem;
-    display: grid;
     padding: 0 0.4rem;
     border-radius: 3px;
     margin-bottom: 0.3rem;
+    display: grid;
+    gap: 0.5rem;
     justify-content: center;
     align-items: center;
-    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
+    grid-template-columns: ${(props) =>
+        props.$name == "certification"
+            ? `repeat(${props.$fieldNum}, 1fr) 1.8rem`
+            : `7rem 4rem 7rem 8rem 8rem 1fr 1.8rem`};
 `;
 
 const Field = styled.div`
@@ -182,10 +227,11 @@ const Field = styled.div`
 `;
 
 const Form = styled.div`
-    background-color: #0007438e;
+    background-color: #0441dd30;
     width: 100%;
     height: 10rem;
     padding: 0.3rem 0;
+    border-radius: 4px;
     display: flex;
     flex-shrink: 0;
     flex-direction: column;
@@ -193,16 +239,49 @@ const Form = styled.div`
     overflow-y: auto;
 `;
 
-const Row = styled.div<{ $fieldNum: number }>`
+const NoContentDiv = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+    align-items: center;
+    background-color: #71717120;
+    color: #dadada;
+    font-weight: 500;
+
+    & span:nth-child(1),
+    :nth-child(3) {
+        font-weight: 800;
+        color: #deaa1a;
+    }
+`;
+
+const Row = styled.div<{ $fieldNum: number; $name: string }>`
     box-sizing: border-box;
     padding: 0.3rem 0.4rem;
     width: 100%;
     min-height: 2.4rem;
     display: grid;
+    gap: 0.5rem;
     justify-content: center;
-
+    grid-template-columns: ${(props) =>
+        props.$name == "certification"
+            ? `repeat(${props.$fieldNum}, 1fr) 1.8rem`
+            : `7rem 4rem 7rem 8rem 8rem 1fr 1.8rem`};
     align-items: center;
-    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
+`;
+
+const DeleteBtn = styled.button`
+    width: 2rem;
+    height: 1.8rem;
+    background-color: #f63737;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0 0.1rem;
+    cursor: pointer;
+    font-size: 0.6rem;
 `;
 
 export default SpecForm;
