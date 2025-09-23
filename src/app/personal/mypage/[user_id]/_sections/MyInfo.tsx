@@ -1,128 +1,50 @@
-import { Certificate } from "crypto";
 import styled from "styled-components";
 import { useForm, FormProvider } from "react-hook-form";
+import { useEffect, useState } from "react";
 import {
     handleBtnEnterBackground,
     handleBtnLeaveBackground,
-    handleEnterBackground,
-    handleLeaveBackground,
 } from "../_utils/mouse";
-import { Icon } from "@iconify/react";
 import SpecForm from "../_components/my-info/SpecForm";
 import Link from "../_components/my-info/Link";
 import Position from "../_components/my-info/Position";
 import Stack from "../_components/my-info/Stack";
 import InfoRow from "../_components/my-info/InfoRow";
-
-const MyData = {
-    user_id: "01HZXUSER00000000000000001",
-    name: "홍민우",
-    coin_name: "MINWOO",
-    image: "https://picsum.photos/200",
-    email: "user01@test.com",
-    resume: "https://example.com/resume.pdf",
-    portfolio: "https://example.com/portfolio.pdf",
-    link: [
-        {
-            sns_id: "01HZXSNS00000000000000001",
-            url: "https://github.com/jjweidon",
-            type: "GITHUB",
-            favicon: "https://github.com/favicon",
-        },
-        {
-            sns_id: "01HZXSNS00000000000000002",
-            url: "https://instagram.com/jwoong_8",
-            type: "INSTAGRAM",
-            favicon: "https://instagram.com/favicon",
-        },
-        {
-            sns_id: "01HZXSNS00000000000000003",
-            url: "https://linkedin.com/jwoong_8",
-            type: "LINKEDIN",
-            favicon: "https://linkedin.com/favicon",
-        },
-    ],
-    position: "BACKEND",
-    education: [
-        {
-            id: "0",
-            school_name: "신한고등학교",
-            status: "GRADUATED",
-            major: "자연계",
-            certificate_url: "https://example.com/certificate.pdf",
-            start_date: "2020-09-01",
-            end_date: "2023-06-30",
-        },
-        {
-            id: "1",
-            school_name: "신한대학교",
-            status: "ENROLLED",
-            major: "컴퓨터공학과",
-            certificate_url: "https://example.com/certificate.pdf",
-            start_date: "2020-09-01",
-            end_date: "2023-06-30",
-        },
-        {
-            id: "2",
-            school_name: "신한대학교",
-            status: "GRADUATED",
-            major: "컴퓨터공학과",
-            certificate_url: "https://example.com/certificate.pdf",
-            start_date: "2020-09-01",
-            end_date: "2023-06-30",
-        },
-        {
-            id: "3",
-            school_name: "신한대학교",
-            status: "ENROLLED",
-            major: "컴퓨터공학과",
-            certificate_url: "https://example.com/certificate.pdf",
-            start_date: "2020-09-01",
-            end_date: "2023-06-30",
-        },
-    ],
-    career: [
-        {
-            id: "0",
-            company_name: "신한은행",
-            status: "UNEMPLOYED",
-            position: "마케터",
-            certificate_url: "https://example.com/certificate.pdf",
-            start_date: "2023-09-01",
-            end_date: "2025-12-31",
-        },
-        {
-            id: "1",
-            company_name: "신한DS",
-            status: "EMPLOYED",
-            position: "백엔드 엔지니어",
-            certificate_url: "https://example.com/certificate.pdf",
-            start_date: "2023-09-01",
-            end_date: "2025-12-31",
-        },
-    ],
-    certification: [
-        {
-            id: "0",
-            certification_id: "01HZXCERTIFICATION00000000000000001",
-            certificate_url: "https://fileurl.com",
-            name: "정보처리기사",
-            ca: "에이비지맥스",
-            cdate: "2015-09-01",
-        },
-        {
-            id: "1",
-            certification_id: "01HZXCERTIFICATION00000000000000002",
-            certificate_url: "https://fileurl.com",
-            name: "SQLD",
-            ca: "에이비지맥스",
-            cdate: "2015-09-02",
-        },
-    ],
-    skill: ["Java", "JavaScript", "SpringBoot", "React"],
-};
+import { getInfo, MyInfo as MyInfoType, putInfo } from "@/app/_api/userAPI";
+import { useUserStore } from "@/app/_store/userStore";
 
 function MyInfo() {
+    const methods = useForm();
+    const [MyData, setInfoData] = useState<MyInfoType>();
+    const [preview, setPreview] = useState(
+        MyData?.image || "/images/personal/shared/basic_profile.png"
+    );
+    const { user } = useUserStore();
+    const coinName = user?.my_bunny_name ?? "";
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getInfo();
+                setInfoData(data);
+                console.log(data, " : fetchData에서 받아온 data");
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        if (MyData) {
+            methods.reset(MyData);
+            setPreview(MyData.image || preview);
+        }
+    }, [MyData]);
+
+    if (!MyData) return <div>로딩중...</div>;
+
     type FieldType = "string" | "select" | "date" | "file";
 
     interface FieldData {
@@ -138,12 +60,12 @@ function MyInfo() {
     }
 
     const infoField = [
-        { key: "name", text: "이름", disabled: true, value: MyData.name },
+        { key: "text", text: "이 름", disabled: true, value: MyData.name },
         {
             key: "coin_name",
             text: "코인명",
             disabled: false,
-            value: MyData.coin_name,
+            value: coinName,
         },
         { key: "email", text: "이메일", disabled: false, value: MyData.email },
     ];
@@ -201,10 +123,17 @@ function MyInfo() {
         },
     ];
 
-    const methods = useForm();
-    const onSubmit = (data: any) => {
-        console.log("폼 전체 값:", data);
-        //api 호출
+    const onSubmit = async (data: any) => {
+        console.log("저장하기 클릭 시 폼 전체 값:", data);
+
+        try {
+            const response = await putInfo(data);
+            console.log("서버 저장 완료", response);
+
+            alert("정보가 저장되었습니다!");
+        } catch (error) {
+            console.error("저장 실패", error);
+        }
     };
     const {
         handleSubmit,
@@ -217,15 +146,33 @@ function MyInfo() {
                 <Main>
                     <InfoSection>
                         <ImgContainer>
-                            <ProfileImg />
+                            <ProfileImg $url={preview} />
                             <EditBtn
-                                src={"/images/personal/mypage/edit_img_btn.png"}
-                            />
+                                $url={
+                                    "/images/personal/mypage/edit_img_btn.png"
+                                }
+                            >
+                                <HiddenInput
+                                    type="file"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file)
+                                            setPreview(
+                                                URL.createObjectURL(file)
+                                            );
+                                    }}
+                                />
+                            </EditBtn>
                         </ImgContainer>
 
                         <InfoForm>
                             {infoField.map((field, i) => (
-                                <InfoRow key={i} field={field} rowIndex={i} />
+                                <InfoRow
+                                    key={i}
+                                    field={field}
+                                    rowIndex={i}
+                                    type={field.key}
+                                />
                             ))}
                         </InfoForm>
 
@@ -295,11 +242,10 @@ const Main = styled.div`
 `;
 
 const PlainForm = styled.form`
-    all: unset; /* 브라우저 기본 스타일 초기화 */
-    display: contents; /* children만 렌더링, 레이아웃 영향 없음 */
+    all: unset;
+    display: contents;
 `;
 
-//나의 정보
 const Section = styled.div`
     width: 100%;
     height: 62vh;
@@ -312,7 +258,7 @@ const Section = styled.div`
 const InfoSection = styled(Section)`
     display: grid;
     /* gap: 0.8rem; */
-    grid-template-rows: 10.5rem 0.5fr 0.1fr 1fr;
+    grid-template-rows: 10.5rem 0.8fr 1fr;
 `;
 
 const ImgContainer = styled.div`
@@ -321,22 +267,30 @@ const ImgContainer = styled.div`
     height: 10rem;
 `;
 
-const ProfileImg = styled.div`
+const ProfileImg = styled.div<{ $url: string }>`
     width: 9.5rem;
     height: 9.5rem;
     background: #d9d9d9;
-    background-image: url("/images/personal/shared/basic_profile.png");
+    background-image: url(${(props) => props.$url});
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: 100% 100%;
     border-radius: 10px;
 `;
 
-const EditBtn = styled.img`
+const EditBtn = styled.label<{ $url: string }>`
     position: absolute;
     bottom: 0;
     right: 0;
     width: 1.5rem;
     height: 1.5rem;
+    background-image: url(${(props) => props.$url});
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+`;
+
+const HiddenInput = styled.input`
+    display: none;
 `;
 
 const InfoForm = styled.div`
@@ -399,7 +353,7 @@ const SaveBtn = styled.button`
     border-radius: 16px;
     background-color: rgba(254, 226, 167, 0.88);
     box-shadow: -1.913px -3.825px 6.376px 0 rgba(255, 177, 14, 0.84) inset,
-        5.738px 3.825px 6.376px 0 #ffefce inset;
+        3px 3px 2px 0 #ffefce inset;
 
     font-weight: 800;
 `;

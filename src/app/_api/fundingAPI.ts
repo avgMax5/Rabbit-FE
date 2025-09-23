@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
@@ -92,48 +92,52 @@ export interface FundingData {
 export const getBunniesCount = async () => {
     try {
         if (!API_BASE_URL) {
-            throw new Error('API_BASE_URL이 설정되지 않았습니다.');
+            throw new Error("API_BASE_URL이 설정되지 않았습니다.");
         }
-        
+
         console.log(TEST_TOKEN);
         const response = await axios.get(`${API_BASE_URL}/fund-bunnies/count`, {
             withCredentials: true,
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${TEST_TOKEN}`
-            }
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         });
-        
+
         return response.data;
     } catch (error) {
-        console.warn('API 호출 실패, 더미 데이터를 사용합니다:', error);
+        console.warn("API 호출 실패, 더미 데이터를 사용합니다:", error);
         return null;
     }
 }
 
 export const postFundBunny = async (bunnyName: string, bunnyType: string) => {
-    try{
+    try {
         if (!API_BASE_URL) {
-            throw new Error('API_BASE_URL이 설정되지 않았습니다.');
+            throw new Error("API_BASE_URL이 설정되지 않았습니다.");
         }
-        
-        const response = await axios.post(`${API_BASE_URL}/fund-bunnies`, {
-            bunny_name: bunnyName,
-            bunny_type: bunnyType
-        }, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${TEST_TOKEN}`
+
+        const response = await axios.post(
+            `${API_BASE_URL}/fund-bunnies`,
+            {
+                bunny_name: bunnyName,
+                bunny_type: bunnyType,
+            },
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${TEST_TOKEN}`,
+                },
             }
-        });
+        );
 
         return response.data;
     } catch (error) {
-        console.error('API 호출 실패:', error);
+        console.error("API 호출 실패:", error);
         throw error;
     }
-}
+};
 
 export const checkBunnyName = async (bunnyName: string) => {
     try{
@@ -143,14 +147,18 @@ export const checkBunnyName = async (bunnyName: string) => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${TEST_TOKEN}`
             }
-        });
-        
+        );
+
         if (response.status === 200) {
             console.log('버니 이름 사용 가능');
             return { success: true, isDuplicate: false, message: '사용 가능한 이름입니다.' };
         } else {
-            console.log('버니 이름이 이미 존재합니다 (중복)');
-            return { success: true, isDuplicate: true, message: '이미 사용 중인 이름입니다.' };
+            console.log("버니 이름이 이미 존재합니다 (중복)");
+            return {
+                success: true,
+                isDuplicate: true,
+                message: "이미 사용 중인 이름입니다.",
+            };
         }
         
     } catch (error) {

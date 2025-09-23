@@ -5,6 +5,8 @@ import axios from "axios";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
 
+console.log(API_BASE_URL, TEST_TOKEN);
+
 export interface User {
     user_id: string;
     name: string;
@@ -33,7 +35,6 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     fetchUser: async () => {
         set({ isLoading: true, error: null });
-
         try {
             const response = await axios.get(`${API_BASE_URL}/personal/me`, {
                 headers: {
@@ -55,7 +56,7 @@ export const useUserStore = create<UserState>((set, get) => ({
                         ? error.message
                         : "사용자 정보를 가져오는데 실패했습니다.",
                 isLoading: false,
-                user: null
+                user: null,
             });
         }
     },
@@ -66,26 +67,28 @@ export const useUserStore = create<UserState>((set, get) => ({
                 window.location.assign(url);
             } catch (error) {
                 set({
-                    error: error instanceof Error 
-                        ? error.message 
-                        : "로그인에 실패했습니다."
+                    error:
+                        error instanceof Error
+                            ? error.message
+                            : "로그인에 실패했습니다.",
                 });
             }
         },
-        
+
         logout: () => {
             try {
                 set({ user: null, error: null });
-                
+
                 const url = `${API_BASE_URL}/auth/logout`;
                 window.location.assign(url);
             } catch (error) {
                 set({
-                    error: error instanceof Error 
-                        ? error.message 
-                        : "로그아웃에 실패했습니다."
+                    error:
+                        error instanceof Error
+                            ? error.message
+                            : "로그아웃에 실패했습니다.",
                 });
             }
-        }
-    }
+        },
+    },
 }));

@@ -4,6 +4,9 @@ import { useFormContext } from "react-hook-form";
 import styled from "styled-components";
 
 const Skills = [
+    { name: "C", include: false },
+    { name: "C++", include: false },
+    { name: "C#", include: false },
     { name: "HTML5", include: false },
     { name: "CSS3", include: false },
     { name: "JavaScript", include: false },
@@ -11,19 +14,21 @@ const Skills = [
     { name: "React", include: false },
     { name: "Next.js", include: false },
     { name: "Vue.js", include: false },
-    { name: "Svelte / SvelteKit", include: false },
+    { name: "Svelte", include: false },
     { name: "Node.js", include: false },
     { name: "Java", include: false },
     { name: "SpringBoot", include: false },
+    { name: "Python", include: false },
     { name: "Django", include: false },
     { name: "Flask", include: false },
+    { name: "FastAPI", include: false },
     { name: "PostgreSQL", include: false },
     { name: "MySQL", include: false },
     { name: "MongoDB", include: false },
     { name: "Redis", include: false },
     { name: "Docker", include: false },
     { name: "Nginx", include: false },
-    { name: "AWS / GCP / Azure", include: false },
+    { name: "AWS/GCP/Azure", include: false },
 ];
 
 interface StackProps {
@@ -34,7 +39,6 @@ interface StackProps {
 function Stack({ skillData, name }: StackProps) {
     const { setValue, watch } = useFormContext();
     const selectedStacks = watch(name) || [];
-    console.log(selectedStacks, "sected1");
 
     const [skills, setSkills] = useState(
         Skills.map((skill) => ({
@@ -48,15 +52,8 @@ function Stack({ skillData, name }: StackProps) {
             setValue(name, skillData); // RHF 초기값 설정
         }
     }, [skillData, name, setValue]);
-    console.log(selectedStacks, "sected2");
 
     console.log(watch(name));
-
-    // const handleInclude = (index: number) => {
-    //     const newStackes = [...skills];
-    //     newSkills[index].include = !newSkills[index].include;
-    //     setSkills(newSkills);
-    // };
 
     const toggleStack = (stack: string) => {
         const newStacks = selectedStacks.includes(stack)
@@ -65,8 +62,6 @@ function Stack({ skillData, name }: StackProps) {
 
         setValue(name, newStacks);
     };
-
-    console.log(selectedStacks, "sected3");
 
     return (
         <>

@@ -1,9 +1,9 @@
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import styled from "styled-components";
 
-type InputProps = { value: string; inputName: string };
+type InputProps = { value: string; inputName: string; name?: string };
 
 export const DateInput = ({ value, inputName }: InputProps) => {
     const { register } = useFormContext();
@@ -25,16 +25,27 @@ export const StringInput = ({ value, inputName }: InputProps) => {
 
 export const FileInput = ({ value, inputName }: InputProps) => {
     const { control } = useFormContext();
-    const [fileName, setFileName] = useState<string>(
-        value || "선택한 파일 없음"
-    );
+    const [fileName, setFileName] = useState<string>("선택한 파일 없음");
+    const [fileUrl, setFileUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (value) {
+            // URL이면 파일명 추출
+            if (value.startsWith("http")) {
+                setFileName(value.split("/").pop() || "파일");
+                setFileUrl(value);
+            } else {
+                setFileName(value);
+            }
+        }
+    }, [value]);
 
     return (
         <FileDiv>
             <Controller
                 name={inputName}
                 control={control}
-                defaultValue={null} // 초기값 없으면 null
+                defaultValue={null}
                 render={({ field }) => (
                     <Label>
                         <Icon
@@ -48,9 +59,11 @@ export const FileInput = ({ value, inputName }: InputProps) => {
                                 const files = e.target.files;
                                 if (files && files.length > 0) {
                                     setFileName(files[0].name);
+                                    setFileUrl(null);
                                     field.onChange(files[0]); // RHF에 파일 전달
                                 } else {
                                     setFileName("선택한 파일 없음");
+                                    setFileUrl(null);
                                     field.onChange(null);
                                 }
                             }}
@@ -58,13 +71,20 @@ export const FileInput = ({ value, inputName }: InputProps) => {
                     </Label>
                 )}
             />
-            <FileName>{fileName}</FileName>
+            {fileUrl ? (
+                <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                    {fileName}
+                </a>
+            ) : (
+                <FileName>{fileName}</FileName>
+            )}
         </FileDiv>
     );
 };
 
-export const SelectInput = ({ value, inputName }: InputProps) => {
+export const SelectInput = ({ value, inputName, name }: InputProps) => {
     const { control } = useFormContext();
+
     return (
         <SelectDiv>
             <Controller
@@ -73,8 +93,17 @@ export const SelectInput = ({ value, inputName }: InputProps) => {
                 defaultValue={value} // 초기값
                 render={({ field }) => (
                     <Select {...field}>
-                        <Option value="GRADUATED">GRADUATED</Option>
-                        <Option value="ENROLLED">ENROLLED</Option>
+                        {name == "education" ? (
+                            <>
+                                <Option value="GRADUATED">졸업</Option>
+                                <Option value="ENROLLED">재학</Option>
+                            </>
+                        ) : (
+                            <>
+                                <Option value="EMPLOYED">재직중</Option>
+                                <Option value="UNENROLLED">퇴사</Option>
+                            </>
+                        )}
                     </Select>
                 )}
             />
@@ -86,21 +115,41 @@ const Input = styled.input`
     width: 100%;
     height: 100%;
     box-sizing: border-box;
+    padding: 3px;
+    border-radius: 4px;
+    border: none;
+
+    font-weight: 600;
+    background-color: #ffffff98;
+
+    &:focus {
+        border: 1px solid #0558f4;
+        background: #ffffff !important;
+    }
 `;
 
-const InputDate = styled(Input)`
-    width: 100%;
-`;
+const InputDate = styled(Input)``;
 
-const InputString = styled(Input)``;
+const InputString = styled(Input)`
+    padding: 6px;
+`;
 
 const FileDiv = styled.div`
-    background-color: #de838e;
+    background-color: #ffffff75;
+    height: 100%;
+    padding: 4px;
+    border-radius: 3px;
     display: flex;
+    gap: 4px;
     align-items: center;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+
+    font-size: 14px;
+
+    & > a {
+        border-bottom: 1px solid #0000006a; /* 글자색과 같은 밑줄 */
+        padding-bottom: 1.2px;
+    }
 `;
 
 const Label = styled.label`
@@ -109,16 +158,18 @@ const Label = styled.label`
     cursor: pointer;
     width: 1rem;
     height: 1rem;
+    border-radius: 3px;
 `;
 
 const InputFile = styled.input`
     display: none;
+    color: #0825a8;
 `;
 
 const FileName = styled.div`
-    color: #000;
-    font-size: 13px;
     margin-left: 0.2rem;
+    font-size: 13px;
+    color: #0825a8;
 `;
 
 const SelectDiv = styled.div`
@@ -126,10 +177,15 @@ const SelectDiv = styled.div`
 `;
 
 const Select = styled.select`
-    width: 100%;
+    width: 4rem;
     height: 100%;
     box-sizing: border-box;
-    background-color: aliceblue;
+    padding: 4px;
+    background-color: #c7dff5;
+    border-radius: 16px;
+    border: none;
+
+    font-weight: 600;
 `;
 
 const Option = styled.option`

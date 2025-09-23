@@ -11,16 +11,17 @@ function Header() {
     const [mouseEnter, setMouseEnter] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const pathname = usePathname();
-    
+
     const userInfo = useUserStore((state) => state.user);
     const fetchUser = useUserStore((state) => state.fetchUser);
     const isLoading = useUserStore((state) => state.isLoading);
-    
+
     useEffect(() => {
         if (!userInfo && !isLoading) {
             fetchUser();
         }
     }, [userInfo, isLoading, fetchUser]);
+
     console.log("userInfo", userInfo);
     const user_id = userInfo?.user_id;
     const carrot = userInfo?.carrot;
@@ -37,7 +38,7 @@ function Header() {
         const timer = setTimeout(() => {
             setIsLoaded(true);
         }, 100);
-        
+
         return () => clearTimeout(timer);
     }, []);
 
@@ -73,23 +74,28 @@ function Header() {
                     </Home>
                 </Link>
                 {/* <Link href={`/personal/mypage/${user_id}`}> */}
-                <Link href={user_id ? `/personal/mypage/${user_id}` : '#'}>
-                    <MyPage $activate={activate === "mypage"} $isLoaded={isLoaded}>
+                <Link href={user_id ? `/personal/mypage/${user_id}` : "#"}>
+                    <MyPage
+                        $activate={activate === "mypage"}
+                        $isLoaded={isLoaded}
+                    >
                         마이페이지
                     </MyPage>
                 </Link>
                 <Link href={`/personal/publish`}>
-                    <Funding $activate={activate === "funding"} $isLoaded={isLoaded}>펀딩</Funding>
+                    <Funding
+                        $activate={activate === "funding"}
+                        $isLoaded={isLoaded}
+                    >
+                        펀딩
+                    </Funding>
                 </Link>
             </Navigate>
             <Money onClick={handleMoneyClick}>
                 <CarrotImg src="/images/personal/home/carrot.png" alt="당근" />
                 {carrot}
             </Money>
-            <ShopModal 
-                isOpen={isShopModalOpen} 
-                onClose={handleCloseModal} 
-            />
+            <ShopModal isOpen={isShopModalOpen} onClose={handleCloseModal} />
         </Div>
     );
 }
@@ -101,7 +107,7 @@ const NavButton = styled.div<{ $activate?: boolean; $isLoaded?: boolean }>`
     text-align: center;
     line-height: 2rem;
     transition: all 0.5s ease-in-out;
-    
+
     color: ${({ $activate }) => ($activate ? "#000" : "#454545")};
     background: ${({ $activate, $isLoaded }) => {
         if (!$isLoaded) return "none";
