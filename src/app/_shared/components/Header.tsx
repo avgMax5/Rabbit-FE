@@ -11,20 +11,19 @@ function Header() {
     const [mouseEnter, setMouseEnter] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const pathname = usePathname();
-
-    const userInfo = useUserStore((state) => state.user);
-    const fetchUser = useUserStore((state) => state.fetchUser);
+    
+    const carrot = useUserStore((state) => state.user?.carrot);
+    const user_id = useUserStore((state) => state.user?.user_id);
+    const user = useUserStore((state) => state.user);
     const isLoading = useUserStore((state) => state.isLoading);
-
+    const fetchUser = useUserStore((state) => state.fetchUser);
+    
     useEffect(() => {
-        if (!userInfo && !isLoading) {
+        if (!user && !isLoading) {
             fetchUser();
         }
-    }, [userInfo, isLoading, fetchUser]);
-
-    console.log("userInfo", userInfo);
-    const user_id = userInfo?.user_id;
-    const carrot = userInfo?.carrot;
+    }, []);
+    console.log("carrot", carrot);
 
     const getActive = () => {
         if (pathname === "/personal/home") return "home";

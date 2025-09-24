@@ -1,56 +1,143 @@
 "use client";
 import styled from "styled-components";
 import { Icon } from "@iconify/react";
+import { Bunny } from "../../../_store/bunnyStore";
 
-export default function BunnySpec() {
+interface Link {
+  sns_id: string;
+  url: string;
+  type: string;
+  favicon: string;
+}
+
+interface Certification {
+  certification_id: string;
+  certificate_url: string;
+  name: string;
+  ca: string;
+  cdate: string;
+}
+
+interface Career {
+  career_id: string;
+  company_name: string;
+  status: string;
+  position: string;
+  start_date: string;
+  end_date: string | null;
+  certificate_url: string;
+}
+
+interface Education {
+  education_id: string;
+  school_name: string;
+  status: string;
+  major: string;
+  start_date: string;
+  end_date: string;
+  certificate_url: string;
+}
+
+interface Spec {
+  name: string;
+  birthdate: string;
+  email: string;
+  phone: string;
+  image: string;
+  resume: string;
+  position: string;
+  link: Link[];
+  skill: string[];
+  certification: Certification[];
+  career: Career[];
+  education: Education[];
+  ai_review: string;
+}
+
+interface BunnyWithSpec extends Bunny {
+  spec?: Spec;
+}
+
+interface BunnySpecProps {
+  bunny: BunnyWithSpec;
+}
+
+export default function BunnySpec({ bunny }: BunnySpecProps) {
+  const spec = bunny.spec;
+  
+  if (!spec) {
+    return <div>스펙 정보가 없습니다.</div>;
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+  };
+
+  const formatDateRange = (startDate: string, endDate: string | null) => {
+    const start = formatDate(startDate);
+    const end = endDate ? formatDate(endDate) : '현재';
+    return `${start} ~ ${end}`;
+  };
+
   return (
     <>
       <EducationSection>
         <SectionHeader>
-          <SectionTitle>학력</SectionTitle>
           <SectionIcon>
             <Icon icon="material-symbols:school" color="#149FAE" />
           </SectionIcon>
+          <SectionTitle>학력</SectionTitle>
         </SectionHeader>
         <SectionContent>
-          <EducationItem>하버드대학교 행정학과 2016.03.02~2020.03</EducationItem>
-          <EducationItem>하버드대학교 행정학과 2016.03.02~2020.03</EducationItem>
+          {spec.education.map((edu) => (
+            <EducationItem key={edu.education_id}>
+              {edu.school_name} {edu.major} {formatDateRange(edu.start_date, edu.end_date)}
+            </EducationItem>
+          ))}
         </SectionContent>
       </EducationSection>
 
       <ExperienceSection>
         <SectionHeader>
-          <SectionTitle>경력</SectionTitle>
           <SectionIcon>
             <Icon icon="material-symbols:code" color="#149FAE" />
           </SectionIcon>
+          <SectionTitle>경력</SectionTitle>
         </SectionHeader>
         <SectionContent>
-          <ExperienceItem>하버드대학교 행정학과 2016.03.02~2020.03</ExperienceItem>
-          <ExperienceItem>하버드대학교 행정학과 2016.03.02~2020.03</ExperienceItem>
+          {spec.career.map((career) => (
+            <ExperienceItem key={career.career_id}>
+              {career.company_name} {career.position} {formatDateRange(career.start_date, career.end_date)}
+            </ExperienceItem>
+          ))}
         </SectionContent>
       </ExperienceSection>
 
       <CertificationSection>
         <SectionHeader>
-          <SectionTitle>자격증</SectionTitle>
           <SectionIcon>
             <Icon icon="material-symbols:description" color="#149FAE" />
           </SectionIcon>
+          <SectionTitle>자격증</SectionTitle>
         </SectionHeader>
         <CertificationContent>
-          <CertificationItem>정보처리기사 2023.03.04</CertificationItem>
-          <CertificationItem>정보처리기사 2023.03.04</CertificationItem>
+          {spec.certification.map((cert) => (
+            <CertificationItem key={cert.certification_id}>
+              {cert.name} ({cert.ca}) {formatDate(cert.cdate)}
+            </CertificationItem>
+          ))}
         </CertificationContent>
       </CertificationSection>
 
       <SkillsSection>
         <SkillsTags>
-          <SkillTag>#JAVA</SkillTag>
-          <SkillTag>#JAVASCRIPT</SkillTag>
-          <SkillTag>#TYPESCRIPT</SkillTag>
-          <SkillTag>#CSS</SkillTag>
-          <SkillTag>#HTML</SkillTag>
+          {spec.skill.map((skill, index) => (
+            <SkillTag key={index}>#{skill}</SkillTag>
+          ))}
         </SkillsTags>
       </SkillsSection>
     </>

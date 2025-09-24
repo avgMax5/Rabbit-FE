@@ -1,19 +1,16 @@
 "use client";
 import styled from "styled-components";
+import { Bunny } from "../../../_store/bunnyStore";
 
 interface CurrentPriceProps {
-  price?: string;
-  change?: string;
-  changePercentage?: string;
-  isPositive?: boolean;
+  bunny: Bunny;
 }
 
-export default function CurrentPrice({ 
-  price = "120,000", 
-  change = "500", 
-  changePercentage = "(+50.00%)", 
-  isPositive = true 
-}: CurrentPriceProps) {
+export default function CurrentPrice({ bunny }: CurrentPriceProps) {
+  const price = bunny.current_price.toLocaleString();
+  const change = bunny.fluctuation_rate ? (bunny.current_price - bunny.closing_price).toLocaleString() : "0";
+  const changePercentage = bunny.fluctuation_rate ? `(${bunny.fluctuation_rate > 0 ? '+' : ''}${bunny.fluctuation_rate.toFixed(2)}%)` : "(0.00%)";
+  const isPositive = bunny.fluctuation_rate ? bunny.fluctuation_rate >= 0 : true;
   return (
     <DashboardContent>
       <MainValue>{price}</MainValue>

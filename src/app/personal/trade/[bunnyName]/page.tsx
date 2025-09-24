@@ -10,13 +10,81 @@ import BunnySpec from '../components/BunnySpec';
 import CurrentPrice from '../components/CurrentPrice';
 import TradeBlock from '../components/Trade';
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useBunnyStore, Bunny } from "../../../_store/bunnyStore";
+import { getChart, ChartData } from "../../../_api/bunnyAPI";
 
 
 
 export default function Trade() {
   const params = useParams();
   const bunnyName = params.bunnyName as string;
+  const { bunnies, fetchBunnies, getBunnyByName, isLoading } = useBunnyStore();
+  const [currentBunny, setCurrentBunny] = useState<Bunny | null>(null);
+  const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [chartLoading, setChartLoading] = useState(false);
+
+  useEffect(() => {
+    if (bunnies.length === 0) {
+      fetchBunnies();
+    }
+  }, [bunnies.length, fetchBunnies]);
+
+  useEffect(() => {
+    if (bunnies.length > 0 && bunnyName) {
+      const bunny = getBunnyByName(bunnyName);
+      setCurrentBunny(bunny || null);
+    }
+  }, [bunnies, bunnyName, getBunnyByName]);
+
+  // 차트 데이터 가져오기
+  const fetchChartData = async (period: string = "일") => {
+    if (!currentBunny?.bunny_name) return;
+    
+    setChartLoading(true);
+    try {
+      const interval = period === "일" ? "DAILY" : period === "주" ? "WEEKLY" : "MONTHLY";
+      const data = await getChart(currentBunny.bunny_name, interval);
+      setChartData(data);
+    } catch (error) {
+      console.error('차트 데이터 가져오기 실패:', error);
+    } finally {
+      setChartLoading(false);
+    }
+  };
+
+  // 기간 변경 핸들러
+  const handlePeriodChange = (period: string) => {
+    fetchChartData(period);
+  };
+
+  useEffect(() => {
+    if (currentBunny?.bunny_name) {
+      fetchChartData();
+    }
+  }, [currentBunny?.bunny_name]);
+
+  if (isLoading) {
+    return (
+      <Wrapper>
+        <Header />
+        <Container>
+          <div>로딩 중...</div>
+        </Container>
+      </Wrapper>
+    );
+  }
+
+  if (!currentBunny) {
+    return (
+      <Wrapper>
+        <Header />
+        <Container>
+          <div>버니를 찾을 수 없습니다.</div>
+        </Container>
+      </Wrapper>
+    );
+  }
 
   return (
     <Wrapper>
@@ -24,13 +92,13 @@ export default function Trade() {
       <Container>
         <LayoutGrid>
           <TopLeftBlock>
-            <Profile />
+            <Profile bunny={currentBunny} />
           </TopLeftBlock>
           <MiddleLeftBlock>
-            <BunnyType />
+            <BunnyType bunny={currentBunny} />
           </MiddleLeftBlock>
           <BottomLeftBlock>
-            <BunnySpec />
+            <BunnySpec bunny={currentBunny} />
           </BottomLeftBlock>
           
           <RightCard>
@@ -38,19 +106,19 @@ export default function Trade() {
               <LeftSection>
                 <TopRow>
                   <ChartTopLeftBlock>
-                    <PentagonChart data={[]} />
+                    <PentagonChart data={currentBunny} />
                   </ChartTopLeftBlock>
                   <TopRightBlock>
-                    <CurrentPrice />
+                    <CurrentPrice bunny={currentBunny} />
                   </TopRightBlock>
                 </TopRow>
                 <ChartBottomLeftBlock>
-                  <Chart />
+                  <Chart chartData={chartData} isLoading={chartLoading} onPeriodChange={handlePeriodChange} />
                 </ChartBottomLeftBlock>
               </LeftSection>
               
               <RightSection>
-                <TradeBlock />
+                <TradeBlock bunny={currentBunny} />
               </RightSection>
             </MainContent>
           </RightCard>

@@ -1,29 +1,35 @@
 "use client";
 import styled from "styled-components";
+import { Bunny } from "../../../_store/bunnyStore";
+import { bunnyTypeValidate, positionValidate, developerTypeValidate, getPositionIcon, getDeveloperTypeIcon, getBunnyTypeIcon } from "../utils/bunnyValidation";
 
-export default function BunnyType() {
+interface BunnyTypeProps {
+  bunny: Bunny;
+}
+
+export default function BunnyType({ bunny }: BunnyTypeProps) {
   return (
     <CategorySection>
       <CategoryItem>
         <CategoryIcon>
-          <img src="/images/trade/frontend.png" alt="Frontend" />
+          <img src={getPositionIcon(bunny.position)} alt="Position" />
         </CategoryIcon>
         <CategoryLabel>직군</CategoryLabel>
-        <CategoryValue>프론트엔드</CategoryValue>
+        <CategoryValue>{positionValidate(bunny.position)}</CategoryValue>
       </CategoryItem>
       <CategoryItem>
         <CategoryIcon>
-          <img src="/images/trade/unique.png" alt="Unique" />
+          <img src={getBunnyTypeIcon(bunny)} alt="Bunny Type" />
         </CategoryIcon>
         <CategoryLabel>버니 유형</CategoryLabel>
-        <CategoryValue>희소 자산형</CategoryValue>
+        <CategoryValue>{bunnyTypeValidate(bunny)}</CategoryValue>
       </CategoryItem>
       <CategoryItem>
         <CategoryIcon>
-          <img src="/images/trade/growth.png" alt="Growth" />
+          <img src={getDeveloperTypeIcon(bunny.developer_type)} alt="Developer Type" />
         </CategoryIcon>
         <CategoryLabel>개발자 유형</CategoryLabel>
-        <CategoryValue>성장형</CategoryValue>
+        <CategoryValue>{developerTypeValidate(bunny.developer_type)}</CategoryValue>
       </CategoryItem>
     </CategorySection>
   );
