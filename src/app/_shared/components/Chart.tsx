@@ -2,9 +2,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-const Chart = () => {
+import { ChartData } from "../../_api/bunnyAPI";
+
+interface ChartProps {
+    chartData: ChartData | null;
+    isLoading?: boolean;
+    onPeriodChange?: (period: string) => void;
+}
+
+const Chart = ({ chartData, isLoading = false, onPeriodChange }: ChartProps) => {
     const chartRef = useRef(null);
     const [activePeriod, setActivePeriod] = useState("일");
+
+    const handlePeriodChange = (period: string) => {
+        setActivePeriod(period);
+        if (onPeriodChange) {
+            onPeriodChange(period);
+        }
+    };
 
     useEffect(() => {
         if (!window.echarts) {
@@ -24,51 +39,41 @@ const Chart = () => {
                 window.echarts.dispose(chartRef.current);
             }
         };
-    }, [activePeriod]);
+    }, [chartData]);
 
-    const getChartData = (period: string) => {
-        switch (period) {
-            case "일":
-                return {
-                    xData: [
-                        "00:00",
-                        "04:00",
-                        "08:00",
-                        "12:00",
-                        "16:00",
-                        "20:00",
-                        "24:00",
-                    ],
-                    yData: [120, 180, 150, 220, 190, 250, 200],
-                };
-            case "주":
-                return {
-                    xData: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                    yData: [150, 230, 224, 218, 135, 147, 260],
-                };
-            case "월":
-                return {
-                    xData: ["1월", "2월", "3월", "4월", "5월", "6월", "7월"],
-                    yData: [200, 180, 250, 300, 280, 320, 350],
-                };
-            default:
-                return {
-                    xData: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                    yData: [150, 230, 224, 218, 135, 147, 260],
-                };
+    const getChartData = () => {
+        if (!chartData || !chartData.chart_data_list) {
+            return {
+                xData: [],
+                yData: []
+            };
         }
+
+        const dataList = chartData.chart_data_list.slice(-7);
+        
+        const xData = dataList.map(item => {
+            const date = new Date(item.date);
+            return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+        });
+        
+        const yData = dataList.map(item => item.closing_price);
+
+        return {
+            xData,
+            yData
+        };
     };
 
     const initChart = () => {
         if (!chartRef.current || !window.echarts) return;
 
         const myChart = window.echarts.init(chartRef.current);
-        const chartData = getChartData(activePeriod);
+        const chartDataForDisplay = getChartData();
 
         const option = {
             xAxis: {
                 type: "category",
-                data: chartData.xData,
+                data: chartDataForDisplay.xData,
                 axisLine: {
                     lineStyle: {
                         color: "rgba(255, 255, 255, 0.3)",
@@ -105,7 +110,7 @@ const Chart = () => {
             },
             series: [
                 {
-                    data: chartData.yData,
+                    data: chartDataForDisplay.yData,
                     type: "line",
                     smooth: true,
                     lineStyle: {
@@ -148,7 +153,6 @@ const Chart = () => {
 
         myChart.setOption(option);
 
-        // 반응형 처리
         const handleResize = () => {
             myChart.resize();
         };
@@ -165,31 +169,37 @@ const Chart = () => {
             <ButtonContainer>
                 <PeriodButton
                     $active={activePeriod === "일"}
-                    onClick={() => setActivePeriod("일")}
+                    onClick={() => handlePeriodChange("일")}
                 >
                     일
                 </PeriodButton>
                 <PeriodButton
                     $active={activePeriod === "주"}
-                    onClick={() => setActivePeriod("주")}
+                    onClick={() => handlePeriodChange("주")}
                 >
                     주
                 </PeriodButton>
                 <PeriodButton
                     $active={activePeriod === "월"}
-                    onClick={() => setActivePeriod("월")}
+                    onClick={() => handlePeriodChange("월")}
                 >
                     월
                 </PeriodButton>
             </ButtonContainer>
-            <div
-                ref={chartRef}
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    minHeight: "200px",
-                }}
-            />
+            {isLoading ? (
+                <LoadingContainer>
+                    <LoadingText>차트 데이터를 불러오는 중...</LoadingText>
+                </LoadingContainer>
+            ) : (
+                <div
+                    ref={chartRef}
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        minHeight: "200px",
+                    }}
+                />
+            )}
         </ChartContainer>
     );
 };
@@ -234,6 +244,20 @@ const PeriodButton = styled.button<{ $active: boolean }>`
           background-color: rgba(255, 255, 255, 0.3);
         }
       `}
+`;
+
+const LoadingContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    width: 100%;
+`;
+
+const LoadingText = styled.div`
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
 `;
 
 export default Chart;

@@ -2,14 +2,54 @@
 import styled from "styled-components";
 import Button from '../../../_shared/components/Button';
 import { useState } from "react";
+import { Bunny } from "../../../_store/bunnyStore";
+import { useUserStore } from "../../../_store/userStore";
+import { validateOrderAmount, calculateTotalAmount, handlePriceIncrease } from '../utils/orderValidate';
+import { createOrder } from '../../../_api/bunnyAPI';
 
 interface OrderProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  bunny: Bunny;
 }
 
-export default function Order({ activeTab, setActiveTab }: OrderProps) {
-  const [selectedPercentage, setSelectedPercentage] = useState('100%');
+export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
+  const [quantity, setQuantity] = useState('');
+  const [price, setPrice] = useState('');
+  const [showTooltip, setShowTooltip] = useState(false);
+  const { user } = useUserStore();
+
+
+  const onPriceIncrease = (percentage: number) => {
+    const newPrice = handlePriceIncrease(price, bunny.current_price, percentage);
+    setPrice(newPrice);
+  };
+
+  const orderValidation = validateOrderAmount(quantity, price);
+  const isOrderValid = orderValidation.isValid;
+
+  const handleOrder = async () => {
+    try {
+      const orderRequest = {
+        quantity: parseFloat(quantity),
+        unit_price: parseFloat(price),
+        order_type: activeTab === '매수' ? 'BUY' : 'SELL'
+      };
+
+      await createOrder(bunny.bunny_name, orderRequest);
+      
+      setQuantity('');
+      setPrice('');
+      alert(`${activeTab} 주문이 성공적으로 처리되었습니다.`);
+    } catch (error) {
+      console.error('주문 처리 중 오류 발생:', error);
+    }
+  };
+
+  const handleReset = () => {
+    setQuantity('');
+    setPrice('');
+  };
 
   return (
     <>
@@ -33,13 +73,18 @@ export default function Order({ activeTab, setActiveTab }: OrderProps) {
         <OrderForm>
           <OrderRow>
             <OrderLabel>주문 가능</OrderLabel>
-            <OrderValue>C 200,000,000</OrderValue>
+            <OrderValue>{user?.carrot} BNY</OrderValue>
           </OrderRow>
           
           <OrderRow>
             <OrderLabel>주문 수량</OrderLabel>
             <OrderInput>
-              <input type="text" placeholder="0" />
+              <input 
+                type="text" 
+                placeholder="0" 
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              />
               <span>BNY</span>
             </OrderInput>
           </OrderRow>
@@ -47,46 +92,67 @@ export default function Order({ activeTab, setActiveTab }: OrderProps) {
           <OrderRow>
             <OrderLabel>{activeTab === '매수' ? '매수 가격' : '매도 가격'}</OrderLabel>
             <OrderInput>
-              <input type="text" placeholder="0" />
+              <input 
+                type="text" 
+                placeholder="0" 
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
               <span>C</span>
             </OrderInput>
           </OrderRow>
           
           <PercentageButtons>
             <PercentageButton 
-              $active={selectedPercentage === '10%'}
-              onClick={() => setSelectedPercentage('10%')}
+              onClick={() => onPriceIncrease(10)}
             >
-              10%
+              +10%
             </PercentageButton>
             <PercentageButton 
-              $active={selectedPercentage === '20%'}
-              onClick={() => setSelectedPercentage('20%')}
+              onClick={() => onPriceIncrease(20)}
             >
-              20%
+              +20%
             </PercentageButton>
             <PercentageButton 
-              $active={selectedPercentage === '50%'}
-              onClick={() => setSelectedPercentage('50%')}
+              onClick={() => onPriceIncrease(50)}
             >
-              50%
+              +50%
             </PercentageButton>
             <PercentageButton 
-              $active={selectedPercentage === '100%'}
-              onClick={() => setSelectedPercentage('100%')}
+              onClick={() => onPriceIncrease(100)}
             >
-              100%
+              +100%
             </PercentageButton>
           </PercentageButtons>
           
           <OrderRow>
             <OrderLabel>주문 총액</OrderLabel>
-            <OrderValue>200,000,000 C</OrderValue>
+            <OrderValue>{calculateTotalAmount(quantity, price)} C</OrderValue>
           </OrderRow>
           
           <ActionButtons>
-            <Button variant="secondary" size="small">초기화</Button>
-            <Button variant="primary" size="small">{activeTab === '매수' ? '매수하기' : '매도하기'}</Button>
+            <Button variant="secondary" size="small" onClick={handleReset}>초기화</Button>
+            <ButtonContainer>
+              <Button 
+                variant="primary" 
+                size="small"
+                disabled={!isOrderValid}
+                onClick={handleOrder}
+                onMouseEnter={() => {
+                  if (!isOrderValid) {
+                    setShowTooltip(true);
+                  }
+                }}
+                onMouseLeave={() => setShowTooltip(false)}
+              >
+                {activeTab === '매수' ? '매수하기' : '매도하기'}
+              </Button>
+              {showTooltip && !isOrderValid && (
+                <Tooltip>
+                  최소 주문 금액은 1,000C입니다
+                </Tooltip>
+              )}
+            </ButtonContainer>
           </ActionButtons>
         </OrderForm>
       </TradeArea>
@@ -122,7 +188,7 @@ const TabButton = styled.button<{ $active: boolean; $type: 'buy' | 'sell' }>`
     } else {
       return `
         background-color: rgba(255, 255, 255, 0.56);
-        color: #E2E2E2;
+        color: #697077;
         &:hover {
           background-color: rgba(255, 255, 255, 0.7);
         }
@@ -133,7 +199,7 @@ const TabButton = styled.button<{ $active: boolean; $type: 'buy' | 'sell' }>`
 
 const TradeArea = styled.div`
   flex: 1;
-  background: rgba(252, 252, 252, 0.34);
+  background-color: rgba(252, 252, 252, 0.34);
   border-radius: 0 0 0.75rem 0.75rem;
   padding: 1rem;
 `;
@@ -197,7 +263,7 @@ const PercentageButtons = styled.div`
   justify-content: flex-end;
 `;
 
-const PercentageButton = styled.button<{ $active?: boolean }>`
+const PercentageButton = styled.button`
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 0.5rem;
@@ -206,18 +272,16 @@ const PercentageButton = styled.button<{ $active?: boolean }>`
   cursor: pointer;
   transition: all 0.3s ease;
   color: white;
+  background-color: rgba(27, 101, 164, 1);
   
-  ${({ $active }) => 
-    $active 
-      ? `
-        background-color: rgba(16, 145, 255, 0.9);
-      `
-      : `
-        background-color: rgba(27, 101, 164, 1);
-        &:hover {
-          background-color: rgba(16, 145, 255, 0.7);
-        }
-      `
+  &:hover {
+    background-color: rgba(16, 145, 255, 0.7);
+    transform: translateY(-1px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    background-color: rgba(16, 145, 255, 0.9);
   }
 `;
 
@@ -225,4 +289,37 @@ const ActionButtons = styled.div`
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
+`;
+
+const ButtonContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const Tooltip = styled.div`
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background-color: rgba(0, 0, 0, 0.95);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.95);
+  }
 `;

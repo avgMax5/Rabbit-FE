@@ -1,34 +1,39 @@
 "use client";
 import styled from "styled-components";
 import { Heart } from "lucide-react";
-import { useState } from "react";
 
-export default function Profile() {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(123);
+import { Bunny, useBunnyStore } from "../../../_store/bunnyStore";
 
-  const handleHeartClick = () => {
-    setIsLiked(!isLiked);
-    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
+interface ProfileProps {
+  bunny: Bunny;
+}
+
+export default function Profile({ bunny }: ProfileProps) {
+  const { toggleLike, isLiked, isLikeLoading } = useBunnyStore();
+  
+  const isCurrentlyLiked = isLiked(bunny.bunny_name);
+  const isLoading = isLikeLoading(bunny.bunny_name);
+
+  const handleHeartClick = async () => {
+    await toggleLike(bunny.bunny_name);
   };
 
   return (
     <>
-
       <TopCardContent>
         <ProfileSection>
           <HeartSection>
-            <HeartButton onClick={handleHeartClick} $isLiked={isLiked}>
-              <Heart size={20} fill={isLiked ? "#ff4757" : "none"} color={isLiked ? "#ff4757" : "#333"} />
+            <HeartButton onClick={handleHeartClick} $isLiked={isCurrentlyLiked} disabled={isLoading}>
+              <Heart size={20} fill={isCurrentlyLiked ? "#ff4757" : "none"} color={isCurrentlyLiked ? "#ff4757" : "#333"} />
             </HeartButton>
-            <HeartCount>{likeCount}</HeartCount>
+            <HeartCount>{bunny.like_count}</HeartCount>
           </HeartSection>
           <Avatar>
             <img src="/images/login/personalProfile.png" alt="Profile" />
           </Avatar>
           <ProfileInfo>
-            <Name>GOOD-RELATION</Name>
-            <KoreanName>황호연</KoreanName>
+            <BunnyName>{bunny.bunny_name}</BunnyName>
+            <KoreanName>{bunny.user_name}</KoreanName>
             <SocialLinks>
               <SocialLink>
                 <img src="/images/login/github.png" alt="GitHub" />
@@ -90,17 +95,20 @@ const ProfileInfo = styled.div`
   text-align: center;
 `;
 
-const Name = styled.h3`
+const BunnyName = styled.h3`
   font-size: 2rem;
   font-weight: bold;
   color: #333;
   font-family: rockstar;
+  color: #FBC95E;
+  text-shadow: 0px 5px 5px rgba(254, 226, 167, 0.25);
   margin: 0;
 `;
 
 const KoreanName = styled.p`
   font-size: 1rem;
-  color: #ffffff;
+  color: #FBC95E;
+  font-weight: 700;
   margin: 0;
 `;
 
@@ -135,7 +143,7 @@ const HeartSection = styled.div`
   border-radius: 1rem;
   position: absolute;
   top: -2rem;
-  left: 0%;
+  left: -30%;
   transform: translateX(-50%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
@@ -151,12 +159,17 @@ const HeartButton = styled.button<{ $isLiked: boolean }>`
   justify-content: center;
   transition: all 0.3s ease;
   
-  &:hover {
+  &:hover:not(:disabled) {
     transform: scale(1.1);
   }
   
-  &:active {
+  &:active:not(:disabled) {
     transform: scale(0.95);
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
   
   ${({ $isLiked }) => $isLiked && `

@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useRef } from "react";
+import { Bunny } from "../../_store/bunnyStore";
 
 export type PentagonChartData = { value: number; name: string }[];
 
 interface PentagonChartProps {
-    data: PentagonChartData;
+    data: Bunny;
 }
 
 const PentagonChart = ({ data }: PentagonChartProps) => {
@@ -34,16 +35,16 @@ const PentagonChart = ({ data }: PentagonChartProps) => {
         if (!chartRef.current || !window.echarts) return;
 
         const myChart = window.echarts.init(chartRef.current);
-        const values = data.map((item) => item.value);
+        const values = [data.growth, data.stability, data.popularity, data.value, data.reliability];
 
         const option = {
             radar: {
                 indicator: [
-                    { name: "성장형", max: 100 },
-                    { name: "밸런스형", max: 100 },
-                    { name: "인기형", max: 100 },
-                    { name: "가치형", max: 100 },
-                    { name: "안정형", max: 100 },
+                    { name: "성장", max: 100 },
+                    { name: "안정성", max: 100 },
+                    { name: "인기도", max: 100 },
+                    { name: "가치", max: 100 },
+                    { name: "신뢰도", max: 100 },
                 ],
                 center: ["50%", "50%"],
                 radius: "65%",

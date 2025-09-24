@@ -3,21 +3,27 @@ import styled from "styled-components";
 import OrderList from './OrderList';
 import Order from './Order';
 import { useState } from "react";
+import { Bunny } from "../../../_store/bunnyStore";
 
-export default function TradeBlock() {
+interface TradeBlockProps {
+  bunny: Bunny;
+}
+
+export default function TradeBlock({ bunny }: TradeBlockProps) {
   const [activeTab, setActiveTab] = useState('매수');
-  const [activeOrderTab, setActiveOrderTab] = useState('오더');
+  const [activeOrderTab, setActiveOrderTab] = useState('호가창');
 
   return (
     <TradeBlockWrapper>
       <TopSection>
-        <Order activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Order activeTab={activeTab} setActiveTab={setActiveTab} bunny={bunny} />
       </TopSection>
       
       <BottomSection>
         <OrderList 
-          activeOrderTab={activeOrderTab} 
-          setActiveOrderTab={setActiveOrderTab} 
+          activeOrderTab={activeOrderTab}
+          setActiveOrderTab={setActiveOrderTab}
+          bunny={bunny}
         />
       </BottomSection>
     </TradeBlockWrapper>

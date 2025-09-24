@@ -6,6 +6,8 @@ import styled from 'styled-components';
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
   disabled?: boolean;
   variant?: 'primary' | 'secondary' | 'danger';
   size?: 'small' | 'medium' | 'large';
@@ -16,6 +18,8 @@ interface ButtonProps {
 export default function Button({
   children,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
   disabled = false,
   variant = 'primary',
   size = 'medium',
@@ -25,6 +29,8 @@ export default function Button({
   return (
     <StyledButton
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       disabled={disabled}
       variant={variant}
       size={size}
