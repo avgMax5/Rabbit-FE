@@ -57,8 +57,11 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
     likeLoading: new Set<string>(),
 
     fetchBunnies: async (params: FetchBunniesParams = {}) => {
-        const { sortType = 'newest', page = 0, size = 30 } = params;
-        
+        // const { sortType = 'newest', page = 0, size = 30 } = params;
+        const sortType = params.sortType ?? "ALL";
+        const page = params.page ?? 0;
+        const size = params.size ?? 30;
+  
         set({ isLoading: true, error: null });
         
         try {
@@ -77,11 +80,15 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
                 }
             });
             
-            const bunnies = response.data;
-
-            console.log('받은 Bunnies 데이터:', bunnies);
-            
-            set({ bunnies, isLoading: false });
+            const newBunnies = response.data.content;
+            if (page === 0) {
+                set({ bunnies: newBunnies, isLoading: false });
+            } else {
+                set({
+                    bunnies: [...get().bunnies, ...newBunnies],
+                    isLoading: false,
+                });
+            }
         } catch (error) {
             console.warn('Bunnies API 호출 실패:', error);
             set({ 
@@ -111,7 +118,7 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
             const isCurrentlyLiked = likedBunnies.has(bunnyName);
             
             if (isCurrentlyLiked) {
-                await deleteLike(bunnyName);
+                await deleteLike(bunnyName, "");
                 set({
                     likedBunnies: new Set([...likedBunnies].filter(name => name !== bunnyName))
                 });

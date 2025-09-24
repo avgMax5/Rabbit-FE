@@ -8,6 +8,7 @@ import { Autoplay } from "swiper/modules";
 interface Top5Props {
     standard: string;
 }
+
 export interface DeveloperTypeData {
     id: number;
     coin_name: string;

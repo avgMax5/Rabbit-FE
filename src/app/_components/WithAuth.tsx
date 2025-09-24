@@ -11,7 +11,6 @@ const WithAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
         const { user, isLoading, error, fetchUser } = useUserStore();
         const router = useRouter();
 
-        console.log("WithAuth 렌더링:", { isLoading, user, error }); 
         useEffect(() => {
             if (!user && !error) {
                 fetchUser();

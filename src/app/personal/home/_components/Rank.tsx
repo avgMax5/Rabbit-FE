@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { DataType } from "../page";
+import { DataType } from "../_types/interfaces";
 
 interface RankProps {
     data: DataType;

@@ -1,4 +1,7 @@
+"use client";
 import styled from "styled-components";
+import { useRouter } from "next/navigation";
+import { BadgeData } from "../_constants/constants";
 
 interface ListProps<T> {
     fieldList: { key: string; label: string }[];
@@ -9,6 +12,7 @@ interface ListProps<T> {
 }
 
 function List<T>({ fieldList, dataList, backgroundColor }: ListProps<T>) {
+    const router = useRouter();
     return (
         <Div $backgroundColor={backgroundColor}>
             <FieldContainer $fieldNum={fieldList.length}>
@@ -20,13 +24,39 @@ function List<T>({ fieldList, dataList, backgroundColor }: ListProps<T>) {
                 {dataList.map((data, i) => {
                     const RowComponent = i % 2 === 0 ? Erow : Orow;
                     return (
-                        <RowComponent key={i} $fieldNum={fieldList.length}>
-                            {fieldList.map((field) => (
-                                <span key={field.key}>
-                                    {(data as Record<string, any>)[field.key]}
-                                </span>
-                            ))}
-                        </RowComponent>
+                    <RowComponent 
+                        key={i} 
+                        $fieldNum={fieldList.length}
+                        onClick={() =>
+                            router.push(
+                                `/personal/trade/${(data as Record<string, any>).bunny_name}`
+                            )
+                        }>
+                        {fieldList.map((field) => {
+                        const value = (data as Record<string, any>)[field.key];
+                        return (
+                            <span key={field.key}>
+                            {Array.isArray(value) ? (
+                                value.length > 0 ? (
+                                value.map((name: string) => {
+                                    const badge = BadgeData.find((b) => b.name === name);
+                                    return badge ? (
+                                         <SmallBadge key={badge.id} src={badge.src} alt={badge.name} />
+                                    ) : (
+                                        <span key={name}>{name}</span>
+                                    );
+                                })
+                                ) : (
+                                "-"
+                                )
+                            ) : (
+                                value
+                            )}
+                            </span>
+
+                        );
+                        })}
+                    </RowComponent>
                     );
                 })}
             </RowContainer>
@@ -47,7 +77,7 @@ const Row = styled.div<{ $fieldNum: number }>`
 
     font-family: var(--font-nanum-squar);
     font-weight: 600;
-    font-size: 0.6rem;
+    font-size: 12px;
 
     & span {
         border-right: 1px solid rgba(148, 163, 184, 0.2);
@@ -60,10 +90,10 @@ const Row = styled.div<{ $fieldNum: number }>`
 
 const Div = styled.div<{ $backgroundColor: string }>`
     display: grid;
-    grid-template-rows: 2.2rem 60%;
+    // grid-template-rows: 2.2rem 60%;
     gap: 0.5rem;
     width: 100%;
-    height: 25rem;
+    // height: 25rem;
     align-items: center;
     flex-shrink: 0;
     border-radius: 12px;
@@ -78,7 +108,7 @@ const FieldContainer = styled.div<{ $fieldNum: number }>`
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
+    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1.2fr);
     align-items: center;
     text-align: center;
     flex-shrink: 0;
@@ -117,8 +147,13 @@ const RowContainer = styled.div`
     padding: 0.5rem;
 
     /* Custom scrollbar */
+    /* 스크롤바 안보이게 */
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+
     &::-webkit-scrollbar {
         width: 6px;
+        display: none; /* Chrome, Safari */
     }
 
     &::-webkit-scrollbar-track {
@@ -137,14 +172,32 @@ const RowContainer = styled.div`
 `;
 
 const Erow = styled(Row)`
-    background: #fff;
-    box-shadow: 1px 1px 10px 0 rgba(204, 204, 204, 0.25) inset,
-        0 2px 2px 0 rgba(0, 0, 0, 0.25);
+  background: #fff;
+  box-shadow: 1px 1px 10px 0 rgba(204, 204, 204, 0.25) inset,
+    0 2px 2px 0 rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+
+  &:hover {
+    background: #e0f2fe;
+  }
 `;
 
 const Orow = styled(Row)`
-    background: #f1f1f1;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
+  background: #f1f1f1;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+
+  &:hover {
+    background: #dbeafe;
+  }
 `;
+
+const SmallBadge = styled.img`
+  width: 20px;   /* row에서 잘 보일 크기 */
+  height: 20px;
+  border-radius: 4px;  /* 살짝 둥글게 */
+  object-fit: cover;   /* 이미지가 찌그러지지 않도록 */
+`;
+
 
 export default List;

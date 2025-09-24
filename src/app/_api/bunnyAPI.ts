@@ -142,3 +142,34 @@ export const getChart = async (bunnyName: string, interval: string): Promise<Cha
     });
     return response.data;
 }
+
+
+export const getRabbitIndex = async () => {
+    try {
+        if (!API_BASE_URL) {
+            throw new Error("API_BASE_URL이 설정되지 않았습니다.");
+        }
+
+        const response = await axios.get(
+            `${API_BASE_URL}/bunnies/rabbit-index`,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${TEST_TOKEN}`,
+                },
+                withCredentials: true,
+            }
+        );
+        
+        if (!response.data || !response.data.rabbit_index) {
+            return 0;
+        }
+
+        console.log(response.data);
+
+        return response.data;
+    } catch (error) {
+        console.error("Rabbit 지수 가져오기 실패: ", error);
+        throw error;
+    }
+};
