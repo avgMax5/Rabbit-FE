@@ -3,34 +3,59 @@ import { useEffect, useState } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 import styled from "styled-components";
 
-type InputProps = { value: string; inputName: string; name?: string };
-
-export const DateInput = ({ value, inputName }: InputProps) => {
-    const { register } = useFormContext();
-    return (
-        <InputDate type="date" defaultValue={value} {...register(inputName)} />
-    );
+type InputProps = {
+    value: string;
+    inputName: string;
+    name?: string;
+    type: string;
 };
 
-export const StringInput = ({ value, inputName }: InputProps) => {
-    const { register } = useFormContext();
+const getValidationRules = (type: string) => {
+    const rules: Record<string, any> = {
+        required: "빈 칸을 채워주세요",
+    };
+
+    return rules;
+};
+
+export const DateInput = ({ value, inputName, type }: InputProps) => {
+    const {
+        register,
+        formState: { errors },
+    } = useFormContext();
     return (
-        <InputString
-            type="string"
+        <InputDate
+            type="date"
             defaultValue={value}
-            {...register(inputName)}
+            {...register(inputName, getValidationRules(type))}
         />
     );
 };
 
-export const FileInput = ({ value, inputName }: InputProps) => {
+export const StringInput = ({ value, inputName, type }: InputProps) => {
+    const {
+        register,
+        formState: { errors },
+    } = useFormContext();
+
+    return (
+        <>
+            <InputString
+                type="string"
+                defaultValue={value}
+                {...register(inputName, getValidationRules(type))}
+            />
+        </>
+    );
+};
+
+export const FileInput = ({ value, inputName, type }: InputProps) => {
     const { control } = useFormContext();
     const [fileName, setFileName] = useState<string>("선택한 파일 없음");
     const [fileUrl, setFileUrl] = useState<string | null>(null);
 
     useEffect(() => {
         if (value) {
-            // URL이면 파일명 추출
             if (value.startsWith("http")) {
                 setFileName(value.split("/").pop() || "파일");
                 setFileUrl(value);
@@ -82,7 +107,7 @@ export const FileInput = ({ value, inputName }: InputProps) => {
     );
 };
 
-export const SelectInput = ({ value, inputName, name }: InputProps) => {
+export const SelectInput = ({ value, inputName, name, type }: InputProps) => {
     const { control } = useFormContext();
 
     return (
@@ -90,7 +115,7 @@ export const SelectInput = ({ value, inputName, name }: InputProps) => {
             <Controller
                 name={inputName}
                 control={control}
-                defaultValue={value} // 초기값
+                defaultValue={value}
                 render={({ field }) => (
                     <Select {...field}>
                         {name == "education" ? (
@@ -144,9 +169,13 @@ const FileDiv = styled.div`
     align-items: center;
     overflow: hidden;
 
-    font-size: 14px;
+    font-size: 12px;
 
     & > a {
+        max-width: 100px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         border-bottom: 1px solid #0000006a; /* 글자색과 같은 밑줄 */
         padding-bottom: 1.2px;
     }
@@ -167,8 +196,13 @@ const InputFile = styled.input`
 `;
 
 const FileName = styled.div`
+    display: inline-block;
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     margin-left: 0.2rem;
-    font-size: 13px;
+    font-size: 12px;
     color: #0825a8;
 `;
 
@@ -190,4 +224,12 @@ const Select = styled.select`
 
 const Option = styled.option`
     border: none;
+`;
+
+const ErrorMessage = styled.div`
+    margin-top: 3.5px;
+    text-align: end;
+    font-size: 10px;
+    font-weight: 800;
+    color: #af072e;
 `;

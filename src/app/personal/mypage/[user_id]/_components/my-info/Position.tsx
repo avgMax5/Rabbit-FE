@@ -14,13 +14,13 @@ function Position({ position, name }: PositionProps) {
     const [selected, setSelected] = useState(position);
 
     const handleSelect = (value: string) => {
-        setSelected(value); // UI용 상태
-        setValue(name, value); // RHF 값 갱신
+        setSelected(value);
+        setValue(name, value);
     };
 
     useEffect(() => {
         if (position) {
-            setValue(name, position); // 초기값 RHF에 반영
+            setValue(name, position);
         }
     }, [position, name, setValue]);
 

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { useEffect, useState } from "react";
 import {
     handleBtnEnterBackground,
@@ -10,11 +10,32 @@ import Link from "../_components/my-info/Link";
 import Position from "../_components/my-info/Position";
 import Stack from "../_components/my-info/Stack";
 import InfoRow from "../_components/my-info/InfoRow";
-import { getInfo, MyInfo as MyInfoType, putInfo } from "@/app/_api/userAPI";
+import {
+    getInfo,
+    MyInfo as MyInfoType,
+    postUpload,
+    putInfo,
+} from "@/app/_api/userAPI";
 import { useUserStore } from "@/app/_store/userStore";
+
+type FieldType = "string" | "select" | "date" | "file";
+
+interface FieldData {
+    key: string;
+    value: string;
+    type: FieldType;
+}
+
+interface SpecField {
+    education: FieldData[];
+    career: FieldData[];
+    certification: FieldData[];
+}
 
 function MyInfo() {
     const methods = useForm();
+    const { register } = methods;
+    const { onChange: regOnChange, ref, ...rest } = register("image");
     const [MyData, setInfoData] = useState<MyInfoType>();
     const [preview, setPreview] = useState(
         MyData?.image || "/images/personal/shared/basic_profile.png"
@@ -45,26 +66,12 @@ function MyInfo() {
 
     if (!MyData) return <div>로딩중...</div>;
 
-    type FieldType = "string" | "select" | "date" | "file";
-
-    interface FieldData {
-        key: string;
-        value: string;
-        type: FieldType;
-    }
-
-    interface SpecField {
-        education: FieldData[];
-        career: FieldData[];
-        certification: FieldData[];
-    }
-
     const infoField = [
-        { key: "text", text: "이 름", disabled: true, value: MyData.name },
+        { key: "name", text: "이름", disabled: false, value: MyData.name },
         {
             key: "coin_name",
             text: "코인명",
-            disabled: false,
+            disabled: true,
             value: coinName,
         },
         { key: "email", text: "이메일", disabled: false, value: MyData.email },
@@ -125,9 +132,58 @@ function MyInfo() {
 
     const onSubmit = async (data: any) => {
         console.log("저장하기 클릭 시 폼 전체 값:", data);
+        // let imageUrl = null;
+
+        // if (data.image && data.image[0]) {
+        //     imageUrl = await postUpload(data.image[0]);
+        // }
+
+        // const payload = { ...data, image: imageUrl };
+
+        const uploadFile = async (file: File | string) => {
+            if (file instanceof File) {
+                const url = await postUpload(file); // 파일 → URL
+                return url;
+            }
+            return file; // 이미 URL이면 그대로
+        };
+
+        // education 배열 처리
+        const education = await Promise.all(
+            data.education.map(async (edu: any) => ({
+                ...edu,
+                certificate_url: await uploadFile(edu.certificate_url),
+            }))
+        );
+
+        // career 배열 처리
+        const career = await Promise.all(
+            data.career.map(async (car: any) => ({
+                ...car,
+                certificate_url: await uploadFile(car.certificate_url),
+            }))
+        );
+
+        // certification 배열 처리
+        const certification = await Promise.all(
+            data.certification.map(async (cer: any) => ({
+                ...cer,
+                certificate_url: await uploadFile(cer.certificate_url),
+            }))
+        );
+
+        // 최종 payload
+        const payload = {
+            ...data,
+            education,
+            career,
+            certification,
+        };
+
+        console.log("파일->URL 변경", payload);
 
         try {
-            const response = await putInfo(data);
+            const response = await putInfo(payload);
             console.log("서버 저장 완료", response);
 
             alert("정보가 저장되었습니다!");
@@ -155,12 +211,15 @@ function MyInfo() {
                                 <HiddenInput
                                     type="file"
                                     onChange={(e) => {
+                                        regOnChange(e); // formState에 파일 저장
                                         const file = e.target.files?.[0];
                                         if (file)
                                             setPreview(
                                                 URL.createObjectURL(file)
                                             );
                                     }}
+                                    ref={ref}
+                                    {...rest}
                                 />
                             </EditBtn>
                         </ImgContainer>
@@ -199,7 +258,7 @@ function MyInfo() {
                         ))}
 
                         <div>
-                            <Stack skillData={MyData.skill} name="stacks" />
+                            <Stack skillData={MyData.skill} name="skill" />
                         </div>
                     </SpecSection>
                 </Main>
@@ -298,7 +357,7 @@ const InfoForm = styled.div`
     height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 1.1rem;
     margin-bottom: 1rem;
 `;
 

@@ -285,27 +285,31 @@ export const getMatches = async () => {
     }
 };
 
-export const postFileUpload = async (file: string) => {
+export const postUpload = async (file: File) => {
     try {
         if (!API_BASE_URL) {
             throw new Error("API_BASE_URL이 설정되지 않았습니다.");
         }
 
+        const formData = new FormData();
+        console.log(formData, "formData");
+        formData.append("file", file);
+
         const response = await axios.post(
             `${API_BASE_URL}/personal/me/upload`,
-            { file: file },
+            formData,
             {
                 headers: {
-                    "Content-Types": "application/json",
                     Authorization: `Bearer ${TEST_TOKEN}`,
                 },
                 withCredentials: true,
             }
         );
 
+        console.log("파일 업로드 성공:", response.data);
         return response.data;
     } catch (error) {
-        console.log("파일 가져오기 실패");
-        return null;
+        console.error("파일 업로드 실패:", error);
+        throw error;
     }
 };

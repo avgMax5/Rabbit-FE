@@ -100,13 +100,6 @@ const Row = styled.div<{ $fieldNum: number }>`
 
     font-size: 10px;
     font-weight: 800;
-    /* & div {
-        border-right: 0.1px solid rgba(29, 31, 35, 0.2);
-
-        &:last-child {
-            border-right: none;
-        }
-    } */
 `;
 
 const Value = styled.div<{ $styleObj: ValueProps }>`
