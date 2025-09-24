@@ -139,7 +139,12 @@ export const getInfo = async () => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${TEST_TOKEN}`,
             },
+            withCredentials: true,
         });
+        
+        if (!response.data || !response.data.user_id) {
+            throw new Error("유효한 사용자 데이터가 아닙니다.");
+        }
 
         console.log("사용자 정보 가져오기 성공:", response.data);
 
@@ -164,6 +169,7 @@ export const putInfo = async (myInfo: MyInfo) => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${TEST_TOKEN}`,
                 },
+                withCredentials: true,
             }
         );
 
@@ -189,8 +195,14 @@ export const getHoldBunnies = async () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${TEST_TOKEN}`,
                 },
+                withCredentials: true,
             }
         );
+        
+        if (!response.data || !response.data.hold_bunnies) {
+            return []; // 받은 데이터에 hold_bunnies가 없을 때 빈 배열 반환
+        }
+
         console.log(response.data);
 
         return response.data;
@@ -213,9 +225,11 @@ export const getHoldBunniesStats = async () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${TEST_TOKEN}`,
                 },
+                withCredentials: true,
             }
         );
         console.log(response.data);
+
 
         return response.data;
     } catch (error) {
@@ -235,6 +249,7 @@ export const getOrders = async () => {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${TEST_TOKEN}`,
             },
+            withCredentials: true,
         });
         console.log(response.data);
 
@@ -258,6 +273,7 @@ export const getMatches = async () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${TEST_TOKEN}`,
                 },
+                withCredentials: true,
             }
         );
         console.log(response.data);
@@ -283,6 +299,7 @@ export const postFileUpload = async (file: string) => {
                     "Content-Types": "application/json",
                     Authorization: `Bearer ${TEST_TOKEN}`,
                 },
+                withCredentials: true,
             }
         );
 
