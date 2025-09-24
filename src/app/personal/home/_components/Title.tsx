@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import Notification from "@/app/_shared/components/Notification";
+import { getYesterdayMidnight } from "../_components/ListContainer";
 
 interface TitleProps {
     content: string;
@@ -18,6 +19,9 @@ function Title({ content, isNoti, notification, icon }: TitleProps) {
     const handleMouseLeave = () => {
         setMouseEnter(false);
     };
+    const date = getYesterdayMidnight();
+    const formatted = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 00:00`;
+
     return (
         <Container>
             <div>
@@ -41,7 +45,7 @@ function Title({ content, isNoti, notification, icon }: TitleProps) {
                     </IconContainer>
                 )}
             </div>
-            <Time>09.01 12:00</Time>
+            <Time>{formatted}</Time>
         </Container>
     );
 }

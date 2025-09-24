@@ -1,12 +1,32 @@
+"use client";
 import HalfChart from "@/app/personal/mypage/[user_id]/_components/chart/HalfChart";
 import styled from "styled-components";
-
-const reliavilityData = [
-    { value: 80, name: "점수" },
-    { value: 40, name: "남은 점수" },
-];
+import { getRabbitIndex } from "@/app/_api/bunnyAPI";
+import { useEffect, useState } from "react";
 
 function MarketScore() {
+    const [value, setValue] = useState<number | null>(null);
+
+    useEffect(() => {
+        const fetchValue = async () => {
+            try {
+                const result = await getRabbitIndex();
+                setValue(result.rabbit_index);
+            } catch (err) {
+                console.error("getRabbitIndex API 호출 실패:", err);
+            }
+        };
+
+        fetchValue();
+    }, []);
+
+    if (value === null) return <div>로딩 중...</div>;
+
+    const reliavilityData = [
+        { value: value, name: "점수" },
+        { value: 100 - value, name: "남은 점수" },
+    ];
+
     return (
         <Div>
             <Score>{reliavilityData[0].value}</Score>

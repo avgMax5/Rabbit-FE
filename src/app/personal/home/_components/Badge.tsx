@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { BadgeType } from "../page";
+import { BadgeType } from "../_types/interfaces";
 
 interface CorporationBadgeProps {
     badge: BadgeType;
