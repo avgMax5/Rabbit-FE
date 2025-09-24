@@ -15,22 +15,36 @@ interface LinkProps {
     name: string;
 }
 
-const findSvg = (type: string) => {
-    const allowed = [
-        "github",
-        "instagram",
-        "naver",
-        "tistory",
-        "velog",
-        "youtube",
-    ];
-    return allowed.includes(type)
-        ? `/images/favicon/${type}.svg`
-        : "/images/favicon/etc.svg";
+const findSvg = (url: string) => {
+    if (!url) return "/images/favicon/etc.svg";
+
+    try {
+        const hostname = new URL(url).hostname.toLowerCase();
+
+        if (hostname.includes("github")) return "/images/favicon/github.svg";
+        if (hostname.includes("instagram"))
+            return "/images/favicon/instagram.svg";
+        if (hostname.includes("naver")) return "/images/favicon/naver.svg";
+        if (hostname.includes("tistory")) return "/images/favicon/tistory.svg";
+        if (hostname.includes("velog")) return "/images/favicon/velog.svg";
+        if (hostname.includes("youtube")) return "/images/favicon/youtube.svg";
+
+        return "/images/favicon/etc.svg";
+    } catch {
+        return "/images/favicon/etc.svg";
+    }
+};
+
+const getValidationRules = () => {
+    const rules: Record<string, any> = {
+        required: "링크를 입력해주세요",
+    };
+
+    return rules;
 };
 
 function Link({ linkData, name }: LinkProps) {
-    const { control } = useFormContext();
+    const { control, register, watch } = useFormContext();
     const { fields, append, remove } = useFieldArray({
         control,
         name,
@@ -51,7 +65,7 @@ function Link({ linkData, name }: LinkProps) {
     }, [append, linkData]);
 
     useEffect(() => {
-        console.log(fields, "이건 필드");
+        console.log("link", fields);
     }, [fields]);
 
     return (
@@ -73,12 +87,28 @@ function Link({ linkData, name }: LinkProps) {
             </Title>
             <Form>
                 {fields.map((link, i) => {
-                    const typedLink = link as unknown as linkDatatype; //수정필요
-                    const faviconSrc = findSvg(typedLink.type.toLowerCase());
+                    const typedLink = link as unknown as linkDatatype;
+                    const url = watch(`${name}[${i}].url`);
+                    const faviconSrc = findSvg(url);
+
                     return (
                         <Row key={i}>
                             <Favicon $src={faviconSrc} />
-                            <LinkInput defaultValue={typedLink.url} />
+                            <LinkInput
+                                {...(register(`${name}[${i}].url`),
+                                getValidationRules())}
+                                defaultValue={typedLink.url}
+                            />
+                            <DeleteBtn
+                                onClick={() => {
+                                    remove(i);
+                                }}
+                            >
+                                <Icon
+                                    icon="iconamoon:trash-bold"
+                                    color="#ffffff"
+                                />
+                            </DeleteBtn>
                         </Row>
                     );
                 })}
@@ -161,9 +191,19 @@ const LinkInput = styled.input`
     color: #041c84;
 
     &:focus {
-        border: 1px solid #0558f4; /* 원하는 border */
-        background: #ffffff !important; /* 확실히 덮어쓰기 */
+        border: 1px solid #0558f4;
+        background: #ffffff !important;
     }
+`;
+
+const DeleteBtn = styled.button`
+    width: 1rem;
+    background: none;
+    height: 1.8rem;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 15px;
 `;
 
 export default Link;

@@ -14,39 +14,61 @@ interface InfoRowProps {
     type: string;
 }
 
+const getValidationRules = (fieldText: string) => {
+    const rules: Record<string, any> = {
+        required: `${fieldText}은 필수입니다`,
+    };
+
+    return rules;
+};
+
 function InfoRow({ field, rowIndex, type }: InfoRowProps) {
-    const { register } = useFormContext();
-    const inputName = `info.${field.text}`;
+    const {
+        register,
+        formState: { errors },
+    } = useFormContext();
+    const inputName = `${field.key}`;
+
+    console.log(errors, "error");
+    console.log(register(inputName), "register");
 
     return (
-        <Row key={rowIndex}>
-            <InfoText>{field.text}</InfoText>
-            {field.value === "" && field.key === "coin_name" ? (
-                <Input
-                    {...register(inputName)}
-                    disabled={true}
-                    $show={true}
-                    placeholder="- - 아직 상장 전입니다 - -"
-                />
-            ) : (
-                <Input
-                    type={type}
-                    {...register(inputName)}
-                    disabled={field.disabled}
-                    $show={field.disabled}
-                    defaultValue={field.value}
-                />
+        <div>
+            <Row key={rowIndex}>
+                <InfoText>{field.text}</InfoText>
+                {field.value === "" && field.key === "coin_name" ? (
+                    <Input
+                        {...register(inputName)}
+                        disabled={true}
+                        $show={true}
+                        placeholder="- - 아직 상장 전입니다 - -"
+                    />
+                ) : (
+                    <Input
+                        type={type}
+                        {...register(inputName, getValidationRules(field.text))}
+                        disabled={field.disabled}
+                        $show={field.disabled}
+                        defaultValue={field.value}
+                    />
+                )}
+            </Row>
+            {(errors as any)?.[field.key]?.message && (
+                <ErrorMessage>
+                    {(errors as any)[field.key].message}
+                </ErrorMessage>
             )}
-        </Row>
+        </div>
     );
 }
 
 const Row = styled.div`
+    position: relative;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     width: 100%;
-    padding: 0rem;
+    border-radius: 5px;
 `;
 
 const InfoText = styled.div`
@@ -83,6 +105,14 @@ const Input = styled.input<{ $show: boolean }>`
         font-size: 12px;
         font-weight: 400;
     }
+`;
+
+const ErrorMessage = styled.div`
+    margin-top: 3.5px;
+    text-align: end;
+    font-size: 10px;
+    font-weight: 800;
+    color: #af072e;
 `;
 
 export default InfoRow;

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { DateInput, FileInput, SelectInput, StringInput } from "./Input";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { useEffect, useRef } from "react";
-//import { console } from "inspector";
 
 interface fieldDataType {
     key: string;
@@ -12,7 +11,6 @@ interface fieldDataType {
 }
 
 export interface rowDataType {
-    //id: string;
     [key: string]: any;
 }
 
@@ -42,7 +40,12 @@ const renderField = ({
     switch (fieldType) {
         case "string":
             return (
-                <StringInput key={key} value={value} inputName={inputName} />
+                <StringInput
+                    key={key}
+                    value={value}
+                    inputName={inputName}
+                    type={fieldType}
+                />
             );
         case "select":
             return (
@@ -51,12 +54,27 @@ const renderField = ({
                     value={value}
                     inputName={inputName}
                     name={name}
+                    type={fieldType}
                 />
             );
         case "date":
-            return <DateInput key={key} value={value} inputName={inputName} />;
+            return (
+                <DateInput
+                    key={key}
+                    value={value}
+                    inputName={inputName}
+                    type={fieldType}
+                />
+            );
         case "file":
-            return <FileInput key={key} value={value} inputName={inputName} />;
+            return (
+                <FileInput
+                    key={key}
+                    value={value}
+                    inputName={inputName}
+                    type={fieldType}
+                />
+            );
         default:
             return null;
     }
@@ -87,7 +105,8 @@ function SpecForm({ title, fieldData, rowData, icon, name }: SpecFormProps) {
             mounted.current = true;
         }
     }, [append, rowData]);
-    console.log(fieldData, rowData);
+    console.log("필드 데이터", fieldData);
+    console.log("행 데이터", rowData);
     return (
         <FormWrapper>
             <Title>
@@ -99,7 +118,15 @@ function SpecForm({ title, fieldData, rowData, icon, name }: SpecFormProps) {
                     type="button"
                     onClick={() => {
                         const newRow = fieldData.reduce((acc, f) => {
-                            acc[f.key] = "";
+                            if (f.key === "status") {
+                                acc[f.key] =
+                                    name === "education"
+                                        ? "ENROLLED"
+                                        : "EMPLOYED";
+                            } else {
+                                acc[f.key] = "";
+                            }
+
                             return acc;
                         }, {} as any);
 
@@ -150,7 +177,10 @@ function SpecForm({ title, fieldData, rowData, icon, name }: SpecFormProps) {
                                         remove(i);
                                     }}
                                 >
-                                    삭제
+                                    <Icon
+                                        icon="iconamoon:trash-bold"
+                                        color="#ffffff"
+                                    />
                                 </DeleteBtn>
                             </Row>
                         ))
@@ -268,20 +298,18 @@ const Row = styled.div<{ $fieldNum: number; $name: string }>`
     grid-template-columns: ${(props) =>
         props.$name == "certification"
             ? `repeat(${props.$fieldNum}, 1fr) 1.8rem`
-            : `7rem 4rem 7rem 8rem 8rem 1fr 1.8rem`};
+            : `7rem 4rem 7rem 8rem 8rem 1fr 1.3rem`};
     align-items: center;
 `;
 
 const DeleteBtn = styled.button`
-    width: 2rem;
+    width: 1rem;
+    background: none;
     height: 1.8rem;
-    background-color: #f63737;
-    color: white;
     border: none;
     border-radius: 3px;
-    padding: 0 0.1rem;
     cursor: pointer;
-    font-size: 0.6rem;
+    font-size: 15px;
 `;
 
 export default SpecForm;

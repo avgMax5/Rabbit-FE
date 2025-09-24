@@ -22,11 +22,16 @@ const Skills = [
     { name: "Django", include: false },
     { name: "Flask", include: false },
     { name: "FastAPI", include: false },
+    { name: "Kotlin", include: false },
+    { name: "Swift", include: false },
+    { name: "Go", include: false },
+    { name: "Rust", include: false },
     { name: "PostgreSQL", include: false },
     { name: "MySQL", include: false },
     { name: "MongoDB", include: false },
     { name: "Redis", include: false },
     { name: "Docker", include: false },
+    { name: "Kubernetes", include: false },
     { name: "Nginx", include: false },
     { name: "AWS/GCP/Azure", include: false },
 ];
@@ -49,16 +54,16 @@ function Stack({ skillData, name }: StackProps) {
 
     useEffect(() => {
         if (skillData.length) {
-            setValue(name, skillData); // RHF 초기값 설정
+            setValue(name, skillData);
         }
     }, [skillData, name, setValue]);
 
-    console.log(watch(name));
+    console.log(watch("skill"));
 
-    const toggleStack = (stack: string) => {
-        const newStacks = selectedStacks.includes(stack)
-            ? selectedStacks.filter((s: string) => s !== stack) // 제거
-            : [...selectedStacks, stack]; // 추가
+    const toggleStack = (skill: string) => {
+        const newStacks = selectedStacks.includes(skill)
+            ? selectedStacks.filter((s: string) => s !== skill)
+            : [...selectedStacks, skill];
 
         setValue(name, newStacks);
     };
