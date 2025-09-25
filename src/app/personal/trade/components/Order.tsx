@@ -96,7 +96,7 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
             <OrderValue>
               {activeTab === '매수' 
                 ? `${bunnyContext?.buyable_amount?.toLocaleString() || 0} C`
-                : `${bunnyContext?.sellable_quantity || 0} BNY`
+                : `${bunnyContext?.sellable_quantity || 0} C`
               }
             </OrderValue>
           </OrderRow>
@@ -154,7 +154,7 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
             <OrderLabel>주문 총액</OrderLabel>
             <OrderValue>
               {quantity && price 
-                ? `${(parseFloat(quantity) * parseFloat(price)).toLocaleString()} C`
+                ? `${Math.floor(parseFloat(quantity) * parseFloat(price) * 1.001).toLocaleString()} C`
                 : '0 C'
               }
             </OrderValue>
@@ -245,6 +245,7 @@ const OrderRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 0.5rem;
 `;
 
 const OrderLabel = styled.span`
@@ -264,16 +265,18 @@ const OrderInput = styled.div`
   align-items: center;
   background: #f0f8ff;
   border-radius: 0.5rem;
-  padding: 0.5rem;
-  min-width: 120px;
+  padding: 0.4rem;
+  min-width: 100px;
+  max-width: 110px;
   
   input {
     border: none;
     background: transparent;
     outline: none;
     flex: 1;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #333;
+    min-width: 0;
     
     &::placeholder {
       color: #999;
@@ -281,9 +284,11 @@ const OrderInput = styled.div`
   }
   
   span {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #666;
-    margin-left: 0.5rem;
+    margin-left: 0.2rem;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 `;
 
@@ -294,10 +299,10 @@ const PercentageButtons = styled.div`
 `;
 
 const PercentageButton = styled.button`
-  padding: 0.5rem 1rem;
+  padding: 0.3rem 0.6rem;
   border: none;
-  border-radius: 0.5rem;
-  font-size: 0.8rem;
+  border-radius: 0.4rem;
+  font-size: 0.7rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -319,6 +324,7 @@ const ActionButtons = styled.div`
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
+  margin-top: 1rem;
 `;
 
 const ButtonContainer = styled.div`

@@ -77,11 +77,28 @@ export const getBunnyTypeIcon = (bunny: Bunny) => {
 
 export const getBadgeIcon = (badge: string[]) => {
     if (badge.includes("KAKAO")) {
-        return "/images/personal/shared/kakao-badge.png";
+        return "/images/personal/home/kakao_sort.png";
     } else if (badge.includes("NAVER")) {
-        return "/images/personal/shared/naver-badge.png";
+        return "/images/personal/home/naver_sort.png";
     } else if (badge.includes("SHINHAN")) {
-        return "/images/personal/shared/shinhan-badge.png";
+        return "/images/personal/home/shinhan_sort.png";
     }
     return "";
 };
+
+export const getLinkIcon = (link: string) => {
+    if (link.includes("github")) {
+        return "/images/favicon/github.svg";
+    } else if (link.includes("instagram")) {
+        return "/images/favicon/instagram.svg";
+    } else if (link.includes("naver")) {
+        return "/images/favicon/naver.svg";
+    } else if (link.includes("youtube")) {
+        return "/images/favicon/youtube.svg";
+    } else if (link.includes("velog")) {
+        return "/images/favicon/velog.svg";
+    } else if(link.includes("tistory")) {
+        return "/images/favicon/tistory.svg";
+    }
+    return "/images/favicon/etc.svg";
+}

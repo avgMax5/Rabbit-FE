@@ -15,6 +15,7 @@ function Header() {
     const carrot = useUserStore((state) => state.user?.carrot);
     const user_id = useUserStore((state) => state.user?.user_id);
     const user = useUserStore((state) => state.user);
+    const user_role = useUserStore((state) => state.user?.role);
     const isLoading = useUserStore((state) => state.isLoading);
     const fetchUser = useUserStore((state) => state.fetchUser);
 
@@ -23,7 +24,8 @@ function Header() {
             fetchUser();
         }
     }, []);
-    console.log("carrot", carrot);
+
+    console.log("user_role", user_role);
 
     const getActive = () => {
         if (pathname === "/personal/home") return "home";
@@ -72,7 +74,6 @@ function Header() {
                         메인
                     </Home>
                 </Link>
-                {/* <Link href={`/personal/mypage/${user_id}`}> */}
                 <Link href={user_id ? `/personal/mypage/${user_id}` : "#"}>
                     <MyPage
                         $activate={activate === "mypage"}

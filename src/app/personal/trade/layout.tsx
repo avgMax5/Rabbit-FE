@@ -15,4 +15,5 @@ const TradeLayoutWrapper = styled.div`
   background-position: center;
   background-repeat: no-repeat;
   min-height: 100vh;
+  overflow: hidden;
 `;

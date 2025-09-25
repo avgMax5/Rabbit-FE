@@ -202,7 +202,7 @@ const Chart = ({
             </ButtonContainer>
             {isLoading ? (
                 <LoadingContainer>
-                    <LoadingText>차트 데이터를 불러오는 중...</LoadingText>
+                    <LoadingText>차트 로딩중 🐰</LoadingText>
                 </LoadingContainer>
             ) : (
                 <div

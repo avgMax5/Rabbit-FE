@@ -59,19 +59,20 @@ const PentagonChart = ({ data }: PentagonChartProps) => {
                 },
                 splitLine: {
                     lineStyle: {
-                        color: "rgba(65, 65, 65, 0.3)",
-                        width: 1,
+                        color: "rgba(65, 65, 65, 0.8)",
+                        width: 1.5,
                     },
                 },
                 splitArea: {
                     areaStyle: {
-                        color: ["rgba(65, 65, 65, 0.05)", "transparent"],
-                        opacity: 0.3,
+                        color: ["rgba(65, 65, 65, 0.1)", "transparent"],
+                        opacity: 0.5,
                     },
                 },
                 axisLine: {
                     lineStyle: {
-                        color: "rgba(65, 65, 65, 0.4)",
+                        color: "rgba(65, 65, 65, 0.9)",
+                        width: 2,
                     },
                 },
             },

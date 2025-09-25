@@ -13,8 +13,10 @@ export default function CurrentPrice({ bunny }: CurrentPriceProps) {
   const isPositive = bunny.fluctuation_rate ? bunny.fluctuation_rate >= 0 : true;
   return (
     <DashboardContent>
-      <MainValue>{price}</MainValue>
-      <StatusDot />
+      <PriceSection>
+        <MainValue>{price}</MainValue>
+        <StatusDot />
+      </PriceSection>
       <ChangeInfo>
         <ChangeValue $isPositive={isPositive}>{change}</ChangeValue>
         <ChangePercentage $isPositive={isPositive}>{changePercentage}</ChangePercentage>
@@ -34,19 +36,28 @@ const DashboardContent = styled.div`
   position: relative;
 `;
 
+const PriceSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+`;
+
 const MainValue = styled.div`
   font-size: 2rem;
   font-weight: bold;
   color: white;
-  margin-bottom: 0.5rem;
 `;
 
 const StatusDot = styled.div`
   width: 8px;
   height: 8px;
-  background-color: #FFD700;
+  background-color: #FEE2A7;
   border-radius: 50%;
-  margin-bottom: 0.5rem;
+  box-shadow: 
+    inset -0.56px -1.13px 2.81px #FFC54A,
+    inset 0.56px 0.56px 0.56px #FFFBF2,
+    1px 1px 2px #FEE2A7;
 `;
 
 const ChangeInfo = styled.div`
@@ -60,18 +71,18 @@ const ChangeInfo = styled.div`
 
 const ChangeValue = styled.span<{ $isPositive: boolean }>`
   font-size: 0.8rem;
-  color: ${({ $isPositive }) => $isPositive ? '#ff4444' : '#44ff44'};
+  color: ${({ $isPositive }) => $isPositive ? '#ff4444' : '#4444ff'};
   font-weight: bold;
 `;
 
 const ChangePercentage = styled.span<{ $isPositive: boolean }>`
   font-size: 0.8rem;
-  color: ${({ $isPositive }) => $isPositive ? '#ff4444' : '#44ff44'};
+  color: ${({ $isPositive }) => $isPositive ? '#ff4444' : '#4444ff'};
   font-weight: bold;
 `;
 
 const ChangeArrow = styled.span<{ $isPositive: boolean }>`
   font-size: 0.8rem;
-  color: ${({ $isPositive }) => $isPositive ? '#ff4444' : '#44ff44'};
+  color: ${({ $isPositive }) => $isPositive ? '#ff4444' : '#4444ff'};
   font-weight: bold;
 `;

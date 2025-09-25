@@ -23,6 +23,7 @@ export interface Bunny {
     balance: number;
     badges: string[];
     like_count: number;
+    ai_review: string;
     created_at: string;
 }
 
