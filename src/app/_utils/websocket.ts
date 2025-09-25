@@ -19,7 +19,7 @@ export interface OrderBookDiff {
   bidUpserts: Array<{ price: number; quantity: number }>;
   bidDeletes: Array<{ price: number; quantity: number }>;
   askUpserts: Array<{ price: number; quantity: number }>;
-  askDeletes: Array<{ price: number; quantity: number }>;
+  askDeletes: Array<{ price: number; quantity: number }>;   
   currentPrice: number;
 }
 
@@ -33,11 +33,11 @@ class WebSocketService {
     }
 
     return new Promise<void>((resolve, reject) => {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+      const API_BASE_URL = "http://localhost:8080/api";
       const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
       
       this.client = new Client({
-        webSocketFactory: () => new SockJS(`${API_BASE_URL}/ws/orderBook?token=${TEST_TOKEN}`, {
+        webSocketFactory: () => new SockJS(`${API_BASE_URL}/ws/orderBook`, {
           withCredentials: true
         } as any),
         connectHeaders: {
@@ -104,7 +104,9 @@ class WebSocketService {
     
     const subscription = this.client.subscribe(destination, (message) => {
       try {
+        console.log('백엔드에서 받은 원본 메시지:', message.body);
         const data = JSON.parse(message.body);
+        console.log('파싱된 데이터:', data);
         
         // 스냅샷인지 차이인지 구분
         if (data.bids && data.asks && !data.bidUpserts) {
@@ -123,7 +125,6 @@ class WebSocketService {
     return subscription;
   }
 
-  // 구독 해제
   unsubscribeFromOrderBook(bunnyName: string) {
     const destination = `/topic/bunnies/${bunnyName}/orderbook`;
     const subscription = this.subscriptions.get(destination);

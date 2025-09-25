@@ -2,8 +2,6 @@
 import React, { useEffect, useRef } from "react";
 import { Bunny } from "../../_store/bunnyStore";
 
-export type PentagonChartData = { value: number; name: string }[];
-
 interface PentagonChartProps {
     data: Bunny;
 }

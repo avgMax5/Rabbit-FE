@@ -25,10 +25,10 @@ export default function Trade() {
   const [chartLoading, setChartLoading] = useState(false);
 
   useEffect(() => {
-    if (bunnies.length === 0) {
+    if (!bunnies || bunnies.length === 0) {
       fetchBunnies();
     }
-  }, [bunnies.length, fetchBunnies]);
+  }, [bunnies, fetchBunnies]);
 
   useEffect(() => {
     if (bunnies.length > 0 && bunnyName) {
@@ -53,7 +53,6 @@ export default function Trade() {
     }
   };
 
-  // 기간 변경 핸들러
   const handlePeriodChange = (period: string) => {
     fetchChartData(period);
   };

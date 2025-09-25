@@ -1,21 +1,58 @@
 "use client";
 import styled from "styled-components";
 import { Heart } from "lucide-react";
+import { useState, useEffect } from "react";
 
 import { Bunny, useBunnyStore } from "../../../_store/bunnyStore";
+import { getBunnyContext, postLike, deleteLike } from "../../../_api/bunnyAPI";
 
 interface ProfileProps {
   bunny: Bunny;
 }
 
+interface BunnyContext {
+  is_liked: boolean;
+  buyable_amount: number;
+  sellable_quantity: number;
+}
+
 export default function Profile({ bunny }: ProfileProps) {
-  const { toggleLike, isLiked, isLikeLoading } = useBunnyStore();
-  
-  const isCurrentlyLiked = isLiked(bunny.bunny_name);
-  const isLoading = isLikeLoading(bunny.bunny_name);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { updateBunnyLikeCount, getBunnyLikeCount } = useBunnyStore();
+
+  useEffect(() => {
+    const fetchBunnyContext = async () => {
+      try {
+        const context = await getBunnyContext(bunny.bunny_name);
+        setIsLiked(context.is_liked);
+      } catch (error) {
+        console.error('Bunny context 가져오기 실패:', error);
+      }
+    };
+
+    fetchBunnyContext();
+  }, [bunny.bunny_name]);
 
   const handleHeartClick = async () => {
-    await toggleLike(bunny.bunny_name);
+    if (isLoading) return;
+    
+    setIsLoading(true);
+    try {
+      if (isLiked) {
+        await deleteLike(bunny.bunny_name);
+        setIsLiked(false);
+        updateBunnyLikeCount(bunny.bunny_name, -1); // bunnyStore에서 좋아요 수 감소
+      } else {
+        await postLike(bunny.bunny_name);
+        setIsLiked(true);
+        updateBunnyLikeCount(bunny.bunny_name, 1); // bunnyStore에서 좋아요 수 증가
+      }
+    } catch (error) {
+      console.error('좋아요 처리 중 오류 발생:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -23,10 +60,10 @@ export default function Profile({ bunny }: ProfileProps) {
       <TopCardContent>
         <ProfileSection>
           <HeartSection>
-            <HeartButton onClick={handleHeartClick} $isLiked={isCurrentlyLiked} disabled={isLoading}>
-              <Heart size={20} fill={isCurrentlyLiked ? "#ff4757" : "none"} color={isCurrentlyLiked ? "#ff4757" : "#333"} />
+            <HeartButton onClick={handleHeartClick} $isLiked={isLiked} disabled={isLoading}>
+              <Heart size={20} fill={isLiked ? "#ff4757" : "none"} color={isLiked ? "#ff4757" : "#333"} />
             </HeartButton>
-            <HeartCount>{bunny.like_count}</HeartCount>
+            <HeartCount>{getBunnyLikeCount(bunny.bunny_name)}</HeartCount>
           </HeartSection>
           <Avatar>
             <img src="/images/login/personalProfile.png" alt="Profile" />
