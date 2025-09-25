@@ -105,8 +105,8 @@ export const postLike = async (bunnyName: string) => {
     return response.data;
 }
 
-export const deleteLike = async (bunnyName: string, orderId: string) => {
-    const response = await axios.delete(`${API_BASE_URL}/bunnies/${bunnyName}/orders/${orderId}`, {
+export const deleteLike = async (bunnyName: string) => {
+    const response = await axios.delete(`${API_BASE_URL}/bunnies/${bunnyName}/like`, {
         withCredentials: true,
         headers: {
             'Content-Type': 'application/json',
@@ -173,3 +173,15 @@ export const getRabbitIndex = async () => {
         throw error;
     }
 };
+
+export const getBunnyContext = async (bunnyName: string) => {
+    const response = await axios.get(`${API_BASE_URL}/bunnies/${bunnyName}/user-context`, {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${TEST_TOKEN}`
+        }
+    });
+    return response.data;
+}
+

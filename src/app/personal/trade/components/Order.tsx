@@ -1,11 +1,11 @@
 "use client";
 import styled from "styled-components";
 import Button from '../../../_shared/components/Button';
-import { useState } from "react";
-import { Bunny } from "../../../_store/bunnyStore";
+import { useState, useEffect } from "react";
+import { Bunny, useBunnyStore } from "../../../_store/bunnyStore";
 import { useUserStore } from "../../../_store/userStore";
-import { validateOrderAmount, calculateTotalAmount, handlePriceIncrease } from '../utils/orderValidate';
-import { createOrder } from '../../../_api/bunnyAPI';
+import { validateOrderAmount, handlePriceIncrease } from '../utils/orderValidate';
+import { createOrder, getBunnyContext } from '../../../_api/bunnyAPI';
 
 interface OrderProps {
   activeTab: string;
@@ -13,11 +13,31 @@ interface OrderProps {
   bunny: Bunny;
 }
 
+interface BunnyContext {
+  is_liked: boolean;
+  buyable_amount: number;
+  sellable_quantity: number;
+}
+
 export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
   const [quantity, setQuantity] = useState('');
   const [price, setPrice] = useState('');
   const [showTooltip, setShowTooltip] = useState(false);
+  const [bunnyContext, setBunnyContext] = useState<BunnyContext | null>(null);
   const { user } = useUserStore();
+
+  useEffect(() => {
+    const fetchBunnyContext = async () => {
+      try {
+        const context = await getBunnyContext(bunny.bunny_name);
+        setBunnyContext(context);
+      } catch (error) {
+        console.error('Bunny context 가져오기 실패:', error);
+      }
+    };
+
+    fetchBunnyContext();
+  }, [bunny.bunny_name]);
 
 
   const onPriceIncrease = (percentage: number) => {
@@ -72,8 +92,13 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
       <TradeArea>
         <OrderForm>
           <OrderRow>
-            <OrderLabel>주문 가능</OrderLabel>
-            <OrderValue>{user?.carrot} BNY</OrderValue>
+            <OrderLabel>{activeTab === '매수' ? '주문 가능' : '매도 가능'}</OrderLabel>
+            <OrderValue>
+              {activeTab === '매수' 
+                ? `${bunnyContext?.buyable_amount?.toLocaleString() || 0} C`
+                : `${bunnyContext?.sellable_quantity || 0} BNY`
+              }
+            </OrderValue>
           </OrderRow>
           
           <OrderRow>
@@ -127,7 +152,12 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
           
           <OrderRow>
             <OrderLabel>주문 총액</OrderLabel>
-            <OrderValue>{calculateTotalAmount(quantity, price)} C</OrderValue>
+            <OrderValue>
+              {quantity && price 
+                ? `${(parseFloat(quantity) * parseFloat(price)).toLocaleString()} C`
+                : '0 C'
+              }
+            </OrderValue>
           </OrderRow>
           
           <ActionButtons>

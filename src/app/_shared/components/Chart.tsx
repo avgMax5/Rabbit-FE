@@ -49,7 +49,12 @@ const Chart = ({ chartData, isLoading = false, onPeriodChange }: ChartProps) => 
             };
         }
 
-        const dataList = chartData.chart_data_list.slice(-7);
+        // 날짜 순으로 정렬 (오래된 날짜부터 최신 날짜 순)
+        const sortedData = [...chartData.chart_data_list].sort((a, b) => 
+            new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+        
+        const dataList = sortedData.slice(-7);
         
         const xData = dataList.map(item => {
             const date = new Date(item.date);
