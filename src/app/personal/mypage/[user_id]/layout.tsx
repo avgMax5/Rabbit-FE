@@ -5,12 +5,39 @@ import Badges from "@/app/_shared/components/Badges";
 import LikeBox from "@/app/_shared/components/LikeBox";
 import Profile from "./_components/Profile";
 import WithAuth from "@/app/_components/WithAuth";
+import { useBunnyStore } from "@/app/_store/bunnyStore";
+import { useUserStore } from "@/app/_store/userStore";
 
 interface MyPageLayoutProps {
     children: React.ReactNode;
 }
 
+interface DataType {
+    like: number;
+    badges: string[];
+}
+
+const getBadgeAndLike = (bunnyName: string) => {
+    const bunny = useBunnyStore((state) =>
+        state.bunnies.find((b) => b.bunny_name === bunnyName)
+    );
+
+    if (!bunny)
+        return {
+            like: 0,
+            badges: [],
+        };
+
+    console.log(bunny, "bunny");
+
+    return { like: bunny.like_count, badges: bunny.badges };
+};
+
 function MyPageLayout({ children }: MyPageLayoutProps) {
+    const { user } = useUserStore();
+    const bunnyName = user?.my_bunny_name ?? "";
+
+    const data: DataType = getBadgeAndLike(bunnyName);
     return (
         <Wrapper>
             <Header />
@@ -20,8 +47,8 @@ function MyPageLayout({ children }: MyPageLayoutProps) {
                 </ProfileLogoSection>
                 <MainSection>
                     <TopContainer>
-                        <LikeBox />
-                        <Badges />
+                        <LikeBox like={data.like} />
+                        <Badges badges={data.badges} />
                     </TopContainer>
                     <Main>{children}</Main>
                 </MainSection>

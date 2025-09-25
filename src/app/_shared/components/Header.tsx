@@ -11,13 +11,13 @@ function Header() {
     const [mouseEnter, setMouseEnter] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const pathname = usePathname();
-    
+
     const carrot = useUserStore((state) => state.user?.carrot);
     const user_id = useUserStore((state) => state.user?.user_id);
     const user = useUserStore((state) => state.user);
     const isLoading = useUserStore((state) => state.isLoading);
     const fetchUser = useUserStore((state) => state.fetchUser);
-    
+
     useEffect(() => {
         if (!user && !isLoading) {
             fetchUser();
@@ -86,7 +86,7 @@ function Header() {
                         $activate={activate === "funding"}
                         $isLoaded={isLoaded}
                     >
-                        펀딩
+                        심사
                     </Funding>
                 </Link>
             </Navigate>
@@ -110,14 +110,14 @@ const NavButton = styled.div<{ $activate?: boolean; $isLoaded?: boolean }>`
     color: ${({ $activate }) => ($activate ? "#000" : "#454545")};
     background: ${({ $activate, $isLoaded }) => {
         if (!$isLoaded) return "none";
-        return $activate ? "#ffbb6e" : "none";
+        return $activate ? "#fbb1a0cd" : "none";
     }};
     box-shadow: ${({ $activate, $isLoaded }) => {
         if (!$isLoaded) return "none";
         return $activate
             ? `-2px -4px 10px 0 #d7654d inset, 
          6px 4px 10px 0 #ffd6cd inset,
-         4px 4px 10px 0 rgba(255, 181, 166, 0.64)`
+         1px 1px 4px 0 rgba(255, 181, 166, 0.64)`
             : "none";
     }};
 `;
@@ -132,7 +132,7 @@ const WhiteContainer = styled.div`
     border-radius: 18px;
     background: rgba(245, 245, 245, 0.68);
     box-shadow: 5px 5px 8px 0 rgba(130, 150, 176, 0.25),
-        4px 3px 4px 0 #f7f7f7 inset,
+        2px 3px 4px 0 #f7f7f7 inset,
         -4px -2px 15px 0 rgba(71, 87, 122, 0.67) inset;
 `;
 
@@ -151,7 +151,23 @@ const Div = styled.div`
     justify-content: center;
     font-family: var(--font-rockstar);
     font-weight: 800;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(6px);
+
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 1) 80%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: cover;
+
+    mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 1) 80%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    mask-repeat: no-repeat;
+    mask-size: cover;
 `;
 
 const Logo = styled.img`

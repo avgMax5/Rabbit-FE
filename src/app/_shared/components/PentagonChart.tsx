@@ -33,21 +33,27 @@ const PentagonChart = ({ data }: PentagonChartProps) => {
         if (!chartRef.current || !window.echarts) return;
 
         const myChart = window.echarts.init(chartRef.current);
-        const values = [data.growth, data.stability, data.popularity, data.value, data.reliability];
+        const values = [
+            data.growth,
+            data.stability,
+            data.popularity,
+            data.value,
+            data.reliability,
+        ];
 
         const option = {
             radar: {
                 indicator: [
-                    { name: "성장", max: 100 },
-                    { name: "안정성", max: 100 },
-                    { name: "인기도", max: 100 },
-                    { name: "가치", max: 100 },
-                    { name: "신뢰도", max: 100 },
+                    { name: "성장형", max: 100 },
+                    { name: "안정형", max: 100 },
+                    { name: "인기형", max: 100 },
+                    { name: "가치형", max: 100 },
+                    { name: "밸런스형", max: 100 },
                 ],
                 center: ["50%", "50%"],
                 radius: "65%",
                 axisName: {
-                    color: "#000000",
+                    color: "#ffffff",
                     fontSize: 12,
                     fontWeight: "bold",
                 },
@@ -97,7 +103,6 @@ const PentagonChart = ({ data }: PentagonChartProps) => {
 
         myChart.setOption(option);
 
-        // 반응형 처리
         const handleResize = () => {
             myChart.resize();
         };

@@ -12,7 +12,7 @@ import { useUserStore } from "@/app/_store/userStore";
 function MyPage() {
     const [activeTab, setActiveTab] = useState<
         "info" | "bunny" | "list" | "logout"
-    >("info");
+    >("bunny");
     const router = useRouter();
     const { authActions } = useUserStore();
 
@@ -30,7 +30,6 @@ function MyPage() {
         if (savedTab) setActiveTab(savedTab);
     }, []);
 
-    // activeTab 변경 시 localStorage에 저장
     useEffect(() => {
         localStorage.setItem("mypageTab", activeTab);
     }, [activeTab]);

@@ -27,13 +27,13 @@ const historyFieldList = [
 
 const fieldList = [
     { key: "bunny_name", label: "코인명" },
-    { key: "profit_loss", label: "평가손익" },
-    { key: "yield", label: "수익률" },
-    { key: "valuation_amount", label: "평가금액" },
+    { key: "profit_or_loss", label: "평가손익" },
+    { key: "return_rate", label: "수익률" },
+    { key: "valuation", label: "평가금액" },
     { key: "current_price", label: "현재가" },
-    { key: "purchase_price", label: "매입가" },
-    { key: "average_price", label: "평균단가" },
-    { key: "change_from_yesterday", label: "전일비" },
+    { key: "total_buy_amount", label: "매입가" },
+    { key: "avg_price", label: "평균단가" },
+    { key: "price_diff_from_yesterday", label: "전일비" },
 ];
 
 interface HistoryItem {
@@ -56,7 +56,7 @@ function MyBunnyList() {
     const position = bunnyStats?.position;
     const developer = bunnyStats?.developer_type;
     const coin = bunnyStats?.coin_type;
-    //이렇게 직접 넣으면 안됨..
+
     const posData = [
         { value: position?.frontend ?? 0, name: "프론트엔드" },
         { value: position?.backend ?? 0, name: "백엔드" },

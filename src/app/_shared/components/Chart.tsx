@@ -7,10 +7,16 @@ import { ChartData } from "../../_api/bunnyAPI";
 interface ChartProps {
     chartData: ChartData | null;
     isLoading?: boolean;
+    isMypage?: boolean;
     onPeriodChange?: (period: string) => void;
 }
 
-const Chart = ({ chartData, isLoading = false, onPeriodChange }: ChartProps) => {
+const Chart = ({
+    chartData,
+    isLoading = false,
+    isMypage = false,
+    onPeriodChange,
+}: ChartProps) => {
     const chartRef = useRef(null);
     const [activePeriod, setActivePeriod] = useState("일");
 
@@ -45,27 +51,30 @@ const Chart = ({ chartData, isLoading = false, onPeriodChange }: ChartProps) => 
         if (!chartData || !chartData.chart_data_list) {
             return {
                 xData: [],
-                yData: []
+                yData: [],
             };
         }
 
         // 날짜 순으로 정렬 (오래된 날짜부터 최신 날짜 순)
-        const sortedData = [...chartData.chart_data_list].sort((a, b) => 
-            new Date(a.date).getTime() - new Date(b.date).getTime()
+        const sortedData = [...chartData.chart_data_list].sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         );
-        
+
         const dataList = sortedData.slice(-7);
-        
-        const xData = dataList.map(item => {
+
+        const xData = dataList.map((item) => {
             const date = new Date(item.date);
-            return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+            return `${(date.getMonth() + 1).toString().padStart(2, "0")}/${date
+                .getDate()
+                .toString()
+                .padStart(2, "0")}`;
         });
-        
-        const yData = dataList.map(item => item.closing_price);
+
+        const yData = dataList.map((item) => item.closing_price);
 
         return {
             xData,
-            yData
+            yData,
         };
     };
 
@@ -107,8 +116,8 @@ const Chart = ({ chartData, isLoading = false, onPeriodChange }: ChartProps) => 
                 },
             },
             grid: {
-                left: "10%",
-                right: "10%",
+                left: isMypage ? "6%" : "10%",
+                right: isMypage ? "5%" : "10%",
                 top: "20%",
                 bottom: "15%",
                 containLabel: true,
@@ -171,7 +180,7 @@ const Chart = ({ chartData, isLoading = false, onPeriodChange }: ChartProps) => 
 
     return (
         <ChartContainer>
-            <ButtonContainer>
+            <ButtonContainer $isMypage={isMypage}>
                 <PeriodButton
                     $active={activePeriod === "일"}
                     onClick={() => handlePeriodChange("일")}
@@ -217,12 +226,12 @@ const ChartContainer = styled.div`
     position: relative;
 `;
 
-const ButtonContainer = styled.div`
+const ButtonContainer = styled.div<{ $isMypage: boolean }>`
     display: flex;
     gap: 0.5rem;
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: ${(props) => (props.$isMypage ? "-20px" : "0.5rem")};
+    right: ${(props) => (props.$isMypage ? "10px" : "0.5rem")};
     z-index: 10;
 `;
 

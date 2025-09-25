@@ -3,10 +3,20 @@ import styled from "styled-components";
 import HalfChart, { ChartData } from "../../_components/chart/HalfChart";
 
 interface ReliavilityProps {
-    data: ChartData;
+    reliability: number;
 }
 
-function Reliavility({ data }: ReliavilityProps) {
+const makeReliabilityData = (reliability: number) => {
+    const data = [
+        { value: reliability, name: "점수" },
+        { value: 100 - reliability, name: "남은 점수" },
+    ];
+
+    return data;
+};
+
+function Reliavility({ reliability }: ReliavilityProps) {
+    const data = makeReliabilityData(reliability);
     const score = data.find((item) => item.name === "점수")?.value;
 
     return (
@@ -14,18 +24,19 @@ function Reliavility({ data }: ReliavilityProps) {
             text="신뢰도"
             isNoti={true}
             notification="신뢰도 계산법"
-            color="#fff"
-            backgroundColor="#001035a4"
+            color="#e3e1e1f8"
+            backgroundColor="#010b20b6"
         >
             <Number>{score}</Number>
-            <HalfChart colors={["#f2ad23", "#8c8c8c"]} data={data} />
+            <HalfChart colors={["#f2ad23", "#f0ecec4e"]} data={data} />
         </GlassBox>
     );
 }
 
 const Number = styled.div`
     position: absolute;
-    left: 42%;
+    width: 100%;
+    justify-content: center;
     z-index: 998;
     font-family: var(--font-rockstar);
     font-size: 34px;

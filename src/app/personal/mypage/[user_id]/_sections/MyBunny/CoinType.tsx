@@ -1,7 +1,7 @@
 import GlassBox from "@/app/personal/mypage/[user_id]/_components/GlassBox";
 import styled from "styled-components";
 
-const getTypeInfo = (type: "A" | "B" | "C") => {
+const getTypeInfo = (type?: string) => {
     switch (type) {
         case "A":
             return {
@@ -27,11 +27,19 @@ const getTypeInfo = (type: "A" | "B" | "C") => {
                 liquidity: [true, true, true, true, false],
                 accessibility: "높음",
             };
+        default:
+            return {
+                title: "유형 미지정",
+                icon: "/images/icon/coin_default.png",
+                rarity: [false, false, false, false, false],
+                liquidity: [false, false, false, false, false],
+                accessibility: "정보 없음",
+            };
     }
 };
 
 interface CoinTypeProps {
-    type: "A" | "B" | "C";
+    type?: string;
 }
 
 function CoinType({ type }: CoinTypeProps) {
@@ -42,7 +50,7 @@ function CoinType({ type }: CoinTypeProps) {
             text="코인 유형"
             isNoti={true}
             notification="코인유형에 대한 설명"
-            color="#fff"
+            color="#e3e1e1f8"
             backgroundImage="/images/personal/shared/space.jpeg"
         >
             <TitleIconContainer>
@@ -76,6 +84,10 @@ function CoinType({ type }: CoinTypeProps) {
 }
 
 const TitleIconContainer = styled.div`
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #46464682;
     height: 5rem;
     padding: 1rem 0;
@@ -86,11 +98,13 @@ const TitleIconContainer = styled.div`
 `;
 
 const TypeIcon = styled.img`
-    width: 3rem;
+    width: 35px;
     height: auto;
 `;
 
 const TypeTitle = styled.h3`
+    position: absolute;
+    top: -19px;
     color: #fff;
     font-size: 22px;
     font-weight: 900;
@@ -102,7 +116,7 @@ const TypeTitle = styled.h3`
 const TypeAttributes = styled.div`
     width: 100%;
     margin: 0 auto;
-    margin-top: 3rem;
+    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     gap: 0.625rem;

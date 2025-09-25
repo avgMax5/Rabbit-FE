@@ -132,13 +132,6 @@ function MyInfo() {
 
     const onSubmit = async (data: any) => {
         console.log("저장하기 클릭 시 폼 전체 값:", data);
-        // let imageUrl = null;
-
-        // if (data.image && data.image[0]) {
-        //     imageUrl = await postUpload(data.image[0]);
-        // }
-
-        // const payload = { ...data, image: imageUrl };
 
         const uploadFile = async (file: File | string) => {
             if (file instanceof File) {

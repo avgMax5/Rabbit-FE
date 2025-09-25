@@ -19,10 +19,10 @@ function GlassBox({
     text,
     isNoti,
     notification,
-    color = "#000",
+    color = "#333232fe",
     backgroundColor = "#ffffff",
     backgroundImage = "none",
-    iconColor = "#ffffff",
+    iconColor = "#ffffffc2",
 }: GlassBoxProps) {
     const [mouseEnter, setMouseEnter] = useState(false);
     const getNotiModal = () => {
@@ -44,7 +44,7 @@ function GlassBox({
                         <Icon
                             icon="mingcute:question-fill"
                             color={iconColor}
-                            width="18px"
+                            width="13px"
                             onMouseEnter={getNotiModal}
                             onMouseLeave={handleMouseLeave}
                         />
@@ -70,13 +70,16 @@ const Div = styled.div<{ $backgroundColor: string; $backgroundImage: string }>`
     grid-template-rows: 1.6rem 1fr;
     text-align: center;
     border-radius: 12px;
-    background: ${({ $backgroundColor }) => $backgroundColor};
-    background-image: ${({ $backgroundImage }) => `url(${$backgroundImage})`};
+    background: ${({ $backgroundColor, $backgroundImage }) =>
+        $backgroundImage && $backgroundImage !== "none"
+            ? `url(${$backgroundImage})`
+            : $backgroundColor};
     background-repeat: no-repeat;
     background-size: cover;
 
     box-shadow: -2px -2px 4px 0 rgba(0, 0, 0, 0.14) inset,
         2px 2px 4px 0 rgba(231, 231, 231, 0.25) inset;
+
     filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
     transition: transform 0.3s ease;
     cursor: pointer;
@@ -102,7 +105,8 @@ const IconContainer = styled.div`
 `;
 
 const Title = styled.div<{ $color: string }>`
-    font-size: 16px;
+    margin-left: 3px;
+    font-size: 12px;
     font-weight: 800;
     color: ${({ $color }) => $color};
 `;

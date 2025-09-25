@@ -1,9 +1,6 @@
 import styled from "styled-components";
 
-function LikeBox() {
-    const likeData = {
-        like: 123,
-    };
+function LikeBox({ like }: { like: number }) {
     return (
         <Div>
             <HearImg>
@@ -19,7 +16,7 @@ function LikeBox() {
                     />
                 </svg>
             </HearImg>
-            <LikeCount>{likeData.like}</LikeCount>
+            <LikeCount>{like}</LikeCount>
         </Div>
     );
 }
