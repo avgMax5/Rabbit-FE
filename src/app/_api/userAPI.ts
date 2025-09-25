@@ -57,14 +57,14 @@ export interface MyInfo {
 export interface HoldBunny {
     bunny_id: string;
     bunny_name: string;
-    hold_quantity: string; //보유랑
-    profit_loss: string; //평가손익
-    profit_rate: string; //수익률
-    evaluation_amount: number; // 평가금액
+    hold_quantity: number; //보유랑
+    profit_or_loss: number; //평가손익
+    return_rate: number; //수익률
+    valuation: number; // 평가금액
     current_price: number; // 현재가
-    purchase_price: number; // 매입가
-    average_price: number; // 평균단가
-    change_from_yesterday: number; // 전일비
+    total_buy_amount: number; // 매입가
+    avg_price: number; // 평균단가
+    price_diff_from_yesterday: number; // 전일비
 }
 
 export interface MatchBunny {
@@ -141,7 +141,7 @@ export const getInfo = async () => {
             },
             withCredentials: true,
         });
-        
+
         if (!response.data || !response.data.user_id) {
             throw new Error("유효한 사용자 데이터가 아닙니다.");
         }
@@ -198,12 +198,10 @@ export const getHoldBunnies = async () => {
                 withCredentials: true,
             }
         );
-        
+
         if (!response.data || !response.data.hold_bunnies) {
             return []; // 받은 데이터에 hold_bunnies가 없을 때 빈 배열 반환
         }
-
-        console.log(response.data);
 
         return response.data;
     } catch (error) {
@@ -228,8 +226,6 @@ export const getHoldBunniesStats = async () => {
                 withCredentials: true,
             }
         );
-        console.log(response.data);
-
 
         return response.data;
     } catch (error) {
@@ -251,7 +247,6 @@ export const getOrders = async () => {
             },
             withCredentials: true,
         });
-        console.log(response.data);
 
         return response.data;
     } catch (error) {
@@ -276,7 +271,6 @@ export const getMatches = async () => {
                 withCredentials: true,
             }
         );
-        console.log(response.data);
 
         return response.data;
     } catch (error) {

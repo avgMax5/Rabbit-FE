@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
 
-export interface Order{
+export interface Order {
     order_type: string;
     order_price: string;
     order_quantity: string;
@@ -28,93 +28,120 @@ export interface OrderBookData {
 }
 
 export const getOrder = async (bunnyName: string): Promise<OrderBookData> => {
-    const response = await axios.get(`${API_BASE_URL}/bunnies/${bunnyName}/orderbook`, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
+    const response = await axios.get(
+        `${API_BASE_URL}/bunnies/${bunnyName}/orderbook`,
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         }
-    });
+    );
     return response.data;
-}
+};
 
 export const getOrderList = async (bunnyName: string) => {
-    const response = await axios.get(`${API_BASE_URL}/bunnies/${bunnyName}/mylist`, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
+    const response = await axios.get(
+        `${API_BASE_URL}/bunnies/${bunnyName}/mylist`,
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         }
-    });
+    );
     return response.data;
-}
+};
 
 export const postOrder = async (bunnyName: string, order: Order) => {
-    const response = await axios.post(`${API_BASE_URL}/${bunnyName}/order`, order, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
+    const response = await axios.post(
+        `${API_BASE_URL}/${bunnyName}/order`,
+        order,
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         }
-    });
+    );
     return response.data;
-}
+};
 
-export const createOrder = async (bunnyName: string, orderRequest: OrderRequest) => {
-    const response = await axios.post(`${API_BASE_URL}/bunnies/${bunnyName}/orders`, orderRequest, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
+export const createOrder = async (
+    bunnyName: string,
+    orderRequest: OrderRequest
+) => {
+    const response = await axios.post(
+        `${API_BASE_URL}/bunnies/${bunnyName}/orders`,
+        orderRequest,
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         }
-    });
+    );
     return response.data;
-}
+};
 
 export const cancelOrder = async (bunnyName: string, orderId: string) => {
-    const response = await axios.delete(`${API_BASE_URL}/bunnies/${bunnyName}/orders/${orderId}`, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
+    const response = await axios.delete(
+        `${API_BASE_URL}/bunnies/${bunnyName}/orders/${orderId}`,
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         }
-    });
+    );
     return response.data;
-}
+};
 
 export const bunnyChart = async (bunnyName: string) => {
     const response = await axios.get(`${API_BASE_URL}/${bunnyName}/chart`, {
         withCredentials: true,
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
-        }
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${TEST_TOKEN}`,
+        },
     });
     console.log(response.data);
     return response.data;
-}
+};
 
 export const postLike = async (bunnyName: string) => {
-    const response = await axios.post(`${API_BASE_URL}/bunnies/${bunnyName}/like`, {}, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
+    const response = await axios.post(
+        `${API_BASE_URL}/bunnies/${bunnyName}/like`,
+        {},
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         }
-    });
+    );
     return response.data;
-}
+};
 
 export const deleteLike = async (bunnyName: string) => {
-    const response = await axios.delete(`${API_BASE_URL}/bunnies/${bunnyName}/like`, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
+    const response = await axios.delete(
+        `${API_BASE_URL}/bunnies/${bunnyName}/like`,
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         }
-    });
+    );
     return response.data;
-}
+};
 
 export interface ChartDataItem {
     date: string;
@@ -132,17 +159,59 @@ export interface ChartData {
     chart_data_list: ChartDataItem[];
 }
 
-export const getChart = async (bunnyName: string, interval: string): Promise<ChartData> => {
-    const response = await axios.get(`${API_BASE_URL}/bunnies/${bunnyName}/chart?interval=${interval}`, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
-        }
-    });
-    return response.data;
+export interface BunnyInfo {
+    bunny_type: string;
+    badges: string[];
+    reliability: number;
+    market_cap: number;
+    current_price: number;
+    ai_feedback: string;
+    like_count: number;
 }
 
+export interface BunnyHolder {
+    developer_type: string;
+    percentage: number;
+    count: number;
+}
+
+export const getChart = async (
+    bunnyName: string,
+    interval: string
+): Promise<ChartData> => {
+    const response = await axios.get(
+        `${API_BASE_URL}/bunnies/${bunnyName}/chart?interval=${interval}`,
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
+        }
+    );
+    return response.data;
+};
+
+export const getBunnyMe = async () => {
+    if (!API_BASE_URL) {
+        throw new Error("API_BASE_URL이 설정되지 않았습니다.");
+    }
+    try {
+        const response = await axios.get(`${API_BASE_URL}/bunnies/me`, {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
+        });
+        console.log("bunny/me get 성공", response.data);
+
+        return response.data;
+    } catch (error) {
+        console.error("bunny me를 가져오지 못 했습니다", error);
+        throw error;
+    }
+};
 
 export const getRabbitIndex = async () => {
     try {
@@ -160,7 +229,7 @@ export const getRabbitIndex = async () => {
                 withCredentials: true,
             }
         );
-        
+
         if (!response.data || !response.data.rabbit_index) {
             return 0;
         }
@@ -175,13 +244,15 @@ export const getRabbitIndex = async () => {
 };
 
 export const getBunnyContext = async (bunnyName: string) => {
-    const response = await axios.get(`${API_BASE_URL}/bunnies/${bunnyName}/user-context`, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
+    const response = await axios.get(
+        `${API_BASE_URL}/bunnies/${bunnyName}/user-context`,
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         }
-    });
+    );
     return response.data;
-}
-
+};

@@ -1,11 +1,13 @@
 import styled from "styled-components";
 
-function Badges() {
+function Badges({ badges }: { badges: string[] }) {
     return (
         <Div>
-            <img src="/images/personal/shared/kakao-badge.png" />
-            <img src="/images/personal/shared/naver-badge.png" />
-            <img src="/images/personal/shared/shinhan-badge.png" />
+            {badges.map((b, i) => (
+                <img
+                    src={`/images/personal/shared/${b.toLowerCase}-badge.png`}
+                />
+            ))}
         </Div>
     );
 }
