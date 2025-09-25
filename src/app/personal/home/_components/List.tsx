@@ -1,7 +1,7 @@
 "use client";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-import { BadgeData } from "../_constants/constants";
+import { BadgeData, PositionData, BunnyFundingTypeData, BunnyTraitsData } from "../_constants/constants";
 
 interface ListProps<T> {
     fieldList: { key: string; label: string }[];
@@ -21,48 +21,74 @@ function List<T>({ fieldList, dataList, backgroundColor }: ListProps<T>) {
                 ))}
             </FieldContainer>
             <RowContainer>
-                {dataList.map((data, i) => {
+                {(!dataList || dataList.length === 0) ? (
+                    <EmptyRowMessage>로켓에 탑승한 버니가 없어요</EmptyRowMessage>
+                ) : 
+                dataList.map((data, i) => {
                     const RowComponent = i % 2 === 0 ? Erow : Orow;
                     return (
-                    <RowComponent 
-                        key={i} 
-                        $fieldNum={fieldList.length}
-                        onClick={() =>
-                            router.push(
-                                `/personal/trade/${(data as Record<string, any>).bunny_name}`
-                            )
-                        }>
-                        {fieldList.map((field) => {
-                        const value = (data as Record<string, any>)[field.key];
-                        return (
-                            <span key={field.key}>
-                            {Array.isArray(value) ? (
-                                value.length > 0 ? (
-                                value.map((name: string) => {
-                                    const badge = BadgeData.find((b) => b.name === name);
-                                    return badge ? (
-                                         <SmallBadge key={badge.id} src={badge.src} alt={badge.name} />
-                                    ) : (
-                                        <span key={name}>{name}</span>
-                                    );
-                                })
-                                ) : (
-                                "-"
+                        <RowComponent 
+                            key={i} 
+                            $fieldNum={fieldList.length}
+                            onClick={() =>
+                                router.push(
+                                    `/personal/trade/${(data as Record<string, any>).bunny_name}`
                                 )
-                            ) : (
-                                value
-                            )}
-                            </span>
-
-                        );
-                        })}
-                    </RowComponent>
+                            }>
+                            {fieldList.map((field) => {
+                            const value = (data as Record<string, any>)[field.key];
+                            return (
+                                <div key={field.key}>
+                                    {renderValue(field.key, value, data as Record<string, any>)}
+                                </div>
+                            );
+                            })}
+                        </RowComponent>
                     );
                 })}
             </RowContainer>
         </Div>
     );
 }
+
+function renderValue(fieldKey: string, value: any, rowData: Record<string, any>) {
+    if (Array.isArray(value)) {
+        if (value.length === 0) return "-";
+
+        return value.map((name: string) => {
+            const badge = BadgeData.find((b) => b.name === name);
+            return badge ? (
+                <SmallBadge key={badge.id} src={badge.src} alt={badge.name} />
+            ) : (
+                <span key={name}>{name}</span>
+            );
+        });
+    }
+
+    if (fieldKey === "fluctuation_rate" && typeof value === "number") {
+        const color = value > 0 ? "red" : value < 0 ? "blue" : "black";
+        return <span style={{ color }}>{value}%</span>;
+    }
+
+    if (fieldKey === "current_price") {
+        const rate = rowData["fluctuation_rate"];
+        const color = rate > 0 ? "red" : rate < 0 ? "blue" : "black";
+        return <span style={{ color }}>{Number(value).toLocaleString()}</span>;
+    }
+
+    const position = PositionData.find((b) => b.name === value);
+    if (position) {
+        return <span key={position.id}>{position.alias}</span>;
+    }
+
+    const devType = BunnyTraitsData.find((b) => b.name === value);
+    if (devType) {
+        return <span key={devType.id}>{devType.alias}</span>;
+    }
+
+    return <span>{value ?? "-"}</span>;
+}
+
 
 const Row = styled.div<{ $fieldNum: number }>`
     width: 100%;
@@ -72,15 +98,18 @@ const Row = styled.div<{ $fieldNum: number }>`
     align-items: center;
     text-align: center;
     flex-shrink: 0;
-    padding: 0.7rem 0rem;
     border-radius: 3px;
 
     font-family: var(--font-nanum-squar);
     font-weight: 600;
     font-size: 12px;
 
-    & span {
+    & div {
+        display: flex;
+        justify-content: center;
         border-right: 1px solid rgba(148, 163, 184, 0.2);
+        align-items: center;
+        gap: 3px;
 
         &:last-child {
             border-right: none;
@@ -90,10 +119,8 @@ const Row = styled.div<{ $fieldNum: number }>`
 
 const Div = styled.div<{ $backgroundColor: string }>`
     display: grid;
-    // grid-template-rows: 2.2rem 60%;
     gap: 0.5rem;
     width: 100%;
-    // height: 25rem;
     align-items: center;
     flex-shrink: 0;
     border-radius: 12px;
@@ -108,7 +135,7 @@ const FieldContainer = styled.div<{ $fieldNum: number }>`
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1.2fr);
+    grid-template-columns: repeat(${(props) => props.$fieldNum}, 1fr);
     align-items: center;
     text-align: center;
     flex-shrink: 0;
@@ -133,6 +160,7 @@ const FieldContainer = styled.div<{ $fieldNum: number }>`
 
         &:last-child {
             border-right: none;
+            padding-right: 0.8rem;
         }
     }
 `;
@@ -143,11 +171,11 @@ const RowContainer = styled.div`
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    max-height: 800px; 
     gap: 0.4rem;
     padding: 0.5rem;
 
     /* Custom scrollbar */
-    /* 스크롤바 안보이게 */
     -ms-overflow-style: none; /* IE, Edge */
     scrollbar-width: none; /* Firefox */
 
@@ -193,11 +221,18 @@ const Orow = styled(Row)`
 `;
 
 const SmallBadge = styled.img`
-  width: 20px;   /* row에서 잘 보일 크기 */
+  width: 20px;
   height: 20px;
-  border-radius: 4px;  /* 살짝 둥글게 */
-  object-fit: cover;   /* 이미지가 찌그러지지 않도록 */
+  object-fit: cover; 
 `;
 
+const EmptyRowMessage = styled.div`
+  width: 100%;
+  padding: 1rem 0;
+  text-align: center;
+  color: #94a3b8; /* 연한 회색 */
+  font-size: 14px;
+  font-style: italic;
+`;
 
 export default List;

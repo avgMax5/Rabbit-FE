@@ -9,9 +9,10 @@ interface TitleProps {
     isNoti: boolean;
     notification?: string;
     icon: string;
+    time: boolean
 }
 
-function Title({ content, isNoti, notification, icon }: TitleProps) {
+function Title({ content, isNoti, notification, icon, time }: TitleProps) {
     const [mouseEnter, setMouseEnter] = useState(false);
     const getNotiModal = () => {
         setMouseEnter(true);
@@ -45,7 +46,7 @@ function Title({ content, isNoti, notification, icon }: TitleProps) {
                     </IconContainer>
                 )}
             </div>
-            <Time>{formatted}</Time>
+            <Time>{time ? formatted : ""}</Time>
         </Container>
     );
 }

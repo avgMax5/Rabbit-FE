@@ -15,24 +15,26 @@ export interface DeveloperTypeData {
     money: number;
 }
 
+const Top5DeveloperTypeData: DeveloperTypeData[] = [
+    {
+        id: 0,
+        coin_name: "min1",
+        money: 20000,
+    },
+    {
+        id: 1,
+        coin_name: "min2",
+        money: 21000,
+    },
+    {
+        id: 2,
+        coin_name: "min3",
+        money: 22000,
+    },
+];
+
 function Top5({ standard }: Top5Props) {
-    const Top5DeveloperTypeData: DeveloperTypeData[] = [
-        {
-            id: 0,
-            coin_name: "min1",
-            money: 20000,
-        },
-        {
-            id: 1,
-            coin_name: "min2",
-            money: 21000,
-        },
-        {
-            id: 2,
-            coin_name: "min3",
-            money: 22000,
-        },
-    ];
+   
     return (
         <Div>
             <Standard>{standard}</Standard>
@@ -54,7 +56,7 @@ function Top5({ standard }: Top5Props) {
                                     <CoinName>{data.coin_name}</CoinName>
                                 </div>
                                 <div>
-                                    <Carrot>{data.money}</Carrot>
+                                    <Carrot>{data.money.toLocaleString()}</Carrot>
                                     <CarrotImg
                                         src="/images/personal/home/carrot.png"
                                         alt="당근"
