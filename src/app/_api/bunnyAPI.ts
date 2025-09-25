@@ -25,21 +25,23 @@ export interface OrderBookData {
     bids: OrderBookItem[];
     asks: OrderBookItem[];
     currentPrice: number;
+    serverTime: number;
 }
 
-export const getOrder = async (bunnyName: string): Promise<OrderBookData> => {
-    const response = await axios.get(
-        `${API_BASE_URL}/bunnies/${bunnyName}/orderbook`,
-        {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${TEST_TOKEN}`,
-            },
+// REST API로 호가창 스냅샷 가져오기
+export const getOrderBookSnapshot = async (bunnyName: string): Promise<OrderBookData> => {
+    const response = await axios.get(`${API_BASE_URL}/bunnies/${bunnyName}/orderbook`, {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${TEST_TOKEN}`
         }
-    );
+    });
     return response.data;
 };
+
+// 기존 함수명 유지 (하위 호환성)
+export const getOrder = getOrderBookSnapshot;
 
 export const getOrderList = async (bunnyName: string) => {
     const response = await axios.get(

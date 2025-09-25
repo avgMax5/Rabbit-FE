@@ -13,6 +13,7 @@ import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useBunnyStore, Bunny } from "../../../_store/bunnyStore";
 import { getChart, ChartData } from "../../../_api/bunnyAPI";
+import { Cctv } from "lucide-react";
 
 
 
@@ -36,7 +37,6 @@ export default function Trade() {
       setCurrentBunny(bunny || null);
     }
   }, [bunnies, bunnyName, getBunnyByName]);
-
   // 차트 데이터 가져오기
   const fetchChartData = async (period: string = "일") => {
     if (!currentBunny?.bunny_name) return;
@@ -103,6 +103,9 @@ export default function Trade() {
           <RightCard>
             <MainContent>
               <LeftSection>
+                <NewTopBlock>
+                  {currentBunny.ai_review}
+                </NewTopBlock>
                 <TopRow>
                   <ChartTopLeftBlock>
                     <PentagonChart data={currentBunny} />
@@ -137,11 +140,11 @@ const Container = styled.div`
 const LayoutGrid = styled.div`
   display: grid;
   grid-template-columns: 22rem 1fr;
-  grid-template-rows: 12.5rem 9.375rem 23.75rem;
+  grid-template-rows: auto auto 1fr;
   gap: 1.25rem;
   max-width: 90rem;
   margin: 0 auto;
-  height: 48rem;
+  min-height: 48rem;
 `;
 
 const RightCard = styled.div`
@@ -165,21 +168,33 @@ const LeftSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  flex: 0.7;
+  flex: 1;
+  min-width: 0;
+`;
+
+const NewTopBlock = styled.div`
+  background: rgba(3, 29, 49, 0.43);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
 `;
 
 const TopRow = styled.div`
   display: flex;
   gap: 1rem;
-  flex: 1;
+  flex: 0 0 150px;
 `;
 
 const ChartTopLeftBlock = styled.div`
   background: rgba(3, 29, 49, 0.43);
   border-radius: 0.75rem;
   padding: 1rem;
-  flex: 2;
-  min-height: 300px;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -189,7 +204,7 @@ const TopRightBlock = styled.div`
   background: rgba(3, 29, 49, 0.43);
   border-radius: 0.75rem;
   padding: 1rem;
-  flex: 2;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,14 +214,14 @@ const ChartBottomLeftBlock = styled.div`
   background: rgba(234, 234, 234, 0.14);
   border-radius: 0.75rem;
   padding: 1rem;
-  flex: 2;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
 const TopLeftBlock = styled.div`
-  background: rgba(3, 29, 49, 0.43);
+  background-color: rgba(184, 209, 241, 0.17);
   border-radius: 0.75rem;
   padding: 1rem;
   grid-column: 1;
@@ -244,6 +259,7 @@ const RightSection = styled.div`
   flex-direction: column;
   gap: 1rem;
   flex: 0.4;
+  min-width: 0;
 `;
 
 

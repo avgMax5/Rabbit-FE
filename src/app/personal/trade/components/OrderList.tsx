@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Bunny } from "../../../_store/bunnyStore";
-import { getOrder, OrderBookData, cancelOrder, getOrderList } from "../../../_api/bunnyAPI";
+import { getOrderBookSnapshot, OrderBookData, cancelOrder, getOrderList } from "../../../_api/bunnyAPI";
 import { webSocketService, OrderBookSnapshot, OrderBookDiff } from "../../../_utils/websocket";
 
 interface OrderItem {
@@ -85,7 +85,8 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
       bunnyName: snapshot.bunnyName,
       bids: snapshot.bids,
       asks: snapshot.asks,
-      currentPrice: snapshot.currentPrice
+      currentPrice: snapshot.currentPrice,
+      serverTime: snapshot.serverTime
     });
   };
 
@@ -136,7 +137,8 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
         ...prevData,
         bids: newBids,
         asks: newAsks,
-        currentPrice: diff.currentPrice
+        currentPrice: diff.currentPrice,
+        serverTime: diff.serverTime
       };
     });
   };
@@ -170,18 +172,25 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
   const fetchOrderBook = async () => {
     setIsLoading(true);
     try {
-      // WebSocket이 연결되어 있으면 WebSocket 사용, 아니면 HTTP API 사용
       if (wsConnected.current) {
-        // WebSocket으로 호가창 구독 및 스냅샷 요청
+        // 1. REST API로 초기 스냅샷 가져오기
+        console.log('REST API로 스냅샷 요청:', bunny.bunny_name);
+        const snapshot = await getOrderBookSnapshot(bunny.bunny_name);
+        console.log('스냅샷 수신:', snapshot);
+        
+        // 2. 스냅샷으로 상태 세팅
+        setOrderBookData(snapshot);
+        
+        // 3. WebSocket 구독 시작 (이미 연결되어 있음)
+        console.log('WebSocket 구독 시작:', bunny.bunny_name);
         webSocketService.subscribeToOrderBook(
           bunny.bunny_name,
           handleOrderBookSnapshot,
           handleOrderBookDiff
         );
-        webSocketService.requestOrderBookSnapshot(bunny.bunny_name);
       } else {
         // HTTP API로 폴백
-        const data = await getOrder(bunny.bunny_name);
+        const data = await getOrderBookSnapshot(bunny.bunny_name);
         setOrderBookData(data);
       }
     } catch (error) {
@@ -449,7 +458,7 @@ const OrderItemsContainer = styled.div`
   overflow-y: auto;
   gap: 0.5rem;
   padding: 0.5rem 0;
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(252, 252, 252, 0.25);
   &::-webkit-scrollbar {
     width: 6px;
   }
@@ -472,7 +481,7 @@ const OrderItem = styled.div`
   transition: background-color 0.2s ease;
   
   &:hover {
-    background: rgba(252, 252, 252, 0.5);
+    backgroun-color: rgba(252, 252, 252, 0.5);
   }
 `;
 
@@ -525,7 +534,7 @@ const OrderHistoryContainer = styled.div`
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(252, 252, 252, 0.25);
   
   &::-webkit-scrollbar {
     width: 6px;
@@ -546,7 +555,7 @@ const OrderHistoryHeader = styled.div`
   grid-template-columns: 1fr 1fr 0.8fr 1fr 1.2fr;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: rgba(252, 252, 252, 0.4);
+  background-color: rgba(252, 252, 252, 0.4);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 0.8rem;
   font-weight: 600;

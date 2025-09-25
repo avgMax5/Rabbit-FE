@@ -1,7 +1,7 @@
 "use client";
 import styled from "styled-components";
 import { Bunny } from "../../../_store/bunnyStore";
-import { bunnyTypeValidate, positionValidate, developerTypeValidate, getPositionIcon, getDeveloperTypeIcon, getBunnyTypeIcon } from "../utils/bunnyValidation";
+import { bunnyTypeValidate, positionValidate, developerTypeValidate, getPositionIcon, getDeveloperTypeIcon, getBunnyTypeIcon } from "../utils/bunnyInfoMapper";
 
 interface BunnyTypeProps {
   bunny: Bunny;

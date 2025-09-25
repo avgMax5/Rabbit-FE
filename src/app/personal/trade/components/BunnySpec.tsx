@@ -93,11 +93,16 @@ export default function BunnySpec({ bunny }: BunnySpecProps) {
           <SectionTitle>학력</SectionTitle>
         </SectionHeader>
         <SectionContent>
-          {spec.education.map((edu) => (
-            <EducationItem key={edu.education_id}>
-              {edu.school_name} {edu.major} {formatDateRange(edu.start_date, edu.end_date)}
-            </EducationItem>
-          ))}
+          {spec.education && spec.education.length > 0 ? (
+            spec.education.map((edu) => (
+              <EducationItem key={edu.education_id}>
+                <EducationInfo>{edu.school_name} {edu.major}</EducationInfo>
+                <EducationDate>{formatDateRange(edu.start_date, edu.end_date)}</EducationDate>
+              </EducationItem>
+            ))
+          ) : (
+            <NoDataMessage>학력 정보가 없습니다🐰</NoDataMessage>
+          )}
         </SectionContent>
       </EducationSection>
 
@@ -109,11 +114,15 @@ export default function BunnySpec({ bunny }: BunnySpecProps) {
           <SectionTitle>경력</SectionTitle>
         </SectionHeader>
         <SectionContent>
-          {spec.career.map((career) => (
-            <ExperienceItem key={career.career_id}>
-              {career.company_name} {career.position} {formatDateRange(career.start_date, career.end_date)}
-            </ExperienceItem>
-          ))}
+          {spec.career && spec.career.length > 0 ? (
+            spec.career.map((career) => (
+              <ExperienceItem key={career.career_id}>
+                {career.company_name} {career.position} {formatDateRange(career.start_date, career.end_date)}
+              </ExperienceItem>
+            ))
+          ) : (
+            <NoDataMessage>경력 정보가 없습니다 🐰</NoDataMessage>
+          )}
         </SectionContent>
       </ExperienceSection>
 
@@ -125,19 +134,28 @@ export default function BunnySpec({ bunny }: BunnySpecProps) {
           <SectionTitle>자격증</SectionTitle>
         </SectionHeader>
         <CertificationContent>
-          {spec.certification.map((cert) => (
-            <CertificationItem key={cert.certification_id}>
-              {cert.name} ({cert.ca}) {formatDate(cert.cdate)}
-            </CertificationItem>
-          ))}
+          {spec.certification && spec.certification.length > 0 ? (
+            spec.certification.map((cert) => (
+              <CertificationItem key={cert.certification_id}>
+                <CertificationInfo>{cert.name} ({cert.ca})</CertificationInfo>
+                <CertificationDate>{formatDate(cert.cdate)}</CertificationDate>
+              </CertificationItem>
+            ))
+          ) : (
+            <NoDataMessage>자격증 정보가 없습니다 🐰</NoDataMessage>
+          )}  
         </CertificationContent>
       </CertificationSection>
 
       <SkillsSection>
         <SkillsTags>
-          {spec.skill.map((skill, index) => (
-            <SkillTag key={index}>#{skill}</SkillTag>
-          ))}
+          {spec.skill && spec.skill.length > 0 ? (
+            spec.skill.map((skill, index) => (
+              <SkillTag key={index}>#{skill}</SkillTag>
+            ))
+          ) : (
+            <NoDataMessage>기술스택 정보가 없습니다 🐰</NoDataMessage>
+          )}
         </SkillsTags>
       </SkillsSection>
     </>
@@ -200,8 +218,22 @@ const SectionContent = styled.div`
 `;
 
 const EducationItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-bottom: 0.3rem;
+`;
+
+const EducationInfo = styled.div`
   font-size: 0.75rem;
   color: #fff;
+  line-height: 1.2;
+  font-weight: 500;
+`;
+
+const EducationDate = styled.div`
+  font-size: 0.7rem;
+  color: #ccc;
   line-height: 1.2;
 `;
 
@@ -212,7 +244,8 @@ const ExperienceItem = styled.div`
 
 const CertificationContent = styled.div`
   border-radius: 0.5rem;
-  padding: 0.5rem;
+  padding: 0.2rem;
+  margin-bottom: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
@@ -221,12 +254,26 @@ const CertificationContent = styled.div`
 `;
 
 const CertificationItem = styled.div`
-  font-size: 0.75rem;
-  color: #fff;
-  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-bottom: 0.3rem;
   background-color: rgba(197, 197, 197, 0.25);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
+`;
+
+const CertificationInfo = styled.div`
+  font-size: 0.75rem;
+  color: #fff;
+  line-height: 1.2;
+  font-weight: 500;
+`;
+
+const CertificationDate = styled.div`
+  font-size: 0.7rem;
+  color: #ccc;
+  line-height: 1.2;
 `;
 
 const SkillsTags = styled.div`
@@ -242,4 +289,10 @@ const SkillTag = styled.span`
   padding: 0.2rem 0.4rem;
   border-radius: 1rem;
   font-weight: bold;
+`;
+
+const NoDataMessage = styled.div`
+  font-size: 0.75rem;
+  color: #fff;
+  padding: 0.5rem;
 `;

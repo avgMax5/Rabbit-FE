@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 
 import { Bunny, useBunnyStore } from "../../../_store/bunnyStore";
 import { getBunnyContext, postLike, deleteLike } from "../../../_api/bunnyAPI";
+import { getBadgeIcon, getLinkIcon } from "../utils/bunnyInfoMapper";
 
 interface ProfileProps {
   bunny: Bunny;
@@ -65,6 +66,21 @@ export default function Profile({ bunny }: ProfileProps) {
             </HeartButton>
             <HeartCount>{getBunnyLikeCount(bunny.bunny_name)}</HeartCount>
           </HeartSection>
+          
+          {/* 뱃지 섹션 추가 */}
+          {bunny.badges && bunny.badges.length > 0 && (
+            <BadgeSection>
+              {bunny.badges.map((badge, index) => {
+                const badgeIcon = getBadgeIcon([badge]);
+                return badgeIcon ? (
+                  <Badge key={index}>
+                    <img src={badgeIcon} alt={badge} />
+                  </Badge>
+                ) : null;
+              })}
+            </BadgeSection>
+          )}
+          
           <Avatar>
             <img src="/images/login/personalProfile.png" alt="Profile" />
           </Avatar>
@@ -73,16 +89,16 @@ export default function Profile({ bunny }: ProfileProps) {
             <KoreanName>{bunny.user_name}</KoreanName>
             <SocialLinks>
               <SocialLink>
-                <img src="/images/login/github.png" alt="GitHub" />
+                <img src={getLinkIcon("github")} alt="GitHub" />
               </SocialLink>
               <SocialLink>
-                <img src="/images/personal/publish/youtube.png" alt="YouTube" />
+                <img src={getLinkIcon("youtube")} alt="YouTube" />
               </SocialLink>
               <SocialLink>
-                <img src="/images/personal/publish/instagram.png" alt="Instagram" />
+                <img src={getLinkIcon("instagram")} alt="Instagram" />
               </SocialLink>
               <SocialLink>
-                <img src="/images/personal/publish/velog.png" alt="Velog" />
+                <img src={getLinkIcon("velog")} alt="Velog" />
               </SocialLink>
             </SocialLinks>
           </ProfileInfo>
@@ -106,68 +122,6 @@ const ProfileSection = styled.div`
   gap: 1rem;
   align-items: center;
   position: relative;
-`;
-
-const Avatar = styled.div`
-  width: 4rem;
-  height: 4rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-`;
-
-const ProfileInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: center;
-  text-align: center;
-`;
-
-const BunnyName = styled.h3`
-  font-size: 2rem;
-  font-weight: bold;
-  color: #333;
-  font-family: rockstar;
-  color: #FBC95E;
-  text-shadow: 0px 5px 5px rgba(254, 226, 167, 0.25);
-  margin: 0;
-`;
-
-const KoreanName = styled.p`
-  font-size: 1rem;
-  color: #FBC95E;
-  font-weight: 700;
-  margin: 0;
-`;
-
-const SocialLinks = styled.div`
-  display: flex;
-  gap: 0.5rem;
-`;
-
-const SocialLink = styled.div`
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 0.25rem;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
 `;
 
 const HeartSection = styled.div`
@@ -233,7 +187,7 @@ const BadgeSection = styled.div`
   gap: 0.5rem;
   position: absolute;
   top: -0.75rem;
-  right: 1.5rem;
+  right: -60%;
   z-index: 10;
 `;
 
@@ -245,8 +199,23 @@ const Badge = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #8499B5;
+
+  img {
+    width: 80%;
+    height: 80%;
+    object-fit: cover;
+  }
+`;
+
+const Avatar = styled.div`
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   img {
     width: 100%;
@@ -254,3 +223,50 @@ const Badge = styled.div`
     object-fit: cover;
   }
 `;
+
+const ProfileInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  text-align: center;
+`;
+
+const BunnyName = styled.h3`
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  font-family: rockstar;
+  color: #FBC95E;
+  text-shadow: 0px 5px 5px rgba(254, 226, 167, 0.25);
+  margin: 0;
+`;
+
+const KoreanName = styled.p`
+  font-size: 1rem;
+  color: #FBC95E;
+  font-weight: 700;
+  margin: 0;
+`;
+
+const SocialLinks = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const SocialLink = styled.div`
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
