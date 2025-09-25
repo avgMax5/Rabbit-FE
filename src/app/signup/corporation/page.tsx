@@ -3,9 +3,17 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import { Mail, Lock, Building2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import Input from './components/Input';
 
 export default function CorporationSignup() {
+  const router = useRouter();
+
+  const handleSignup = () => {
+    alert('회원가입이 완료되었습니다.');
+    router.push('/corporation');
+  };
+
   return (
     <Container>
       <LogoImage
@@ -52,7 +60,7 @@ export default function CorporationSignup() {
         </FormSection>
 
         
-        <SignupButton>시작하기</SignupButton>
+        <SignupButton onClick={handleSignup}>시작하기</SignupButton>
       </FormContainer>
       <BackgroundImage
         src="/images/login/background.png"
