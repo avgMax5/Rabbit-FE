@@ -10,6 +10,7 @@ import { useUserStore } from "@/app/_store/userStore";
 function Header() {
     const [mouseEnter, setMouseEnter] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [isShopModalOpen, setIsShopModalOpen] = useState(false);
     const pathname = usePathname();
 
     const carrot = useUserStore((state) => state.user?.carrot);
@@ -50,7 +51,6 @@ function Header() {
         setMouseEnter(false);
     };
 
-    const [isShopModalOpen, setIsShopModalOpen] = useState(false);
     const handleMoneyClick = () => {
         setIsShopModalOpen(true);
     };
@@ -196,6 +196,11 @@ const Money = styled(WhiteContainer)`
     font-size: 15px;
     cursor: pointer;
     color: #000;
+    transition: all 0.2s ease;
+    
+    &:hover {
+        transform: scale(1.05);
+    }
 `;
 
 export default Header;

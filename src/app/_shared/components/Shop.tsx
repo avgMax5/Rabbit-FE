@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useUserStore } from '../../_store/userStore';
 
 const fadeIn = keyframes`
   from {
@@ -21,6 +22,15 @@ const bounce = keyframes`
   }
   90% {
     transform: translate3d(0,-6px,0);
+  }
+`;
+
+const goldShimmer = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
   }
 `;
 
@@ -99,6 +109,82 @@ const CarrotIcon = styled.img`
   position: relative;
   animation: ${bounce} 2s infinite;
 `;
+
+const CarrotBalance = styled.div`
+  display: flex;
+  height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(90deg, #F4E4BC,rgb(231, 208, 149),rgb(240, 220, 172), #E6D3A3, #F4E4BC);
+  background-size: 200% 100%;
+  animation: ${goldShimmer} 8s linear infinite;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(230, 211, 163, 0.7);
+  box-shadow: 
+    0 8px 32px rgba(230, 211, 163, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(230, 211, 163, 0.5);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  }
+`;
+
+const BalanceLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const CarrotIconSmall = styled.img`
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.4));
+`;
+
+const BalanceInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-nanum-square);
+`;
+
+const BalanceLabel = styled.span`
+  color: rgba(62, 27, 0, 0.7);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: var(--font-nanum-square);
+`;
+
+const BalanceAmount = styled.span`
+  color:rgb(114, 60, 19);
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--font-nanum-square);
+  font-weight: 900;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+`;
+
+const CurrencySymbol = styled.span`
+  color: #3e1b00;
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 4px;
+  opacity: 0.8;
+`;
+
 
 const TabContainer = styled.div`
   display: flex;
@@ -261,6 +347,7 @@ interface ShopModalProps {
 // 메인 컴포넌트
 const ShopModal: React.FC<ShopModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<'buy' | 'sell' | 'tickets' | 'gift'>('buy');
+  const { user, isLoading } = useUserStore();
 
   const getActiveIndex = () => {
     switch (activeTab) {
@@ -370,6 +457,21 @@ const ShopModal: React.FC<ShopModalProps> = ({ isOpen, onClose }) => {
             캐럿 상점
             <CarrotIcon src="/images/personal/home/carrot.png" alt="당근" />
         </Title>
+
+        <CarrotBalance>
+          <BalanceLeft>
+            <CarrotIconSmall src="/images/personal/home/carrot.png" alt="당근" />
+            <BalanceInfo>
+              <BalanceLabel>보유 캐럿</BalanceLabel>
+              <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                <BalanceAmount>
+                  {isLoading ? '...' : user?.carrot ? Number(user.carrot).toLocaleString() : '0'}
+                </BalanceAmount>
+                <CurrencySymbol>C</CurrencySymbol>
+              </div>
+            </BalanceInfo>
+          </BalanceLeft>
+        </CarrotBalance>
 
         <TabContainer>
           <TabSlider $activeIndex={getActiveIndex()} />
