@@ -31,7 +31,7 @@ function Header() {
     const getActive = () => {
         if (pathname === "/personal/home") return "home";
         if (pathname.startsWith("/personal/mypage")) return "mypage";
-        if (pathname === "/personal/publish") return "funding";
+        if (pathname === "/personal/funding") return "funding";
         return null;
     };
     const activate = getActive();
@@ -82,7 +82,7 @@ function Header() {
                         마이페이지
                     </MyPage>
                 </Link>
-                <Link href={`/personal/publish`}>
+                <Link href={`/personal/funding`}>
                     <Funding
                         $activate={activate === "funding"}
                         $isLoaded={isLoaded}

@@ -12,7 +12,9 @@ export default function FundBunnyCard({
   endAt, 
   currentAmount, 
   targetBny,
-  avatarSrc 
+  avatarSrc,
+  countdownColor = '#ff0000',
+  showCountdown = false
 }: {
   fundBunnyId: string
   bunnyName: string
@@ -21,6 +23,8 @@ export default function FundBunnyCard({
   currentAmount: number
   targetBny: number
   avatarSrc: string
+  countdownColor?: string
+  showCountdown?: boolean
 }) {
   const safeCurrentAmount = currentAmount ?? 0;
   const safeTargetBny = targetBny ?? 1;
@@ -28,6 +32,20 @@ export default function FundBunnyCard({
   const [mounted, setMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [countdown, setCountdown] = useState<string>('');
+
+  // bunnyType에 따른 아이콘 매핑
+  const getCoinTypeIcon = (type: string) => {
+    switch (type.toUpperCase()) {
+      case 'A':
+        return '/images/icon/coin_rare.png';
+      case 'B':
+        return '/images/icon/coin_balance.png';
+      case 'C':
+        return '/images/icon/coin_friend.png';
+      default:
+        return '/images/icon/coin_balance.png'; // 기본값
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -72,7 +90,18 @@ export default function FundBunnyCard({
             </AvatarContainer>
             <CoinInfo>
               <CoinName>{bunnyName}</CoinName>
-              <CoinType>{bunnyType}</CoinType>
+              <CoinType>
+                <img 
+                  src={getCoinTypeIcon(bunnyType)} 
+                  alt={`${bunnyType} coin type`}
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain' 
+                    
+                  }} 
+                />
+              </CoinType>
             </CoinInfo>
           </LeftGroup>
           <ProgressCircle progress={progress}>
@@ -82,9 +111,9 @@ export default function FundBunnyCard({
           </ProgressCircle>
         </TopSection>
         
-        {endAt && (
+        {endAt && showCountdown && (
           <CountdownSection>
-            <CountdownText>{countdown}</CountdownText>
+            <CountdownText countdownColor={countdownColor}>{countdown}</CountdownText>
           </CountdownSection>
         )}
         
@@ -287,12 +316,14 @@ const CountdownSection = styled.div`
   animation: ${scaleIn} 0.4s ease-out 0.5s both;
 `;
 
-const CountdownText = styled.div`
+const CountdownText = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== 'countdownColor',
+})<{ countdownColor: string }>`
   font-size: 32px;
   font-weight: 900;
   font-family: 'rockstar';
   text-shadow: 2px 2px 2px rgba(48, 0, 0, 0.25);
-  color: #ff0000;
+  color: ${props => props.countdownColor};
 `;
 
 const BottomSection = styled.div`
