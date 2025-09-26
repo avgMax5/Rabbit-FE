@@ -88,7 +88,7 @@ export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalPr
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalHeader>
-          <Image src="/images/personal/publish/astronaut.png" alt="close" width={48} height={48} />
+          <Image src="/images/personal/funding/astronaut.png" alt="close" width={48} height={48} />
           <CloseButton onClick={onClose} >
             X
           </CloseButton>

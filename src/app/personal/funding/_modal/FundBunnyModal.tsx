@@ -5,7 +5,7 @@ import Button from '../../../_shared/components/Button';
 import FundingRate from '../_components/FundingRate';
 import Portfolio from '../../../_shared/components/Portfolio';
 
-import { postFundBunny, getFundBunniesDetail, FundBunnyDetail, postFundBunnyFunding, FundingData } from '../../../_api/fundingAPI';
+import { getFundBunniesDetail, FundBunnyDetail, postFundBunnyFunding, FundingData } from '../../../_api/fundingAPI';
 
 interface FundBunnyModalProps {
   isOpen: boolean;
@@ -94,7 +94,12 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({ isOpen, onClose, fundBu
                   <MiddleBlock>
                     <FundingRate holdingStatus={bunnyDetail.holding_status} />
                   </MiddleBlock>
-                  <MiddleBlock />
+                  <MiddleBlock>
+                    <AISummarySection>
+                      <SectionTitle>AI 요약</SectionTitle>
+                      <SummaryText>{bunnyDetail.spec.ai_review}</SummaryText>
+                    </AISummarySection>
+                  </MiddleBlock>
                 </MiddleRow>
 
                 <InputBlock>
@@ -448,6 +453,34 @@ const ErrorText = styled.div`
   font-weight: 600;
   text-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0, 0, 0, 0.5);
   text-align: center;
+`;
+
+const AISummarySection = styled.div`
+  border-radius: 0.75rem;
+  padding: 1.5rem 1.25rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const SectionTitle = styled.h3`
+  color: #FBC95E;
+  font-size: 1rem;
+  font-weight: 600;
+  text-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0, 0, 0, 0.5);
+  margin: 0;
+`;
+
+const SummaryText = styled.p`
+  color: #ffffff;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  margin: 0;
+  text-shadow: 0.0625rem 0.0625rem 0.125rem rgba(0, 0, 0, 0.5);
+  flex: 1;
+  overflow-y: auto;
 `;
 
 export default FundBunnyModal;

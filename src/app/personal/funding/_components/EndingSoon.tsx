@@ -78,6 +78,8 @@ export default function EndingSoon() {
               currentAmount={data.collected_bny}
               targetBny={data.target_bny}
               avatarSrc={data.avatarSrc}
+              countdownColor="#ff0000"
+              showCountdown={true}
             />
           ))
         ) : (

@@ -132,6 +132,7 @@ export default function List() {
                 currentAmount={item.collected_bny}
                 targetBny={item.target_bny}
                 avatarSrc="/images/login/personalProfile.png"
+                showCountdown={false}
               />
             ))
           )}

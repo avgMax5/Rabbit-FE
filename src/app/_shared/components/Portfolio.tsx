@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FundBunnyDetail } from '../../_api/fundingAPI';
+import { getLinkIcon } from '../../personal/trade/utils/bunnyInfoMapper';
 
 interface PortfolioProps {
   bunnyDetail?: FundBunnyDetail | null;
@@ -22,12 +23,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ bunnyDetail }) => {
               <RealName>{bunnyDetail?.spec.name}</RealName>
             </UserInfo>
           </ProfileSection>
-
-          <AISummarySection>
-            <SectionTitle>AI 요약</SectionTitle>
-            <SummaryText>{bunnyDetail?.spec.ai_review}</SummaryText>
-          </AISummarySection>
-
           <ContactSection>
             <ContactItem>
               <ContactLabel>Email</ContactLabel>
@@ -36,14 +31,17 @@ const Portfolio: React.FC<PortfolioProps> = ({ bunnyDetail }) => {
             <ContactItem>
               <ContactLabel>Link</ContactLabel>
               <SocialIcons>
-                {bunnyDetail?.spec.link && bunnyDetail.spec.link.length > 0 && 
-                  bunnyDetail.spec.link.map((link, index) => (
-                    <SocialImage 
-                      key={index}
-                      src={link.favicon} 
-                      alt={link.type} 
-                    />
-                  ))
+                {bunnyDetail?.spec.link && bunnyDetail.spec.link.length > 0 &&
+                  bunnyDetail.spec.link.map((link, index) => {
+                    const iconSrc = getLinkIcon(link.url?.toLowerCase?.() || '');
+                    return (
+                      <SocialImage
+                        key={index}
+                        src={iconSrc}
+                        alt={link.type}
+                      />
+                    );
+                  })
                 }
               </SocialIcons>
             </ContactItem>
@@ -53,11 +51,11 @@ const Portfolio: React.FC<PortfolioProps> = ({ bunnyDetail }) => {
         <DetailedProfileColumn>
           <ExperienceSection>
             <SectionHeader>
-              <SectionImage src="/images/personal/publish/company.png" alt="경력" />
+              <SectionImage src="/images/personal/funding/company.png" alt="경력" />
               <SectionTitle>경력</SectionTitle>
               <SectionLine />
             </SectionHeader>
-            {bunnyDetail?.spec.career && bunnyDetail.spec.career.length > 0 && 
+            {bunnyDetail?.spec.career && bunnyDetail.spec.career.length > 0 &&
               bunnyDetail.spec.career.map((career, index) => (
                 <ExperienceItem key={index}>
                   <ExperiencePeriod>
@@ -71,7 +69,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ bunnyDetail }) => {
 
           <EducationSection>
             <SectionHeader>
-              <SectionImage src="/images/personal/publish/education.png" alt="학력" />
+              <SectionImage src="/images/personal/funding/education.png" alt="학력" />
               <SectionTitle>학력</SectionTitle>
               <SectionLine />
             </SectionHeader>
@@ -89,7 +87,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ bunnyDetail }) => {
 
           <CertificationSection>
             <SectionHeader>
-              <SectionImage src="/images/personal/publish/certification.png" alt="자격증" />
+              <SectionImage src="/images/personal/funding/certification.png" alt="자격증" />
               <SectionTitle>자격증</SectionTitle>
               <SectionLine />
             </SectionHeader>
@@ -105,7 +103,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ bunnyDetail }) => {
 
           <TechStackSection>
             <SectionHeader>
-              <SectionImage src="/images/personal/publish/stack.png" alt="기술스택" />
+              <SectionImage src="/images/personal/funding/stack.png" alt="기술스택" />
               <SectionTitle>기술스택</SectionTitle>
               <SectionLine />
             </SectionHeader>

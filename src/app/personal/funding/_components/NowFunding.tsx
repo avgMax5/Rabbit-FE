@@ -22,7 +22,7 @@ export default function NowFunding() {
         end_at: bunny.end_at,
         collected_bny: bunny.collected_bny,
         target_bny: bunny.target_bny,
-        avatarSrc: "/images/personal/publish/astronaut.png"
+        avatarSrc: "/images/personal/funding/astronaut.png"
       }));
   }, [fundBunnies]);
 
@@ -48,6 +48,8 @@ export default function NowFunding() {
               currentAmount={data.collected_bny}
               targetBny={data.target_bny}
               avatarSrc={data.avatarSrc}
+              countdownColor="#000000"
+              showCountdown={false}
             />
           ))
         ) : (
