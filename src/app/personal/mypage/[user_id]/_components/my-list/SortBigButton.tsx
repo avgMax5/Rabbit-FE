@@ -3,16 +3,14 @@ import NightingaleChart, { ChartData } from "../chart/NightingaleChart";
 
 interface SortBigButtonProps {
     sortTitle: string;
-    top1Title?: string;
-    top1Carrot?: number;
+
     chartData: ChartData;
     colors?: string[];
 }
 
 function SortBigButton({
     sortTitle,
-    top1Title,
-    top1Carrot,
+
     chartData,
     colors,
 }: SortBigButtonProps) {
@@ -41,14 +39,6 @@ function SortBigButton({
                     />
                 </GraphBox>
             </TopContainer>
-
-            <BottomContainer>
-                <TextBox>
-                    <Top1Text>TOP 1</Top1Text>
-                    <Top1Title>{top1Title}</Top1Title>
-                </TextBox>
-                <Top1Carrot>{top1Carrot?.toLocaleString()}</Top1Carrot>
-            </BottomContainer>
         </Div>
     );
 }
@@ -60,9 +50,6 @@ const Div = styled.div<{ $hoverColor: string }>`
     padding: 0.6rem;
     box-sizing: border-box;
     border-radius: 8px;
-
-    display: grid;
-    grid-template-rows: 3fr 1fr;
     background: #ffffffec;
     box-shadow: -2px -2px 4px 0 rgba(0, 0, 0, 0.14) inset,
         2px 2px 4px 0 rgba(231, 231, 231, 0.25) inset;
@@ -96,38 +83,6 @@ const SortTitle = styled.div`
 const GraphBox = styled.div`
     width: 100%;
     height: 100%;
-`;
-
-const BottomContainer = styled.div`
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-`;
-
-const TextBox = styled.div`
-    width: 3rem;
-    height: 100%;
-    display: grid;
-    justify-content: space-between;
-`;
-
-const Top1Title = styled.div`
-    width: 100%;
-    height: 100%;
-    font-size: 10px;
-    font-weight: 600;
-`;
-
-const Top1Carrot = styled.div`
-    font-size: 22px;
-    font-weight: 800;
-`;
-
-const Top1Text = styled.div`
-    font-size: 15px;
-    font-weight: 800;
 `;
 
 export default SortBigButton;

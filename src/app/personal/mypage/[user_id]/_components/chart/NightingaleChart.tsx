@@ -23,17 +23,11 @@ function NightingaleChart({
     useEffect(() => {
         if (!chartRef.current) return;
         const myChart = echarts.init(chartRef.current);
+        const sum = data.reduce((a, b) => a + b.value, 0);
+        const seriesData = sum === 0 ? [] : data;
 
         const option: echarts.EChartsOption = {
             color: colors,
-            // toolbox: {
-            //     show: true,
-            //     feature: {
-            //         mark: { show: true },
-            //         dataView: { show: true, readOnly: false },
-            //         restore: { show: true },
-            //     },
-            // },
             tooltip: {
                 trigger: "item",
             },
@@ -42,7 +36,7 @@ function NightingaleChart({
                     name: "Access From",
                     type: "pie",
                     radius: [inner ?? 15, outer ?? 60],
-                    center: ["72%", "50%"],
+                    center: ["68%", "50%"],
                     avoidLabelOverlap: false,
                     padAngle: 3,
                     itemStyle: {
@@ -62,14 +56,18 @@ function NightingaleChart({
                     labelLine: {
                         show: false,
                     },
-                    data,
+
+                    emptyCircleStyle: {
+                        color: "#e0e0e0",
+                    },
+                    data: seriesData,
                 },
             ],
             legend: {
                 show: true,
                 orient: "vertical", // 세로로 나열
                 left: 0, // 오른쪽에 배치
-                top: "30%", // 세로 중앙 정렬
+                top: "20%", // 세로 중앙 정렬
                 itemWidth: 14, // 범례 아이콘 너비
                 itemHeight: 8, // 범례 아이콘 높이
                 textStyle: {

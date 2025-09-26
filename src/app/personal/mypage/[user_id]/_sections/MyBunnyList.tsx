@@ -13,9 +13,9 @@ import {
     MatchBunny,
     OrderBunny,
 } from "@/app/_api/userAPI";
+import Top1Container from "../_components/my-bunny/Top1Container";
 
-const historyFieldList = [
-    { key: "matched_at", label: "체결시간" },
+const orderFieldList = [
     { key: "ordered_at", label: "주문시간" },
     { key: "bunny_name", label: "코인명" },
     { key: "quantity", label: "거래수량" },
@@ -36,9 +36,8 @@ const fieldList = [
     { key: "price_diff_from_yesterday", label: "전일비" },
 ];
 
-interface HistoryItem {
-    matched_at?: string;
-    ordered_at?: string;
+interface OrderItem {
+    ordered_at: string;
     bunny_name: string;
     quantity: number;
     price: number;
@@ -47,15 +46,79 @@ interface HistoryItem {
     order_type: string;
 }
 
+interface MatchItem {
+    matched_at: string;
+    bunny_name: string;
+    quantity: number;
+    price: number;
+    fee: number;
+    amount: number;
+    order_type: string;
+}
+
+export interface Top {
+    title: string;
+    type?: string;
+    carrot?: number;
+}
+
 function MyBunnyList() {
     const [isHistory, setIsHistory] = useState(false);
     const [holdDataList, setHoldDataList] = useState<HoldBunny[]>([]);
-    const [historyDataList, setHistoryDataList] = useState<HistoryItem[]>([]);
+    const [orderDataList, setOrderDataList] = useState<OrderItem[]>([]);
     const [bunnyStats, setBunnyStats] = useState<BunnyStats>();
 
     const position = bunnyStats?.position;
     const developer = bunnyStats?.developer_type;
     const coin = bunnyStats?.coin_type;
+
+    // const orderDummyData = [
+    //     {
+    //         ordered_at: "2025-09-26T15:30:00",
+    //         bunny_name: "BUNNY",
+    //         quantity: 120,
+    //         price: 1500,
+    //         fee: 30,
+    //         amount: 180000,
+    //         order_type: "BUY",
+    //     },
+    //     {
+    //         ordered_at: "2025-09-26T15:45:00",
+    //         bunny_name: "CARROT",
+    //         quantity: 50,
+    //         price: 3200,
+    //         fee: 16,
+    //         amount: 160000,
+    //         order_type: "SELL",
+    //     },
+    //     {
+    //         ordered_at: "2025-09-26T16:00:00",
+    //         bunny_name: "HOP",
+    //         quantity: 200,
+    //         price: 980,
+    //         fee: 40,
+    //         amount: 196000,
+    //         order_type: "BUY",
+    //     },
+    // ];
+
+    const topData = [
+        {
+            title: "직군",
+            type: position?.top.type,
+            carrot: position?.top.total_market_cap,
+        },
+        {
+            title: "개발자 유형",
+            type: developer?.top.type,
+            carrot: developer?.top.total_market_cap,
+        },
+        {
+            title: "버니 유형",
+            type: coin?.top.type,
+            carrot: coin?.top.total_market_cap,
+        },
+    ];
 
     const posData = [
         { value: position?.frontend ?? 0, name: "프론트엔드" },
@@ -69,6 +132,7 @@ function MyBunnyList() {
         { value: developer?.value ?? 0, name: "가치형" },
         { value: developer?.popular ?? 0, name: "인기형" },
         { value: developer?.balance ?? 0, name: "밸런스형" },
+        { value: developer?.basic ?? 0, name: "기본형" },
     ];
 
     const coinData = [
@@ -115,12 +179,11 @@ function MyBunnyList() {
     }, []);
 
     useEffect(() => {
-        const fetchHistoryBunnies = async () => {
+        const fetchOrderBunnies = async () => {
             try {
                 const orderData = await getOrders();
-                const matchData = await getMatches();
 
-                const orderItems: HistoryItem[] = orderData.orders.map(
+                const orderItems: OrderItem[] = orderData.orders.map(
                     (order: OrderBunny) => ({
                         matched_at: "-",
                         ordered_at: order.ordered_at,
@@ -132,44 +195,28 @@ function MyBunnyList() {
                         order_type: order.order_type,
                     })
                 );
-
-                const matchItems: HistoryItem[] = matchData.matches.map(
-                    (match: MatchBunny) => ({
-                        matched_at: match.matched_at,
-                        ordered_at: "-",
-                        bunny_name: match.bunny_name,
-                        quantity: match.quantity,
-                        price: match.unit_price,
-                        fee: match.fee,
-                        amount: match.total_amount,
-                        order_type: match.order_type,
-                    })
-                );
-
-                setHistoryDataList([...orderItems, ...matchItems]);
+                setOrderDataList(orderItems);
             } catch (error) {
-                console.error(error);
+                console.error("order 리스트 받기 실패", error);
             }
         };
-        fetchHistoryBunnies();
+        fetchOrderBunnies();
     }, []);
 
     return (
         <Wrapper>
+            <Top1Container data={topData} />
             <FirstRow>
                 <SortBigButton
                     sortTitle="직군"
-                    top1Title={position?.top.type}
-                    top1Carrot={position?.top.total_market_cap}
                     chartData={posData}
                     colors={["#ff9e30", "#ffbb6e", "#ffd8ac"]}
                 />
                 <SortBigButton
                     sortTitle="개발자 유형"
-                    top1Title={developer?.top.type}
-                    top1Carrot={developer?.top.total_market_cap}
                     chartData={devData}
                     colors={[
+                        "#043f2e",
                         "#008b61",
                         "#33a280",
                         "#66b9a0",
@@ -179,8 +226,6 @@ function MyBunnyList() {
                 />
                 <SortBigButton
                     sortTitle="버니 유형"
-                    top1Title="희소자산형"
-                    top1Carrot={200000}
                     chartData={coinData}
                     colors={["#9d00a0", "#ba4cbc", "#d799d9"]}
                 />
@@ -192,7 +237,7 @@ function MyBunnyList() {
                     />
                     <ListButton
                         onGetList={handleGetHistory}
-                        totalLength={historyDataList.length}
+                        totalLength={orderDataList.length}
                         content="주문 내역 보기"
                     />
                 </ButtonContainer>
@@ -200,8 +245,8 @@ function MyBunnyList() {
             <SecondRow>
                 {isHistory ? (
                     <ListTable
-                        fieldList={historyFieldList}
-                        dataList={historyDataList}
+                        fieldList={orderFieldList}
+                        dataList={orderDataList}
                         title="주문"
                     />
                 ) : (
@@ -217,11 +262,12 @@ function MyBunnyList() {
 }
 
 const Wrapper = styled.div`
+    position: relative;
     width: 100%;
     height: 100%;
     display: grid;
     grid-template-rows: 35% 1fr;
-    gap: 1rem;
+    gap: 1.2rem;
     box-sizing: border-box;
 `;
 
@@ -235,7 +281,9 @@ const FirstRow = styled.div`
 `;
 
 const SecondRow = styled.div`
+    position: relative;
     display: grid;
+    gap: 10px;
     grid-row: 2;
     width: 100%;
     height: 100%;

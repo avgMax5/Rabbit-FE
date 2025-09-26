@@ -18,15 +18,15 @@ const sliceString = (text: string) => {
     return result;
 };
 
-const formatValue = (key: string, value: any) => {
-    if (["matched_at", "ordered_at"].includes(key)) {
-        return sliceString(String(value));
-    }
-    if (typeof value === "number") {
-        return value.toLocaleString();
-    }
-    return value != null ? String(value) : "";
-};
+// const formatValue = (key: string, value: any) => {
+//     if (["matched_at", "ordered_at"].includes(key)) {
+//         return sliceString(String(value));
+//     }
+//     if (typeof value === "number") {
+//         return value.toLocaleString();
+//     }
+//     return value != null ? String(value) : "";
+// };
 
 const OrderTypeStyle = (key: string, value: any) => {
     if (key === "order_type" && String(value) === "BUY") {
@@ -41,6 +41,48 @@ const OrderTypeStyle = (key: string, value: any) => {
     return {
         color: "#000000",
     };
+};
+
+const renderValue = (key: string, value: any) => {
+    if (["matched_at", "ordered_at"].includes(key)) {
+        return sliceString(String(value));
+    }
+
+    if (key === "return_rate") {
+        const color = value > 0 ? "red" : value < 0 ? "blue" : "black";
+        return <span style={{ color }}>{value.toLocaleString()}%</span>;
+    }
+
+    if (key === "profit_or_loss" || key === "price_diff_from_yesterday") {
+        const color = value > 0 ? "red" : value < 0 ? "blue" : "black";
+        return <span style={{ color }}>{value.toLocaleString()}</span>;
+    }
+
+    if (key === "order_type" && String(value) === "BUY") {
+        const color = "#df0606";
+        const backgroundColor = "#ffdede";
+        return (
+            <OrderTypeBtn style={{ color, backgroundColor }}>
+                {value}
+            </OrderTypeBtn>
+        );
+    }
+
+    if (key === "order_type" && String(value) === "SELL") {
+        const color = "#040faf";
+        const backgroundColor = "#d1d4ff";
+        return (
+            <OrderTypeBtn style={{ color, backgroundColor }}>
+                {value}
+            </OrderTypeBtn>
+        );
+    }
+
+    return value != null
+        ? typeof value === "number"
+            ? value.toLocaleString()
+            : String(value)
+        : "-";
 };
 
 function ListTable<T>({ fieldList, dataList, title }: ListProps<T>) {
@@ -73,7 +115,7 @@ function ListTable<T>({ fieldList, dataList, title }: ListProps<T>) {
                                                 value
                                             )}
                                         >
-                                            {formatValue(field.key, value)}
+                                            {renderValue(field.key, value)}
                                         </Value>
                                     );
                                 })}
@@ -109,13 +151,14 @@ const Value = styled.div<{ $styleObj: ValueProps }>`
     align-items: center;
     justify-content: center;
     color: ${(props) => props.$styleObj.color};
+    font-weight: 900;
 `;
 
 const Div = styled.div`
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-rows: 2.5rem 34vh;
+    grid-template-rows: 2.5rem 1fr;
     gap: 0.5rem;
     background: rgba(15, 23, 42);
     border-radius: 16px;
@@ -140,7 +183,7 @@ const FieldContainer = styled.div<{ $fieldNum: number }>`
     );
     border-bottom: 1px solid rgba(148, 163, 184, 0.2);
 
-    font-weight: 700;
+    font-weight: 800;
     font-size: 13px;
     color: rgba(226, 232, 240);
 
@@ -151,13 +194,14 @@ const FieldContainer = styled.div<{ $fieldNum: number }>`
 
         &:last-child {
             border-right: none;
+            padding-right: 6px;
         }
     }
 `;
 
 const RowContainer = styled.div`
     width: 100%;
-    max-height: 100%;
+    //max-height: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -189,6 +233,7 @@ const RowLengthZero = styled.div`
     background-color: #6e6c6c46;
     width: 100%;
     height: 100%;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -205,6 +250,13 @@ const Erow = styled(Row)`
 const Orow = styled(Row)`
     background: #ffffff;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
+`;
+
+const OrderTypeBtn = styled.span`
+    width: 4rem;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    border-radius: 8px;
 `;
 
 export default ListTable;
