@@ -20,23 +20,24 @@ import { Cctv } from "lucide-react";
 export default function Trade() {
   const params = useParams();
   const bunnyName = params.bunnyName as string;
-  const { bunnies, fetchBunnies, getBunnyByName, isLoading } = useBunnyStore();
+  const { allBunnies, fetchAllBunnies, getBunnyByName, status  } = useBunnyStore();
   const [currentBunny, setCurrentBunny] = useState<Bunny | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [chartLoading, setChartLoading] = useState(false);
 
   useEffect(() => {
-    if (!bunnies || bunnies.length === 0) {
-      fetchBunnies();
+    if (!allBunnies || allBunnies.length === 0) {
+      fetchAllBunnies();
     }
-  }, [bunnies, fetchBunnies]);
+  }, [allBunnies, fetchAllBunnies]);
 
   useEffect(() => {
-    if (bunnies.length > 0 && bunnyName) {
+    if (allBunnies.length > 0 && bunnyName) {
       const bunny = getBunnyByName(bunnyName);
       setCurrentBunny(bunny || null);
     }
-  }, [bunnies, bunnyName, getBunnyByName]);
+  }, [allBunnies, bunnyName, getBunnyByName]);
+
   // 차트 데이터 가져오기
   const fetchChartData = async (period: string = "일") => {
     if (!currentBunny?.bunny_name) return;
@@ -63,7 +64,7 @@ export default function Trade() {
     }
   }, [currentBunny?.bunny_name]);
 
-  if (isLoading) {
+  if (status.allBunnies.isLoading) {
     return (
       <Wrapper>
         <Header />

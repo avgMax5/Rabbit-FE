@@ -14,13 +14,11 @@ export const BadgeData: BadgeType[] = [
         src: "/images/personal/shared/kakao-badge.png",
         name: "KAKAO",
         alias: "카카오", 
-        amount: 16,
         raise: true,
     },
     {
         id: 1,
         src: "/images/personal/shared/naver-badge.png",
-        amount: 19,
         name: "NAVER",
         alias: "네이버", 
         raise: false,
@@ -28,7 +26,6 @@ export const BadgeData: BadgeType[] = [
     {
         id: 2,
         src: "/images/personal/shared/shinhan-badge.png",
-        amount: 16,
         name: "SHINHAN",
         alias: "신한", 
         raise: true,

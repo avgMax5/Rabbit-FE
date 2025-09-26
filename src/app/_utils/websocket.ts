@@ -1,6 +1,9 @@
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
+
 declare global {
   interface Window {
     SockJS: any;
@@ -32,10 +35,7 @@ class WebSocketService {
       return Promise.resolve();
     }
 
-    return new Promise<void>((resolve, reject) => {
-      const API_BASE_URL = "http://localhost:8080/api";
-      const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
-      
+    return new Promise<void>((resolve, reject) => {      
       this.client = new Client({
         webSocketFactory: () => new SockJS(`${API_BASE_URL}/ws/orderBook`, {
           withCredentials: true

@@ -3,14 +3,15 @@ import { BadgeType } from "../_types/interfaces";
 
 interface CorporationBadgeProps {
     badge: BadgeType;
+    amount: number;
 }
 
-function CorporationBadge({ badge }: CorporationBadgeProps) {
+function CorporationBadge({ badge, amount}: CorporationBadgeProps) {
     return (
         <Corporation>
-            <img src={badge.src} alt="카카오" />
+            <img src={badge.src} alt={badge.alias} />
             <div>
-                <TotalAmount>{badge.amount}</TotalAmount>
+                <TotalAmount>{amount}</TotalAmount>
                 <span>개</span>
                 <Triangle
                     viewBox="0 0 23 18"
