@@ -14,6 +14,7 @@ function Badges({ badges }: { badges: string[] }) {
 
 const Div = styled.div`
     width: auto;
+    background-color: #909;
     & img {
         width: 2.3rem;
         height: 2.3rem;

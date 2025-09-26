@@ -283,8 +283,10 @@ function MyInfo() {
 
 const Main = styled.div`
     width: 100%;
-    height: 94%;
+    height: 100%;
+    max-height: 500px;
     padding: 0 0.2rem;
+    margin-bottom: 10px;
     display: grid;
     grid-template-columns: 1.5fr 5fr;
     gap: 1.2rem;
@@ -300,7 +302,7 @@ const PlainForm = styled.form`
 
 const Section = styled.div`
     width: 100%;
-    height: 62vh;
+    height: 100%;
     padding: 1rem;
     border-radius: 15px;
     background-color: rgb(118 177 224 / 8%);
