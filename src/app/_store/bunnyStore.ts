@@ -42,10 +42,22 @@ export interface Filters {
 
 interface BunnyState {
     bunnies: Bunny[];
-    isLoading: boolean;
-    error: string | null;
+    allBunnies: Bunny[];
+
+    status: {
+        bunnies: {
+            isLoading: boolean;
+            error: string | null; 
+        },
+        allBunnies: { 
+            isLoading: boolean;
+            error: string | null;
+        },
+    }
 
     fetchBunnies: (params?: FetchBunniesParams) => Promise<void>;
+    fetchAllBunnies: (params?: FetchBunniesParams) => Promise<void>;
+
     getBunnyByName: (bunnyName: string) => Bunny | undefined;
     clearError: () => void;
     updateBunnyLikeCount: (bunnyName: string, delta: number) => void;
@@ -57,23 +69,30 @@ interface BunnyState {
 
 export const useBunnyStore = create<BunnyState>((set, get) => ({
     bunnies: [],
-    isLoading: false,
-    error: null,
+    allBunnies: [],
+
+    status: {
+        bunnies: { isLoading: false, error: null },
+        allBunnies: { isLoading: false, error: null },
+    },
 
     fetchBunnies: async (params: FetchBunniesParams = {}) => {
         const sortType = params.sortType ?? "";
         const page = params.page ?? 0;
         const size = params.size ?? 10;
   
-        set({ isLoading: true, error: null });
+        set((state) => ({
+            status: {
+                ...state.status,
+                bunnies: { isLoading: true, error: null },
+            },
+        }));
 
         try {
             const url = new URL(`${API_BASE_URL}/bunnies`, window.location.origin);
             url.searchParams.append('page', page.toString());
             url.searchParams.append('size', size.toString());
-            // url.searchParams.append('sortType', sortType);
-            
-            // console.log('Bunnies API 호출 URL:', url.toString());
+            url.searchParams.append('sortType', sortType);
             
             const response = await axios.get(url.toString(), {
                 withCredentials: true,
@@ -85,31 +104,98 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
 
             const newBunnies = response.data.content;
             if (page === 0) {
-                set({ bunnies: newBunnies, isLoading: false });
+            set((state) => ({
+                bunnies: newBunnies,
+                status: {
+                ...state.status,
+                bunnies: { ...state.status.bunnies, isLoading: false },
+                },
+            }));
             } else {
-                set({
-                    bunnies: [...get().bunnies, ...newBunnies],
-                    isLoading: false,
-                });
+            set((state) => ({
+                bunnies: [...get().bunnies, ...newBunnies],
+                status: {
+                ...state.status,
+                bunnies: { ...state.status.bunnies, isLoading: false },
+                },
+            }));
             }
         } catch (error) {
             console.warn("Bunnies API 호출 실패:", error);
-            set({
-                isLoading: false,
-                error:
-                    error instanceof Error
+            set((state) => ({
+                status: {
+                    ...state.status,
+                    bunnies: {
+                        isLoading: false,
+                        error:
+                            error instanceof Error
+                            ? error.message
+                            : "알 수 없는 오류가 발생했습니다.",
+                        },
+                    },
+            }));
+        }
+    },
+
+    
+    fetchAllBunnies: async () => {
+        set((state) => ({
+            status: {
+                ...state.status,
+                allBunnies: { isLoading: true, error: null },
+            },
+        }));
+
+        try {
+            const url = new URL(`${API_BASE_URL}/bunnies?filter=ALL`, window.location.origin);
+            
+            const response = await axios.get(url.toString(), {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${TEST_TOKEN}`,
+                },
+            });
+
+            const bunnies = response.data.content;
+
+            set((state) => ({
+                allBunnies: bunnies,
+                status: {
+                    ...state.status,
+                    allBunnies: { ...state.status.allBunnies, isLoading: false },
+                },
+            }));
+        } catch (error) {
+            console.warn("Bunnies API 호출 실패:", error);
+            set((state) => ({
+            status: {
+                ...state.status,
+                allBunnies: {
+                    isLoading: false,
+                    error:
+                        error instanceof Error
                         ? error.message
                         : "알 수 없는 오류가 발생했습니다.",
-            });
+                    },
+                },
+            }));
         }
     },
 
     getBunnyByName: (bunnyName: string) => {
-        const { bunnies } = get();
-        return bunnies.find((bunny) => bunny.bunny_name === bunnyName);
+        const { allBunnies } = get();
+        return allBunnies.find((bunny) => bunny.bunny_name === bunnyName);
     },
 
-    clearError: () => set({ error: null }),
+    clearError: () =>
+        set((state) => ({
+            status: {
+                bunnies: { ...state.status.bunnies, error: null },
+                allBunnies: { ...state.status.allBunnies, error: null },
+            },
+        })
+    ),
 
     updateBunnyLikeCount: (bunnyName: string, delta: number) => {
         const { bunnies } = get();

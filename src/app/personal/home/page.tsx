@@ -3,19 +3,18 @@
 import styled from "styled-components";
 import Header from "../../_shared/components/Header";
 import Title from "./_components/Title";
-import List from "./_components/List";
 import SortButton from "./_components/SortButton";
 import MarketScore from "../../_shared/components/MarketScore";
 import Top5 from "./_components/Top5";
 import Rank from "./_components/Rank";
-import Badge from "./_components/Badge";
 import Banner from "./_components/BannerContainer";
 import Alarm from "./_components/Alarm";
 import WithAuth from "@/app/_components/WithAuth";
 
 import { updateData, RankData } from "./_mocks/mocks";
-import { BadgeData, SelectData, notificationData } from "./_constants/constants";
+import { SelectData, notificationData } from "./_constants/constants";
 import { ListContainer, BunnyListContainer } from "./_components/ListContainer";
+import { BadgeContainer } from "./_components/BadgeContainer";
 
 function Personal() {
     return (
@@ -38,9 +37,7 @@ function Personal() {
 
                         <Container>
                             <CorporationCotainer>
-                                {BadgeData.map((badge, i) => (
-                                    <Badge key={badge.id} badge={badge} />
-                                ))}
+                                <BadgeContainer />
                             </CorporationCotainer>
                             <Title
                                 content={"로켓에 탑승한 버니들"}
@@ -89,15 +86,15 @@ function Personal() {
 
                         <Container>
                             <Title
-                                content={"TOP 5 버니들"}
+                                content={"버니 시가총액 순위"}
                                 isNoti={false}
                                 icon="fluent-emoji-high-contrast:top-arrow"
                                 time={false}
                             />
                             <RankContainer>
-                                <Top5 standard="개발자 유형별" />
-                                <Top5 standard="직군별" />
-                                <Top5 standard="코인별" />
+                                <Top5 standard="개발자 성향별 Top 1" />
+                                <Top5 standard="포지션별 가치 Top 1" />
+                                <Top5 standard="코인 가치 순위 Top 5" />
                             </RankContainer>
                         </Container>
 

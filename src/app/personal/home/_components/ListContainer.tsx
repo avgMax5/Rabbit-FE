@@ -15,33 +15,38 @@ export function getYesterdayMidnight(): Date {
 }
 
 export function ListContainer() {
-    const dataList = useBunnyStore((state) => state.bunnies);
+    const { allBunnies, fetchAllBunnies } = useBunnyStore();
+    
+    useEffect(() => {
+        if (!allBunnies || allBunnies.length === 0) {
+            fetchAllBunnies();
+        }
+    }, [allBunnies, fetchAllBunnies]);
 
     const filteredList = useMemo(() => {
-    const threshold = getYesterdayMidnight().getTime();
+        const threshold = getYesterdayMidnight().getTime();
 
-    return dataList.filter(
-        (bunny) => new Date(bunny.created_at).getTime() >= threshold
-    );
-    }, [dataList]);
+        return allBunnies.filter(
+                (bunny) => new Date(bunny.created_at).getTime() >= threshold
+            );
+    }, [allBunnies]);
 
     return (
-    <List
-        fieldList={fieldList}
-        dataList={filteredList}
-        backgroundColor="rgba(255, 255, 255, 0.05)"
-    />
+        <List
+            fieldList={fieldList}
+            dataList={filteredList}
+            backgroundColor="rgba(255, 255, 255, 0.05)"
+        />
     );
 }
 
 export function BunnyListContainer() {
-    const { bunnies, isLoading, error, fetchBunnies, filters } = useBunnyStore();
+    const { bunnies, fetchBunnies, filters, status } = useBunnyStore();
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
 
     const filteredBunnies = bunnies.filter((bunny) => {
         if (filters.bunnyType !== null && bunny.bunny_type !== SelectData[0][filters.bunnyType]) {
-            console.log(bunny.bunny_type + ", " + SelectData[0][filters.bunnyType]);
             return false;
         }
 
@@ -60,35 +65,42 @@ export function BunnyListContainer() {
         return true;
     });
 
-    console.log(filteredBunnies.length);
-
     useEffect(() => {
         fetchBunnies({ sortType: "", page, size });
     }, [page, size, fetchBunnies]);
 
-    if (isLoading) return <Loading 
-                variant="bunny" 
-                size="small" 
-                text="버니들을 찾고 있어요..." 
+    if (status.bunnies.isLoading)
+        return (
+            <Loading
+                variant="bunny"
+                size="small"
+                text="버니들을 찾고 있어요..."
                 fullScreen={false}
-            />;
-    if (error) return <div>에러 발생: {error}</div>;
+            />
+        );
+
+    if (status.bunnies.error)
+        return <div>에러 발생: {status.bunnies.error}</div>;
 
     return (
-    <>
-        <List
-            fieldList={fieldList}
-            dataList={filteredBunnies}
-            backgroundColor="rgba(255, 255, 255, 0.05)"
-        />
-        <div style={{ textAlign: "center", marginTop: "1rem" }}>
-            <LoadMoreButton disabled={isLoading} onClick={() => setPage((page) => page + 1)}>
-                {isLoading ? "로딩 중..." : "더보기"}
-            </LoadMoreButton>
-        </div>    
-    </>
+        <>
+            <List
+                fieldList={fieldList}
+                dataList={filteredBunnies}
+                backgroundColor="rgba(255, 255, 255, 0.05)"
+            />
+            <div style={{ textAlign: "center", marginTop: "1rem" }}>
+                <LoadMoreButton
+                    disabled={status.bunnies.isLoading}
+                    onClick={() => setPage((page) => page + 1)}
+                >
+                    {status.bunnies.isLoading ? "로딩 중..." : "더보기"}
+                </LoadMoreButton>
+            </div>
+        </>
     );
 }
+
 
 const LoadMoreButton = styled.button`
   padding: 0.5rem 1rem;

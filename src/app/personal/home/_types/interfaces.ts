@@ -10,7 +10,6 @@ export interface BadgeType {
     src: string;
     name: string;
     alias: string;
-    amount: number;
     raise: boolean;
 }
 

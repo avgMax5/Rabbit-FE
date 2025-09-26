@@ -75,7 +75,7 @@ function Banner() {
                 observeParents={true}
                 slidesPerView={1}
                 style={{
-                    width: "1200px",
+                    width: "110rem",
                     height: "100%",
                     overflow: "visible",
                 }}
