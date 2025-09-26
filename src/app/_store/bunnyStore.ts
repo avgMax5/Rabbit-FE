@@ -33,6 +33,13 @@ export interface FetchBunniesParams {
     size?: number;
 }
 
+export interface Filters {
+    bunnyType: number | null;
+    position: number | null;
+    bunnyTraits: number | null;
+    badges: number[];
+}
+
 interface BunnyState {
     bunnies: Bunny[];
     isLoading: boolean;
@@ -43,6 +50,9 @@ interface BunnyState {
     clearError: () => void;
     updateBunnyLikeCount: (bunnyName: string, delta: number) => void;
     getBunnyLikeCount: (bunnyName: string) => number;
+
+    filters: Filters;
+    setFilter: (key: string, value: number | number[] | null) => void;
 }
 
 export const useBunnyStore = create<BunnyState>((set, get) => ({
@@ -51,23 +61,20 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
     error: null,
 
     fetchBunnies: async (params: FetchBunniesParams = {}) => {
-        const sortType = params.sortType ?? "ALL";
+        const sortType = params.sortType ?? "";
         const page = params.page ?? 0;
-        const size = params.size ?? 30;
-
+        const size = params.size ?? 10;
+  
         set({ isLoading: true, error: null });
 
         try {
-            const url = new URL(
-                `${API_BASE_URL}/bunnies`,
-                window.location.origin
-            );
-            url.searchParams.append("page", page.toString());
-            url.searchParams.append("size", size.toString());
-            url.searchParams.append("sortType", sortType);
-
-            console.log("Bunnies API 호출 URL:", url.toString());
-
+            const url = new URL(`${API_BASE_URL}/bunnies`, window.location.origin);
+            url.searchParams.append('page', page.toString());
+            url.searchParams.append('size', size.toString());
+            // url.searchParams.append('sortType', sortType);
+            
+            // console.log('Bunnies API 호출 URL:', url.toString());
+            
             const response = await axios.get(url.toString(), {
                 withCredentials: true,
                 headers: {
@@ -119,4 +126,19 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
         const bunny = bunnies.find((b) => b.bunny_name === bunnyName);
         return bunny ? bunny.like_count : 0;
     },
+
+    filters: {
+        bunnyType: null,
+        position: null,
+        bunnyTraits: null,
+        badges: [],
+    },
+    
+    setFilter: (key, value) =>
+        set((state) => ({
+        filters: {
+            ...state.filters,
+            [key]: value,
+        },
+    })),
 }));

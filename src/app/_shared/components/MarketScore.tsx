@@ -30,12 +30,12 @@ function MarketScore() {
     return (
         <Div>
             <Score>{reliavilityData[0].value}</Score>
-            <HalfChart
+            {/* <HalfChart
                 colors={["#1682109d", "#e9e9e9"]}
                 data={reliavilityData}
                 inner={60}
                 outer={120}
-            />
+            /> */}
         </Div>
     );
 }
@@ -43,20 +43,20 @@ function MarketScore() {
 const Div = styled.div`
     position: relative;
     width: 100%;
-    height: 13rem;
+    height: 6rem;
     padding-bottom: 0.2rem;
     flex-shrink: 0;
     border-radius: 10.7px;
     background: rgba(255, 254, 254, 0.56);
     box-shadow: 4px 4px 6px 0 #fbfbfb93 inset, -4px -4px 4px 0 #707070 inset,
         2px 3px 10px 0 rgba(0, 0, 0, 0.25);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `;
 
 const Score = styled.div`
-    position: absolute;
-    z-index: 999;
-    left: 45%;
-    bottom: 50%;
     font-family: var(--font-rockstar);
     font-size: 45px;
     font-weight: 800;
