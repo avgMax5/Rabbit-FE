@@ -1,34 +1,34 @@
 import { DataType, ListDataType } from "../_types/interfaces";
 
-export const RankData: DataType[] = [
+const RankData: DataType[] = [
     {
         id: 0,
-        coin_name: "coin1",
+        bunny_name: "coin1",
         percent: 200.3,
     },
     {
         id: 1,
-        coin_name: "coin2",
+        bunny_name: "coin2",
         percent: 200.3,
     },
     {
         id: 2,
-        coin_name: "coin3",
+        bunny_name: "coin3",
         percent: 200.3,
     },
     {
         id: 3,
-        coin_name: "coin4",
+        bunny_name: "coin4",
         percent: 200.3,
     },
     {
         id: 4,
-        coin_name: "coin5",
+        bunny_name: "coin5",
         percent: 200.3,
     },
 ];
 
-export const Data: ListDataType[] = [
+const Data: ListDataType[] = [
     {
         id: 0,
         coin_name: "coin1",

@@ -6,15 +6,15 @@ import Title from "./_components/Title";
 import SortButton from "./_components/SortButton";
 import MarketScore from "../../_shared/components/MarketScore";
 import Top5 from "./_components/Top5";
-import Rank from "./_components/Rank";
 import Banner from "./_components/BannerContainer";
 import Alarm from "./_components/Alarm";
 import WithAuth from "@/app/_components/WithAuth";
 
-import { updateData, RankData } from "./_mocks/mocks";
+import { updateData } from "./_mocks/mocks";
 import { SelectData, notificationData } from "./_constants/constants";
 import { ListContainer, BunnyListContainer } from "./_components/ListContainer";
 import { BadgeContainer } from "./_components/BadgeContainer";
+import { RankList } from "./_components/RankList";
 import HeaderForCorporation from "@/app/_shared/components/HeaderForCorporation";
 
 function Personal() {
@@ -110,9 +110,7 @@ function Personal() {
                                 time={false}
                             />
                             <RankContainer>
-                                {RankData.map((data, i) => (
-                                    <Rank key={i} data={data} />
-                                ))}
+                                <RankList type="buy" />
                             </RankContainer>
                         </Container>
 
@@ -126,9 +124,7 @@ function Personal() {
                                 time={false}
                             />
                             <RankContainer>
-                                {RankData.map((data, i) => (
-                                    <Rank key={i} data={data} />
-                                ))}
+                                <RankList type="sell" />
                             </RankContainer>
                         </Container>
                         {/*                         

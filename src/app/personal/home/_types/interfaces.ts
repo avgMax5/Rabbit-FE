@@ -1,9 +1,10 @@
 
 export interface DataType {
     id: number;
-    coin_name: string;
+    bunny_name: string;
     percent: number;
 }
+
 
 export interface BadgeType {
     id: number;
@@ -22,4 +23,16 @@ export interface ListDataType {
     fluctuation_rate: number;
     current_price: number;
     badge: string[];
+}
+
+export interface BunnyPressureData {
+  bunny_id: string;
+  bunny_name: string;
+  date: string;
+  pressure: number;
+}
+
+export interface PressureResponse {
+  buy_top5: BunnyPressureData[];
+  sell_top5: BunnyPressureData[];
 }
