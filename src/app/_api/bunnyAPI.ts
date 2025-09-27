@@ -74,22 +74,40 @@ export const postOrder = async (bunnyName: string, order: Order) => {
 };
 
 export const createOrder = async (
-    bunnyName: string,
-    orderRequest: OrderRequest
+  bunnyName: string,
+  orderRequest: { quantity: number; unit_price: number; order_type: "BUY" | "SELL" }
 ) => {
+  // 정수 강제 + 문자열로 전송(BigDecimal 정밀도 안전)
+  const payload = {
+    quantity: Math.trunc(orderRequest.quantity).toString(),
+    unit_price: Math.trunc(orderRequest.unit_price).toString(),
+    order_type: orderRequest.order_type, // "BUY" | "SELL"
+  };
+
+  try {
     const response = await axios.post(
-        `${API_BASE_URL}/bunnies/${bunnyName}/orders`,
-        orderRequest,
-        {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${TEST_TOKEN}`,
-            },
-        }
+      `${API_BASE_URL}/bunnies/${encodeURIComponent(bunnyName)}/orders`,
+      payload,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${TEST_TOKEN}`,
+        },
+      }
     );
     return response.data;
+  } catch (err: any) {
+    // 서버가 내려주는 에러 메시지 확인
+    console.error(
+      "createOrder error:",
+      err.response?.status,
+      err.response?.data || err.message
+    );
+    throw err;
+  }
 };
+
 
 export const cancelOrder = async (bunnyName: string, orderId: string) => {
     const response = await axios.delete(
