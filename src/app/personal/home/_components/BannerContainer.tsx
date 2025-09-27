@@ -64,7 +64,7 @@ function Banner() {
     return (
         <Wrapper>
             <Swiper
-                spaceBetween={20}
+                spaceBetween={70}
                 pagination={{
                     clickable: true,
                     el: ".custom-pagination",
@@ -74,8 +74,10 @@ function Banner() {
                 observer={true}
                 observeParents={true}
                 slidesPerView={1}
+                speed={800}
+                loop={true}
                 style={{
-                    width: "110rem",
+                    width: "1350x",
                     height: "100%",
                     overflow: "visible",
                 }}
@@ -148,12 +150,12 @@ const CustomPagination = styled.div`
         width: 0.7rem;
         height: 0.7rem;
         border-radius: 50%;
-        background: #b6b6b6;
+        background: #ecececa6;
         opacity: 1;
     }
 
     .swiper-pagination-bullet-active {
-        background: #ff8969;
+        background: #fd8563;
     }
 `;
 

@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import ShopModal from "./Shop";
 import { useUserStore } from "@/app/_store/userStore";
 
-function Header() {
+function HeaderForCorporation() {
     const [mouseEnter, setMouseEnter] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isShopModalOpen, setIsShopModalOpen] = useState(false);
@@ -30,8 +30,7 @@ function Header() {
 
     const getActive = () => {
         if (pathname === "/personal/home") return "home";
-        if (pathname.startsWith("/personal/mypage")) return "mypage";
-        if (pathname.startsWith("/personal/funding")) return "funding";
+        if (pathname === "/personal/funding") return "funding";
         return null;
     };
     const activate = getActive();
@@ -51,9 +50,6 @@ function Header() {
         setMouseEnter(false);
     };
 
-    const handleMoneyClick = () => {
-        setIsShopModalOpen(true);
-    };
     const handleCloseModal = () => {
         setIsShopModalOpen(false);
     };
@@ -74,39 +70,18 @@ function Header() {
                         홈
                     </Home>
                 </Link>
-                <Link href={user_id ? `/personal/mypage/${user_id}` : "#"}>
-                    <MyPage
-                        $activate={activate === "mypage"}
+                <Link href={`/personal/funding`}>
+                    <Funding
+                        $activate={activate === "funding"}
                         $isLoaded={isLoaded}
                     >
-                        마이페이지
-                    </MyPage>
+                        심사 메인
+                    </Funding>
                 </Link>
-                {pathname === "/personal/funding/list" ? (
-                    <Link href={`/personal/funding/list`}>
-                        <Funding
-                            $activate={activate === "funding"}
-                            $isLoaded={isLoaded}
-                        >
-                            심사 리스트
-                        </Funding>
-                    </Link>
-                ) : (
-                    <Link href={`/personal/funding`}>
-                        <Funding
-                            $activate={activate === "funding"}
-                            $isLoaded={isLoaded}
-                        >
-                            심사 메인
-                        </Funding>
-                    </Link>
-                )}
             </Navigate>
-            <Money onClick={handleMoneyClick}>
-                <CarrotImg src="/images/personal/home/carrot.png" alt="당근" />
-                {Number(carrot).toLocaleString()}
-            </Money>
-            <ShopModal isOpen={isShopModalOpen} onClose={handleCloseModal} />
+            <Link href={`/corporation`}>
+                <GoCorporationPage>기업 페이지로 이동하기</GoCorporationPage>
+            </Link>
         </Div>
     );
 }
@@ -203,7 +178,6 @@ const CarrotImg = styled.img`
 `;
 const Money = styled(WhiteContainer)`
     padding: 0.5rem 1.2rem;
-    border-radius: 45px;
     gap: 0.4rem;
     font-size: 15px;
     cursor: pointer;
@@ -215,4 +189,22 @@ const Money = styled(WhiteContainer)`
     }
 `;
 
-export default Header;
+const GoCorporationPage = styled.div`
+    font-size: 12px;
+    color: #fff;
+    padding: 12px;
+    border-radius: 6px;
+    background-color: #ffffff57;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+
+        &::before {
+            left: 100%;
+        }
+    }
+`;
+
+export default HeaderForCorporation;
