@@ -1,7 +1,12 @@
 "use client";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-import { BadgeData, PositionData, BunnyFundingTypeData, BunnyTraitsData } from "../_constants/constants";
+import {
+    BadgeData,
+    PositionData,
+    BunnyFundingTypeData,
+    BunnyTraitsData,
+} from "../_constants/constants";
 
 interface ListProps<T> {
     fieldList: { key: string; label: string }[];
@@ -21,37 +26,54 @@ function List<T>({ fieldList, dataList, backgroundColor }: ListProps<T>) {
                 ))}
             </FieldContainer>
             <RowContainer>
-                {(!dataList || dataList.length === 0) ? (
-                    <EmptyRowMessage>로켓에 탑승한 버니가 없어요</EmptyRowMessage>
-                ) : 
-                dataList.map((data, i) => {
-                    const RowComponent = i % 2 === 0 ? Erow : Orow;
-                    return (
-                        <RowComponent 
-                            key={i} 
-                            $fieldNum={fieldList.length}
-                            onClick={() =>
-                                router.push(
-                                    `/personal/trade/${(data as Record<string, any>).bunny_name}`
-                                )
-                            }>
-                            {fieldList.map((field) => {
-                            const value = (data as Record<string, any>)[field.key];
-                            return (
-                                <div key={field.key}>
-                                    {renderValue(field.key, value, data as Record<string, any>)}
-                                </div>
-                            );
-                            })}
-                        </RowComponent>
-                    );
-                })}
+                {!dataList || dataList.length === 0 ? (
+                    <EmptyRowMessage>
+                        로켓에 탑승한 버니가 없어요
+                    </EmptyRowMessage>
+                ) : (
+                    dataList.map((data, i) => {
+                        const RowComponent = i % 2 === 0 ? Erow : Orow;
+                        return (
+                            <RowComponent
+                                key={i}
+                                $fieldNum={fieldList.length}
+                                onClick={() =>
+                                    router.push(
+                                        `/personal/trade/${
+                                            (data as Record<string, any>)
+                                                .bunny_name
+                                        }`
+                                    )
+                                }
+                            >
+                                {fieldList.map((field) => {
+                                    const value = (data as Record<string, any>)[
+                                        field.key
+                                    ];
+                                    return (
+                                        <div key={field.key}>
+                                            {renderValue(
+                                                field.key,
+                                                value,
+                                                data as Record<string, any>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </RowComponent>
+                        );
+                    })
+                )}
             </RowContainer>
         </Div>
     );
 }
 
-function renderValue(fieldKey: string, value: any, rowData: Record<string, any>) {
+function renderValue(
+    fieldKey: string,
+    value: any,
+    rowData: Record<string, any>
+) {
     if (Array.isArray(value)) {
         if (value.length === 0) return "-";
 
@@ -88,7 +110,6 @@ function renderValue(fieldKey: string, value: any, rowData: Record<string, any>)
 
     return <span>{value ?? "-"}</span>;
 }
-
 
 const Row = styled.div<{ $fieldNum: number }>`
     width: 100%;
@@ -171,7 +192,7 @@ const RowContainer = styled.div`
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    max-height: 800px; 
+    max-height: 800px;
     gap: 0.4rem;
     padding: 0.5rem;
 
@@ -200,39 +221,39 @@ const RowContainer = styled.div`
 `;
 
 const Erow = styled(Row)`
-  background: #fff;
-  box-shadow: 1px 1px 10px 0 rgba(204, 204, 204, 0.25) inset,
-    0 2px 2px 0 rgba(0, 0, 0, 0.25);
-  cursor: pointer;
+    background: #fff;
+    box-shadow: 1px 1px 10px 0 rgba(204, 204, 204, 0.25) inset,
+        0 2px 2px 0 rgba(0, 0, 0, 0.25);
+    cursor: pointer;
 
-  &:hover {
-    background: #e0f2fe;
-  }
+    &:hover {
+        background: #e0f2fe;
+    }
 `;
 
 const Orow = styled(Row)`
-  background: #f1f1f1;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
-  cursor: pointer;
+    background: #f1f1f1;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
+    cursor: pointer;
 
-  &:hover {
-    background: #dbeafe;
-  }
+    &:hover {
+        background: #dbeafe;
+    }
 `;
 
 const SmallBadge = styled.img`
-  width: 20px;
-  height: 20px;
-  object-fit: cover; 
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
 `;
 
 const EmptyRowMessage = styled.div`
-  width: 100%;
-  padding: 1rem 0;
-  text-align: center;
-  color: #94a3b8; /* 연한 회색 */
-  font-size: 14px;
-  font-style: italic;
+    width: 100%;
+    padding: 1rem 0;
+    text-align: center;
+    color: #94a3b8; /* 연한 회색 */
+    font-size: 14px;
+    font-style: italic;
 `;
 
 export default List;

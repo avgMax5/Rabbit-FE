@@ -16,6 +16,7 @@ function CustomerHold({ holderData }: CustomerHoldProps) {
             backgroundColor="linear-gradient(135deg, rgb(41, 59, 90) 0%, rgb(0, 16, 57) 70%)"
         >
             <SubTitle>나의 코인 보유자 비율 : 개발자 유형 기준</SubTitle>
+
             <BarChart data={holderData} />
         </GlassBox>
     );

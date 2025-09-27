@@ -15,12 +15,14 @@ import { updateData, RankData } from "./_mocks/mocks";
 import { SelectData, notificationData } from "./_constants/constants";
 import { ListContainer, BunnyListContainer } from "./_components/ListContainer";
 import { BadgeContainer } from "./_components/BadgeContainer";
+import HeaderForCorporation from "@/app/_shared/components/HeaderForCorporation";
 
 function Personal() {
     return (
         <>
             <Wrapper>
                 <Header />
+                {/* <HeaderForCorporation /> */}
                 <Banner />
                 <Alarm updateData={updateData} />
                 <Main>
@@ -43,7 +45,7 @@ function Personal() {
                                 content={"로켓에 탑승한 버니들"}
                                 isNoti={false}
                                 icon="flowbite:rocket-solid"
-                                 time={true}
+                                time={true}
                             />
                             <SortButtons>
                                 <SortButton
@@ -65,7 +67,7 @@ function Personal() {
                                     text={"뱃지"}
                                     data={SelectData[3]}
                                     isMulti={true}
-                                    filterKey="badges" 
+                                    filterKey="badges"
                                 />
                             </SortButtons>
                             <BunnyListContainer />

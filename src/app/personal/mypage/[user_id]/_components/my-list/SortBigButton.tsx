@@ -3,17 +3,11 @@ import NightingaleChart, { ChartData } from "../chart/NightingaleChart";
 
 interface SortBigButtonProps {
     sortTitle: string;
-
     chartData: ChartData;
     colors?: string[];
 }
 
-function SortBigButton({
-    sortTitle,
-
-    chartData,
-    colors,
-}: SortBigButtonProps) {
+function SortBigButton({ sortTitle, chartData, colors }: SortBigButtonProps) {
     // 직군별 호버 배경색 결정
     const getHoverBackgroundColor = (title: string) => {
         if (title.includes("직군")) {

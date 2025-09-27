@@ -13,12 +13,14 @@ import Header from "@/app/_shared/components/Header";
 import Loading from "@/app/_shared/components/Loading";
 import { useFundingStore } from "../../_store/fundingStore";
 import WithAuth from "@/app/_components/WithAuth";
+import HeaderForCorporation from "@/app/_shared/components/HeaderForCorporation";
 
 function Funding() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
-    
-    const { fundBunnies, isLoading, error, fetchFundBunnies, clearError } = useFundingStore();
+
+    const { fundBunnies, isLoading, error, fetchFundBunnies, clearError } =
+        useFundingStore();
 
     useEffect(() => {
         fetchFundBunnies();
@@ -40,10 +42,10 @@ function Funding() {
                 <ContentContainer>
                     <Header />
                     <LoadingContainer>
-                        <Loading 
-                            variant="bunny" 
-                            size="large" 
-                            text="펀딩 버니 데이터를 불러오는 중..." 
+                        <Loading
+                            variant="bunny"
+                            size="large"
+                            text="펀딩 버니 데이터를 불러오는 중..."
                         />
                     </LoadingContainer>
                 </ContentContainer>
@@ -60,7 +62,11 @@ function Funding() {
                     <Header />
                     <ErrorContainer>
                         <ErrorText>오류가 발생했습니다: {error}</ErrorText>
-                        <Button onClick={() => fetchFundBunnies()} variant="primary" size="medium">
+                        <Button
+                            onClick={() => fetchFundBunnies()}
+                            variant="primary"
+                            size="medium"
+                        >
                             다시 시도
                         </Button>
                     </ErrorContainer>
@@ -75,37 +81,39 @@ function Funding() {
 
             <ContentContainer>
                 <Header />
-                
                 {/* 온보딩 섹션 1: 메인 소개 */}
                 <OnboardingSection>
                     <OnboardingContent>
                         <MainTitle>버니버니, 버니버니, 당근당근</MainTitle>
                         <MainDescription>
-                            마음에 드는 버니에게 당근을 주세요<br />
+                            마음에 드는 버니에게 당근을 주세요
+                            <br />
                             당신의 선택이 버니의 미래를 결정합니다
                         </MainDescription>
-                        
+
                         <FeatureGrid>
                             <FeatureCard>
                                 <FeatureIcon>🚀</FeatureIcon>
                                 <FeatureTitle>펀딩 참여</FeatureTitle>
                                 <FeatureDesc>
-                                    진행 중인 펀딩에<br />
+                                    진행 중인 펀딩에
+                                    <br />
                                     참여하여 버니를 상장시켜 보세요
                                 </FeatureDesc>
                             </FeatureCard>
-                            
+
                             <FeatureCard>
                                 <FeatureIcon>⭐</FeatureIcon>
                                 <FeatureTitle>상장 심사</FeatureTitle>
                                 <FeatureDesc>
-                                    당신의 버니를<br />
+                                    당신의 버니를
+                                    <br />
                                     Rabbit에서 선보이세요
                                 </FeatureDesc>
                             </FeatureCard>
                         </FeatureGrid>
                     </OnboardingContent>
-                    
+
                     <OnboardingImageContainer>
                         <AstronautImage
                             src="/images/personal/funding/astronaut.png"
@@ -116,8 +124,14 @@ function Funding() {
                         <MoonImage
                             src="/images/personal/funding/moon.png"
                             alt="moon"
-                            width={350}
-                            height={350}
+                            width={380}
+                            height={380}
+                        />
+                        <RabbitImage
+                            src="/images/personal/funding/space_rabbit.png"
+                            alt="bottom_rabbit"
+                            width={80}
+                            height={120}
                         />
                     </OnboardingImageContainer>
                 </OnboardingSection>
@@ -126,27 +140,34 @@ function Funding() {
                     <ActionContent>
                         <ActionTitle>지금 바로 시작해보세요!</ActionTitle>
                         <ActionDescription>
-                            버니의 세계에서 투자자가 되거나, 자신만의 버니를 직접 상장해보세요!
+                            버니의 세계에서 투자자가 되거나, 자신만의 버니를
+                            직접 상장해보세요!
                         </ActionDescription>
-                        
+
                         <ActionGrid>
-                            <ActionCard onClick={() => router.push("/personal/funding/list")}>
+                            <ActionCard
+                                onClick={() =>
+                                    router.push("/personal/funding/list")
+                                }
+                            >
                                 <ActionCardIcon>👀</ActionCardIcon>
                                 <ActionCardTitle>버니 둘러보기</ActionCardTitle>
                                 <ActionCardDesc>
-                                    다양한 버니들을 구경하고<br />
+                                    다양한 버니들을 구경하고
+                                    <br />
                                     마음에 드는 버니에게 투자해보세요
                                 </ActionCardDesc>
                                 <ActionButton variant="secondary" size="medium">
                                     구경하러 가기
                                 </ActionButton>
                             </ActionCard>
-                            
+
                             <ActionCard onClick={handleOpenModal}>
                                 <ActionCardIcon>📝</ActionCardIcon>
                                 <ActionCardTitle>버니 상장하기</ActionCardTitle>
                                 <ActionCardDesc>
-                                    나만의 버니를 만들어<br />
+                                    나만의 버니를 만들어
+                                    <br />
                                     Rabbit에서 펀딩을 받아보세요
                                 </ActionCardDesc>
                                 <ActionButton variant="primary" size="medium">
@@ -162,39 +183,39 @@ function Funding() {
                     <FundingTop>
                         <RabbitImageContainer>
                             <Image
-                                src="/images/personal/funding/rabbit1.png"
+                                src="/images/personal/funding/standing_rabbit2.png"
                                 alt="rabbit1"
-                                width={73}
-                                height={155}
+                                width={100}
+                                height={180}
                             />
                             <Image
-                                src="/images/personal/funding/rabbit2.png"
+                                src="/images/personal/funding/sitting_rabbit2.png"
                                 alt="rabbit2"
-                                width={73}
+                                width={80}
                                 height={155}
                             />
                             <Image
-                                src="/images/personal/funding/rabbit3.png"
+                                src="/images/personal/funding/sitting_rabbit2.png"
                                 alt="rabbit3"
-                                width={73}
+                                width={80}
                                 height={155}
                             />
                         </RabbitImageContainer>
 
                         <CoinState />
 
-                        <RabbitImageContainer>
+                        <RabbitImageContainer style={{ right: "-65rem" }}>
                             <Image
-                                src="/images/personal/funding/rabbit4.png"
+                                src="/images/personal/funding/standing_rabbit3.png"
                                 alt="rabbit4"
-                                width={73}
-                                height={155}
+                                width={100}
+                                height={180}
                             />
                             <Image
-                                src="/images/personal/funding/rabbit5.png"
-                                alt="rabbit5"
-                                width={73}
-                                height={155}
+                                src="/images/personal/funding/standing_rabbit3.png"
+                                alt="rabbit4"
+                                width={100}
+                                height={180}
                             />
                         </RabbitImageContainer>
                     </FundingTop>
@@ -246,7 +267,7 @@ const OnboardingSection = styled.section`
     align-items: center;
     justify-content: space-between;
     position: relative;
-    
+
     @media (max-width: 768px) {
         flex-direction: column;
         text-align: center;
@@ -271,14 +292,14 @@ const WelcomeText = styled.p`
 const MainTitle = styled.h1`
     color: white;
     font-size: 48px;
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.2;
     margin-bottom: 24px;
     background: linear-gradient(135deg, #ffffff 0%, #7cb0f3 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    
+
     @media (max-width: 768px) {
         font-size: 36px;
     }
@@ -286,11 +307,11 @@ const MainTitle = styled.h1`
 
 const MainDescription = styled.p`
     color: rgba(255, 255, 255, 0.9);
-    font-size: 20px;
-    font-weight: 400;
+    font-size: 22px;
+    font-weight: 500;
     line-height: 1.6;
     margin-bottom: 60px;
-    
+
     @media (max-width: 768px) {
         font-size: 18px;
         margin-bottom: 40px;
@@ -312,7 +333,7 @@ const FeatureCard = styled.div`
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
-    
+
     &:hover {
         background: rgba(255, 255, 255, 0.15);
         transform: translateY(-4px);
@@ -343,7 +364,7 @@ const OnboardingImageContainer = styled.div`
     max-width: 500px;
     height: 400px;
     z-index: 1;
-    
+
     @media (max-width: 768px) {
         width: 100%;
         max-width: 350px;
@@ -356,7 +377,38 @@ const MoonImage = styled(Image)`
     top: 0;
     right: 0;
     opacity: 0.9;
-    
+    animation: duwoong 3s ease-in-out infinite;
+
+    @media (max-width: 768px) {
+        width: 280px;
+        height: 280px;
+    }
+
+    @keyframes duwoong {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        25% {
+            transform: translateY(-8px);
+        }
+        50% {
+            transform: translateY(0);
+        }
+        75% {
+            transform: translateY(-4px);
+        }
+    }
+`;
+
+const RabbitImage = styled(Image)`
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    animation: duwoong 3s ease-in-out infinite;
+
+    display: inline-block;
+    transform: rotate(36deg);
     @media (max-width: 768px) {
         width: 280px;
         height: 280px;
@@ -368,7 +420,8 @@ const AstronautImage = styled(Image)`
     top: 0%;
     left: 15%;
     z-index: 2;
-    
+    animation: duwoong 3s ease-in-out infinite;
+
     @media (max-width: 768px) {
         width: 100px;
         height: 130px;
@@ -388,10 +441,10 @@ const ActionContent = styled.div`
 
 const ActionTitle = styled.h2`
     color: white;
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    
+    font-size: 38px;
+    font-weight: 800;
+    margin-bottom: 18px;
+
     @media (max-width: 768px) {
         font-size: 28px;
     }
@@ -399,12 +452,12 @@ const ActionTitle = styled.h2`
 
 const ActionDescription = styled.p`
     color: rgba(255, 255, 255, 0.8);
-    font-size: 18px;
-    margin-bottom: 60px;
-    
+    font-size: 20px;
+    margin-bottom: 64px;
+
     @media (max-width: 768px) {
         font-size: 16px;
-        margin-bottom: 40px;
+        margin-bottom: 46px;
     }
 `;
 
@@ -424,7 +477,7 @@ const ActionCard = styled.div`
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
     cursor: pointer;
-    
+
     &:hover {
         background: rgba(255, 255, 255, 0.15);
         transform: translateY(-8px);
@@ -459,26 +512,25 @@ const FundingSection = styled.section`
     width: 100%;
     margin-top: 100px;
     display: flex;
+    gap: 45px;
     flex-direction: column;
     position: relative;
     justify-content: flex-start;
     align-items: center;
     background: rgba(39, 39, 39, 0.18);
-    box-shadow: inset 0 20px 50px rgba(5, 9, 15, 0.8);
-    padding: 200px 40px 60px;
+    box-shadow: inset 0 20px 50px rgba(5, 9, 15, 0.599);
+    padding: 0px 40px 60px;
 `;
 
 const FundingTop = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    display: grid;
     justify-content: center;
+    align-items: center;
+    margin: 0 auto;
     position: relative;
-    top: -150px;
-    gap: 100px;
+    top: -40px;
     width: 100%;
-    max-width: 1200px;
-    
+    max-width: 1360px;
     @media (max-width: 768px) {
         flex-direction: column;
         gap: 40px;
@@ -487,11 +539,13 @@ const FundingTop = styled.div`
 `;
 
 const RabbitImageContainer = styled.div`
+    position: absolute;
+    left: 0rem;
+    top: -6rem;
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 24px;
+    gap: 15px;
     z-index: 1;
 `;
 

@@ -7,6 +7,7 @@ import Profile from "./_components/Profile";
 import WithAuth from "@/app/_components/WithAuth";
 import { useBunnyStore } from "@/app/_store/bunnyStore";
 import { useUserStore } from "@/app/_store/userStore";
+import StarryBackground from "@/app/_shared/components/StarryBackground";
 
 interface MyPageLayoutProps {
     children: React.ReactNode;

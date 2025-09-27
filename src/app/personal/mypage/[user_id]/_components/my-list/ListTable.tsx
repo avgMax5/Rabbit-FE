@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import styled from "styled-components";
 
 interface ListProps<T> {
@@ -86,6 +87,7 @@ const renderValue = (key: string, value: any) => {
 };
 
 function ListTable<T>({ fieldList, dataList, title }: ListProps<T>) {
+    const router = useRouter();
     return (
         <Div>
             <FieldContainer $fieldNum={fieldList.length}>
@@ -98,11 +100,20 @@ function ListTable<T>({ fieldList, dataList, title }: ListProps<T>) {
                     <RowLengthZero>{title} 해라 버니! 버니!</RowLengthZero>
                 ) : (
                     dataList.map((data, i) => {
-                        console.log(data, i, "data");
-
                         const RowComponent = i % 2 === 0 ? Erow : Orow;
                         return (
-                            <RowComponent key={i} $fieldNum={fieldList.length}>
+                            <RowComponent
+                                key={i}
+                                $fieldNum={fieldList.length}
+                                onClick={() =>
+                                    router.push(
+                                        `/personal/trade/${
+                                            (data as Record<string, any>)
+                                                .bunny_name
+                                        }`
+                                    )
+                                }
+                            >
                                 {fieldList.map((field) => {
                                     const key = field.key as keyof T;
                                     const value = data[key];

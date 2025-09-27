@@ -5,7 +5,8 @@ function Badges({ badges }: { badges: string[] }) {
         <Div>
             {badges.map((b, i) => (
                 <img
-                    src={`/images/personal/shared/${b.toLowerCase}-badge.png`}
+                    key={i}
+                    src={`/images/personal/shared/${b.toLowerCase()}-badge.png`}
                 />
             ))}
         </Div>
@@ -14,7 +15,6 @@ function Badges({ badges }: { badges: string[] }) {
 
 const Div = styled.div`
     width: auto;
-    background-color: #909;
     & img {
         width: 2.3rem;
         height: 2.3rem;
