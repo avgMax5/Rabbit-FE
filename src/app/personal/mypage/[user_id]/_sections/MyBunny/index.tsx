@@ -47,6 +47,7 @@ const radialObject: Bunny = {
     badges: ["KAKAO"],
     like_count: 0,
     created_at: "2025-09-25",
+    ai_review: "",
 };
 
 function MyBunny() {
@@ -109,7 +110,7 @@ function MyBunny() {
                         <br /> 상장을 통해 <b>로켓</b>에 탑승해주세요
                     </SmallTitle>
                     <ClosedImage src="/images/personal/mypage/closed_bunny.png" />
-                    <Link href="/personal/publish">
+                    <Link href="/personal/funding">
                         <MoveFundingBtn
                             variants={bounceTopVariants}
                             animate="animate"

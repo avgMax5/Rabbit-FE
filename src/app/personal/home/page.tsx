@@ -9,6 +9,7 @@ import Top5 from "./_components/Top5";
 import Banner from "./_components/BannerContainer";
 import Alarm from "./_components/Alarm";
 import WithAuth from "@/app/_components/WithAuth";
+import SpaceBackground from "../../_shared/components/SpaceBackground";
 
 import { updateData } from "./_mocks/mocks";
 import { SelectData, notificationData } from "./_constants/constants";
@@ -19,7 +20,7 @@ import HeaderForCorporation from "@/app/_shared/components/HeaderForCorporation"
 
 function Personal() {
     return (
-        <>
+        <SpaceBackground>
             <Wrapper>
                 <Header />
                 {/* <HeaderForCorporation /> */}
@@ -144,18 +145,21 @@ function Personal() {
                     </RightSection>
                 </Main>
             </Wrapper>
-        </>
+        </SpaceBackground>
     );
 }
 
 const Wrapper = styled.div`
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
     display: grid;
     grid-template-rows: auto 1fr;
     gap: 2rem;
     margin: 0 auto;
-    margin-top: 12rem;
+    padding-top: 12rem;
+    position: relative;
+    z-index: 10;
+    overflow-y: auto;
 `;
 
 const Main = styled.div`

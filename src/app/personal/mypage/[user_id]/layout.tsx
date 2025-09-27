@@ -7,7 +7,7 @@ import Profile from "./_components/Profile";
 import WithAuth from "@/app/_components/WithAuth";
 import { useBunnyStore } from "@/app/_store/bunnyStore";
 import { useUserStore } from "@/app/_store/userStore";
-import StarryBackground from "@/app/_shared/components/StarryBackground";
+import SpaceBackground from "@/app/_shared/components/SpaceBackground";
 
 interface MyPageLayoutProps {
     children: React.ReactNode;
@@ -41,34 +41,45 @@ function MyPageLayout({ children }: MyPageLayoutProps) {
     const data: DataType = getBadgeAndLike(bunnyName);
 
     return (
-        <Wrapper>
-            <Header />
-            <Body>
-                <ProfileLogoSection>
-                    <Profile name={bunnyName} src={bunnyProfile} />
-                </ProfileLogoSection>
-                <MainSection>
-                    <TopContainer>
-                        <LikeBox like={data.like} />
-                        <Badges badges={data.badges} />
-                    </TopContainer>
-                    <Main>{children}</Main>
-                </MainSection>
-            </Body>
-            <Rabbit src="/images/personal/shared/background_rabbit.png" />
-        </Wrapper>
+        <SpaceBackground>
+            <MyPageBackground />
+            <Wrapper>
+                <Header />
+                <Body>
+                    <ProfileLogoSection>
+                        <Profile name={bunnyName} src={bunnyProfile} />
+                    </ProfileLogoSection>
+                    <MainSection>
+                        <TopContainer>
+                            <LikeBox like={data.like} />
+                            <Badges badges={data.badges} />
+                        </TopContainer>
+                        <Main>{children}</Main>
+                    </MainSection>
+                </Body>
+            </Wrapper>
+        </SpaceBackground>
     );
 }
 
-const Wrapper = styled.div`
-    position: relative;
-    //max-width: 1280px;
-    min-height: 100vh;
-    background-image: url("/images/personal/shared/background.png");
+const MyPageBackground = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("/images/shared/background2.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    overflow: hidden;
+    z-index: 5;
+    pointer-events: none;
+`;
+
+const Wrapper = styled.div`
+    position: relative;
+    min-height: 100vh;
+    z-index: 10;
 `;
 
 const Body = styled.div`
@@ -137,15 +148,6 @@ const Main = styled.div`
     box-sizing: border-box;
     overflow: visible;
     grid-row: 2;
-`;
-
-const Rabbit = styled.img`
-    position: absolute;
-    bottom: -5rem;
-    right: -3rem;
-    width: 18rem;
-    height: auto;
-    z-index: 999;
 `;
 
 export default WithAuth(MyPageLayout);

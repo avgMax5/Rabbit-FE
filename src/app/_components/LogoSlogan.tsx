@@ -10,16 +10,14 @@ export default function LogoSlogan({ initial, animate, transition }: any) {
             animate={animate}
             transition={transition}
         >
-            <LogoImage
-                src="/images/logo.png"
-                alt="Rabbit Logo"
-                width={436}
-                height={130}
-                priority
-            />
             <SloganText>
                 개발자들의 <HighlightText>가치</HighlightText><br />
-                <GoldText>Rabbit</GoldText>과 <HighlightText>같이</HighlightText>
+                <InlineLogoImage
+                    src="/images/login/rabbit_logo_txt.png"
+                    alt="Rabbit Logo"
+                    width={300}
+                    height={90}
+                />과 <HighlightText>같이</HighlightText>
             </SloganText>
         </LogoSloganContainer>
     );
@@ -53,7 +51,8 @@ const HighlightText = styled.span`
     font-weight: 900;
 `;
 
-const GoldText = styled.span`
-    font-weight: 700;
-    color: #FEDC95;
+const InlineLogoImage = styled(Image)`
+    display: inline-block;
+    vertical-align: middle;
+    object-fit: contain;
 `;

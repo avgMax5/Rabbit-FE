@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Image from 'next/image';
-import { Check, Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Building2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function FormCorporation() {
@@ -10,16 +10,24 @@ export default function FormCorporation() {
         router.push('/signup/corporation');
     };
 
+    const handleStartClick = () => {
+        router.push('/corporation');
+    };
+
     return (
-        <>
-            <FormText>
-                개발자의 능력치를 확인하고 채용하고자 하는<br />
-                모든 기업을 위한 회원 유형입니다.
-            </FormText>
-            <ImageFormContainer>
-                <StyledImage
+        <Container>
+            <HeroSection>
+                <HeroText>
+                    개발자의 능력치를 확인하고 채용하고자 하는
+                    <br />
+                    모든 <HighlightText>기업</HighlightText>을 위한 회원 유형입니다.
+                </HeroText>
+            </HeroSection>
+
+            <ImageFormSection>
+                <ProfileImage
                     src="/images/login/corporationProfile.png"
-                    alt="Corporation Logo"
+                    alt="Corporation Profile"
                     width={436}
                     height={130}
                 />
@@ -27,230 +35,309 @@ export default function FormCorporation() {
                 <LoginFormContainer>
                     <InputContainer>
                         <InputIcon>
-                            <InputLabel>ID</InputLabel>
-                            <Mail size={20} color="#697077" />
+                            <Mail size={16} color="#6b7280" />
                         </InputIcon>
-                        <LoginInput placeholder="" isFirst={true} />
+                        <LoginInput placeholder="이메일을 입력하세요" />
                     </InputContainer>
                     
                     <InputContainer>
                         <InputIcon>
-                            <InputLabel>PWD</InputLabel>
-                            <Lock size={20} color="#697077" />
+                            <Lock size={16} color="#6b7280" />
                         </InputIcon>
-                        <LoginInput placeholder="" type="password" isFirst={false} />
+                        <LoginInput placeholder="비밀번호를 입력하세요" type="password" />
                     </InputContainer>
                 </LoginFormContainer>
-            </ImageFormContainer>
+            </ImageFormSection>
             
-            <Signup>
+            <SignupSection>
                 <SignupText>계정이 없으신가요?</SignupText>
                 <SignupButton onClick={handleSignupClick}>회원가입</SignupButton>
-            </Signup>
+            </SignupSection>
             
-            <FeatureBox>
-                <FeatureTitle>이런 기업을 원해요!</FeatureTitle>
+            <FeatureCard>
+                <FeatureHeader>
+                    <FeatureIcon>
+                        <Building2 size={16} color="#374151" />
+                    </FeatureIcon>
+                    <FeatureTitle>이런 기업을 위한 서비스입니다</FeatureTitle>
+                </FeatureHeader>
                 <FeatureList>
                     <FeatureItem>
-                        <FeatureText><CheckIcon><Check color="#14ae5c" size={16} /></CheckIcon>필요한 인재를 찾고싶은 기업</FeatureText>
+                        <NumberIcon>1</NumberIcon>
+                        <FeatureText>필요한 인재를 찾고싶은 기업</FeatureText>
                     </FeatureItem>
                     <FeatureItem>
-                        <FeatureText><CheckIcon><Check color="#14ae5c" size={16} /></CheckIcon>개발자에게 편하게 커피챗을 요청 하고싶은 기업</FeatureText>
+                        <NumberIcon>2</NumberIcon>
+                        <FeatureText>개발자에게 편하게 커피챗을 요청 하고싶은 기업</FeatureText>
                     </FeatureItem>
                 </FeatureList>
-            </FeatureBox>
+            </FeatureCard>
 
-            <StartButton>시작하기</StartButton>
-        </>
+            <StartButton onClick={handleStartClick}>시작하기</StartButton>
+        </Container>
     );
 }
 
-const FormText = styled.div`
-    font-size: 1rem;
-    color: #000000;
-    font-family: 'nanum-square';
-    font-weight: 400;
-    text-align: center;
-    margin-top: 40px;
+// Container
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1rem 1.5rem;
+    width: 100%;
+    max-width: 550px;
+    margin: 0 auto;
+    height: 100%;
+    overflow: hidden;
 `;
 
-const ImageFormContainer = styled.div`
+// Hero Section
+const HeroSection = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    flex-shrink: 0;
+`;
+
+const HeroText = styled.div`
+    font-size: 0.95rem;
+    color: #374151;
+    font-family: var(--font-nanum-square);
+    font-weight: 400;
+    line-height: 1.5;
+    max-width: 500px;
+`;
+
+const HighlightText = styled.span`
+    font-size: 0.95rem;
+    color: #1f2937;
+    font-family: var(--font-nanum-square);
+    font-weight: 600;
+`;
+
+const ProfileImage = styled(Image)`
+    object-fit: contain;
+    width: 100px;
+    height: 100px;
+    transition: transform 0.2s ease;
+    border-radius: 10px;
+    
+    &:hover {
+        transform: scale(1.02);
+    }
+`;
+
+// Image Form Section
+const ImageFormSection = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 30px;
-    margin-top: 20px;
-`;
-
-const StyledImage = styled(Image)`
-    object-fit: contain;
-    width: 123px;
-    height: 123px;
-    opacity: 1;
-    border-radius: 10px;
-`;
-
-const FeatureBox = styled.div`
+    gap: 1.5rem;
     width: 100%;
-    max-width: 500px;
-    position: relative;
-    background-color: #B2D2FF;
-    border-radius: 12px;
-    padding: 5px;
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`;
-
-const FeatureTitle = styled.h3`
-    position: absolute;
-    top: -12px;
-    left: 10px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #000000;
-    font-family: 'nanum-square';
-    margin: 0 0 15px 0;
-    text-align: center;
-`;
-
-const FeatureList = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-`;
-
-const FeatureItem = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
-`;
-
-const CheckIcon = styled.span`
-    color: #14AE5C;
-    font-weight: bold;
-    font-size: 1rem;
-    min-width: 20px;
-`;
-
-const FeatureText = styled.span`
-    font-size: 1rem;
-    color: #333;
-    font-family: 'nanum-square';
-    margin-top: 10px;
-    font-weight: 400;
-    line-height: 1.4;
+    flex-shrink: 0;
 `;
 
 const LoginFormContainer = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 200px;
 `;
 
 const InputContainer = styled.div`
     position: relative;
-    width: 288px;
-    height: 60px;
-    background-color: #ff0000;
-    opacity: 0.86;
-    border-radius: 15px;
-    box-shadow: inset 3px 3px 3px rgba(250, 252, 255, 0.6), inset -3px -3px 4px rgba(157, 172, 193, 1), 3px 3px 4px rgba(26, 102, 203, 0.43);
-`;
-
-const InputIcon = styled.div`
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-`;
-
-const InputLabel = styled.span`
-    font-size: 12px;
-    color: #666;
-    font-family: 'nanum-square';
-    font-weight: 900;
-    white-space: nowrap;
-`;
-
-const LoginInput = styled.input.withConfig({
-    shouldForwardProp: (prop) => prop !== 'isFirst',
-})<{ isFirst?: boolean }>`
     width: 100%;
-    height: 100%;
-    border: none;
-    right: 10px;
-    border-radius: ${props => props.isFirst ? '15px 15px 0 0' : '0 0 15px 15px'};
-    background-color: #ffffff;
-    padding: 10px 50px 0 60px;
-    font-size: 1rem;
-    font-family: 'nanum-square';
-    color: #333;
-    box-sizing: border-box;
-    outline: none;
-    border-bottom: ${props => props.isFirst ? '1px solid #e0e0e0' : 'none'};
+    height: 44px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
     
-    &::placeholder {
-        color: #999;
+    &:focus-within {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     }
 `;
 
-const Signup = styled.div`
+const InputIcon = styled.div`
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: flex-end;
-    gap: 5px;
-    margin-top: 20px;
-    margin-right: 20px;
+    justify-content: center;
+    width: 40px;
+    height: 100%;
+    flex-shrink: 0;
+`;
+
+const LoginInput = styled.input`
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: transparent;
+    padding: 0 12px 0 0;
+    font-size: 0.9rem;
+    font-family: var(--font-nanum-square);
+    color: #374151;
+    outline: none;
+    
+    &::placeholder {
+        color: #9ca3af;
+    }
+`;
+
+const SignupSection = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    flex-shrink: 0;
 `;
 
 const SignupText = styled.span`
-    font-size: 0.9rem;
-    color: #697077;
-    font-family: 'nanum-square';
+    font-size: 0.8rem;
+    color: #6b7280;
+    font-family: var(--font-nanum-square);
     font-weight: 400;
 `;
 
 const SignupButton = styled.button`
     background: none;
     border: none;
-    color: #7F90D9;
-    font-family: 'nanum-square';
+    color: #6366f1;
+    font-family: var(--font-nanum-square);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     cursor: pointer;
     text-decoration: underline;
+    transition: color 0.2s ease;
     
     &:hover {
-        color: #2a1a9e;
+        color: #4f46e5;
     }
 `;
 
-const StartButton = styled.button`
-    width: 180px;
-    height: 38px;
-    border: none;
-    border-radius: 18px;
-    background: #6787CE;
-    color: #000;
-    font-family: 'nanum-square';
-    font-weight: 900;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 30px;
-    transition: all 0.3s ease;
-    box-shadow: inset -2px -4px 6px #6787ce, inset 6px 4px 6px #B7CEFF, 4px 4px 10px rgba(130, 164, 238, 0.64);
+// Feature Card
+const FeatureCard = styled.div`
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+`;
+
+const FeatureHeader = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+`;
+
+const FeatureIcon = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: #f3f4f6;
+    border-radius: 6px;
+`;
+
+const FeatureTitle = styled.h3`
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+    font-family: var(--font-nanum-square);
+    margin: 0;
+`;
+
+const FeatureList = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+`;
+
+const FeatureItem = styled.div`
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.4rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    
     &:hover {
-        transform: translateY(-2px);
+        background: #f3f4f6;
+    }
+`;
+
+const NumberIcon = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #374151;
+    color: #ffffff;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: var(--font-nanum-square);
+`;
+
+const FeatureText = styled.span`
+    font-size: 0.85rem;
+    color: #4b5563;
+    font-family: var(--font-nanum-square);
+    font-weight: 400;
+    line-height: 1.4;
+`;
+
+// Start Button
+const StartButton = styled.button`
+    width: 100%;
+    max-width: 200px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #000046 0%,rgb(19, 19, 78) 50%,rgb(76, 76, 105) 100%);
+    color: #ffffff;
+    font-family: var(--font-nanum-square);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    box-shadow: 
+        inset 2px 2px 4px rgba(255, 255, 255, 0.3),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.4),
+        0 4px 8px rgba(0, 0, 0, 0.2);
+    
+    &:hover {
+        background: linear-gradient(135deg,rgb(6, 6, 101) 0%,rgb(30, 30, 116) 50%,rgb(96, 96, 131) 100%);
+        transform: translateY(-1px);
+        box-shadow: 
+            inset 2px 2px 4px rgba(255, 255, 255, 0.4),
+            inset -2px -2px 4px rgba(0, 0, 0, 0.5),
+            0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    &:active {
+        transform: translateY(0);
+        box-shadow: 
+            inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+            inset -2px -2px 4px rgba(0, 0, 0, 0.6),
+            0 2px 4px rgba(0, 0, 0, 0.2);
     }
 `;
