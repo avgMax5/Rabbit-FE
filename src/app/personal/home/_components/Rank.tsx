@@ -1,20 +1,21 @@
 import styled from "styled-components";
-import { DataType } from "../_types/interfaces";
+import { BunnyPressureData } from "../_types/interfaces";
 
 interface RankProps {
-    data: DataType;
+    rank: number;
+    data: BunnyPressureData;
 }
 
-function Rank({ data }: RankProps) {
+function Rank({ rank, data }: RankProps) {
     return (
         <Div>
             <Line>
                 <div>
-                    <Number>{data.id + 1}</Number>
-                    <CoinName>{data.coin_name}</CoinName>
+                    <Number>{rank}</Number>
+                    <CoinName>{data.bunny_name}</CoinName>
                 </div>
                 <div>
-                    <Percent>{data.percent}</Percent>
+                    <Percent>{Math.min(data.pressure, 500)}</Percent>
                     <span>%</span>
                 </div>
             </Line>

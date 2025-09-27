@@ -23,10 +23,10 @@ export default function FormPersonal() {
                 <FeatureTitle>이런 기업을 원해요!</FeatureTitle>
                 <FeatureList>
                     <FeatureItem>
-                        <FeatureText><CheckIcon><Check color="#14ae5c" size={16} /></CheckIcon>개발자로서 자신을 홍보하고 싶은 사람</FeatureText>
+                        <FeatureText><CheckIcon><Check color="#14ae5c" size={16} /></CheckIcon> 개발자로서 자신을 홍보하고 싶은 사람</FeatureText>
                     </FeatureItem>
                     <FeatureItem>
-                        <FeatureText><CheckIcon><Check color="#14ae5c" size={16} /></CheckIcon>유망한 개발자를 발굴하고 투자하고자 하는 사람</FeatureText>
+                        <FeatureText><CheckIcon><Check color="#14ae5c" size={16} /></CheckIcon> 유망한 개발자를 발굴하고 투자하고자 하는 사람</FeatureText>
                     </FeatureItem>
                 </FeatureList>
             </FeatureBox>

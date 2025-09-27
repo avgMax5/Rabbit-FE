@@ -1,4 +1,5 @@
 import axios from "axios";
+import { PressureResponse } from "../personal/home/_types/interfaces";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
@@ -256,5 +257,18 @@ export const getBunnyContext = async (bunnyName: string) => {
             },
         }
     );
+    return response.data;
+};
+
+
+export const getPressureTop5 = async () => {
+    const response = await axios.get(`${API_BASE_URL}/bunnies/pressure-top5`, {
+        withCredentials: true,
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${TEST_TOKEN}`,
+        },
+    });
+    
     return response.data;
 };
