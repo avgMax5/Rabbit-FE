@@ -1,5 +1,4 @@
 "use client";
-import HalfChart from "@/app/personal/mypage/[user_id]/_components/chart/HalfChart";
 import styled from "styled-components";
 import { getRabbitIndex } from "@/app/_api/bunnyAPI";
 import { useEffect, useState } from "react";
@@ -30,37 +29,38 @@ function MarketScore() {
     return (
         <Div>
             <Score>{reliavilityData[0].value}</Score>
-            {/* <HalfChart
-                colors={["#1682109d", "#e9e9e9"]}
-                data={reliavilityData}
-                inner={60}
-                outer={120}
-            /> */}
         </Div>
     );
 }
 
 const Div = styled.div`
     position: relative;
-    width: 100%;
-    height: 6rem;
-    padding-bottom: 0.2rem;
-    flex-shrink: 0;
-    border-radius: 10.7px;
-    background: rgba(255, 254, 254, 0.56);
-    box-shadow: 4px 4px 6px 0 #fbfbfb93 inset, -4px -4px 4px 0 #707070 inset,
-        2px 3px 10px 0 rgba(0, 0, 0, 0.25);
-
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    height: 5rem;
+    border-radius: 8px;
+    background-color: rgba(240, 211, 251, 0.462);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(176, 106, 179, 0.25),
+        0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: scale(1.02);
+        box-shadow: 0 12px 40px rgba(8, 5, 8, 0.35),
+            0 6px 20px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
 `;
 
 const Score = styled.div`
     font-family: var(--font-rockstar);
-    font-size: 45px;
+    font-size: 40px;
     font-weight: 800;
-    color: #111111;
+    color: #fff;
 `;
 
 export default MarketScore;

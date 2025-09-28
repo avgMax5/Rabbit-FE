@@ -39,6 +39,12 @@ function Personal() {
                         </Container>
 
                         <Container>
+                            <Title
+                                content={"기업"}
+                                isNoti={false}
+                                icon="flowbite:rocket-solid"
+                                time={false}
+                            />
                             <CorporationCotainer>
                                 <BadgeContainer />
                             </CorporationCotainer>
@@ -81,8 +87,8 @@ function Personal() {
                                 content={"Rabbit 지수"}
                                 isNoti={true}
                                 notification={notificationData[0].noti}
-                                icon="tabler:number"
                                 time={true}
+                                notiWidth="240px"
                             />
                             <MarketScore />
                         </Container>
@@ -91,13 +97,24 @@ function Personal() {
                             <Title
                                 content={"버니 시가총액 순위"}
                                 isNoti={false}
-                                icon="fluent-emoji-high-contrast:top-arrow"
                                 time={false}
                             />
                             <RankContainer>
-                                <Top5 standard="개발자 성향별 Top 1" />
-                                <Top5 standard="포지션별 가치 Top 1" />
-                                <Top5 standard="코인 가치 순위 Top 5" />
+                                <Top5
+                                    standard="코인 가치 순위 Top 5"
+                                    isSwipper={true}
+                                    type=""
+                                />
+                                <Top5
+                                    standard="개발자 성향별 Top 1"
+                                    isSwipper={false}
+                                    type="dev"
+                                />
+                                <Top5
+                                    standard="포지션별 가치 Top 1"
+                                    isSwipper={false}
+                                    type="position"
+                                />
                             </RankContainer>
                         </Container>
 
@@ -107,7 +124,6 @@ function Personal() {
                                 content={"일 매수 체결강도 순위"}
                                 isNoti={true}
                                 notification={notificationData[1].noti}
-                                icon="icon-park-solid:list-top"
                                 time={false}
                             />
                             <RankContainer>
@@ -121,7 +137,6 @@ function Personal() {
                                 content={"일 매도 체결강도 순위"}
                                 isNoti={true}
                                 notification={notificationData[1].noti}
-                                icon="icon-park-solid:list-top"
                                 time={false}
                             />
                             <RankContainer>
@@ -210,12 +225,11 @@ const CorporationCotainer = styled.div`
     gap: 60px;
     flex-shrink: 0;
 
-    margin-bottom: 2rem;
-
+    margin-bottom: 5rem;
+    background-color: #ffffff2b;
     border-radius: 8px;
-    background: rgba(32, 45, 74, 0.06);
-    box-shadow: 6px 6px 20px 0 #b9c4dc inset,
-        4px 4px 4px 0 rgba(19, 35, 70, 0.26);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
 const RankContainer = styled.div`
