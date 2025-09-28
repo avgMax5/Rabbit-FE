@@ -11,8 +11,11 @@ export interface FundingCount {
 
 export interface HoldingStatus {
     top1: number;
+    top1_name: string | null;
     top2: number;
+    top2_name: string | null;
     top3: number;
+    top3_name: string | null;
     others: number;
     remaining: number;
 }

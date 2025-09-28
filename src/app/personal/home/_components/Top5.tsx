@@ -18,7 +18,7 @@ export interface DeveloperTypeData {
 
 interface Top5Props {
     standard:
-        | "개발자 성향별 Top 1"
+        | "개발자 유형별 Top 1"
         | "포지션별 가치 Top 1"
         | "코인 가치 순위 Top 5";
     isSwipper: boolean;
@@ -51,7 +51,7 @@ function Top5({ standard, isSwipper, type }: Top5Props) {
 
         let result: DeveloperTypeData[] = [];
 
-        if (standard === "개발자 성향별 Top 1") {
+        if (standard === "개발자 유형별 Top 1") {
             const grouped: Record<string, DeveloperTypeData[]> = {};
             mappedList.forEach((item) => {
                 if (!item.dev_type) return;

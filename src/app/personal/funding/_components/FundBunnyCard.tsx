@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import FundBunnyModal from "../_modal/FundBunnyModal";
-import { updateCountdown } from "../_utils/countdown";
+import { useCountdown } from "@/app/_hooks/useCountdown";
 
 export default function FundBunnyCard({
     fundBunnyId,
@@ -32,7 +32,7 @@ export default function FundBunnyCard({
         Math.round((safeCurrentAmount / safeTargetBny) * 100 * 10) / 10;
     const [mounted, setMounted] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [countdown, setCountdown] = useState<string>("");
+    const { timeLeft, isUrgent, isExpired } = useCountdown(endAt);
 
     // bunnyType에 따른 아이콘 매핑
     const getCoinTypeIcon = (type: string) => {
@@ -65,17 +65,6 @@ export default function FundBunnyCard({
         setMounted(true);
     }, []);
 
-    useEffect(() => {
-        if (!endAt) return;
-
-        updateCountdown(endAt, setCountdown);
-
-        const interval = setInterval(() => {
-            updateCountdown(endAt, setCountdown);
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [endAt]);
 
     const handleCardClick = () => {
         setIsModalOpen(true);
@@ -142,8 +131,8 @@ export default function FundBunnyCard({
 
                 {endAt && showCountdown && (
                     <CountdownSection>
-                        <CountdownText countdownColor={countdownColor}>
-                            {countdown}
+                        <CountdownText isUrgent={isUrgent}>
+                            {timeLeft}
                         </CountdownText>
                     </CountdownSection>
                 )}
@@ -235,6 +224,17 @@ const bubbleSlide = keyframes`
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0) scale(1);
+  }
+`;
+
+const pulse = keyframes`
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
   }
 `;
 
@@ -374,7 +374,7 @@ const ProgressText = styled.div`
 `;
 
 const CountdownSection = styled.div`
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -382,11 +382,27 @@ const CountdownSection = styled.div`
 `;
 
 const CountdownText = styled.div.withConfig({
-    shouldForwardProp: (prop) => prop !== "countdownColor",
-})<{ countdownColor: string }>`
-    font-size: 36px;
-    font-weight: 800;
-    color: ${(props) => props.countdownColor};
+    shouldForwardProp: (prop) => prop !== "isUrgent",
+})<{ isUrgent: boolean }>`
+    font-size: 14px;
+    font-weight: 600;
+    color: ${(props) => props.isUrgent ? "#ff6b6b" : "#5a5a5a"};
+    background: ${(props) => props.isUrgent 
+        ? "linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 107, 107, 0.05) 100%)"
+        : "rgba(255, 255, 255, 0.1)"
+    };
+    padding: 0.25rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid ${(props) => props.isUrgent 
+        ? "rgba(255, 107, 107, 0.2)" 
+        : "rgba(255, 255, 255, 0.2)"
+    };
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    
+    ${props => props.isUrgent && css`
+        animation: ${pulse} 2s ease-in-out infinite;
+    `}
 `;
 
 const BottomSection = styled.div`
@@ -507,3 +523,4 @@ const TotalAmount = styled.div`
     text-align: right;
     animation: ${fadeIn} 0.5s ease-out 2.6s both;
 `;
+

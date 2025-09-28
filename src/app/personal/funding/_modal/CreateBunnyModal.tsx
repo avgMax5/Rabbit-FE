@@ -12,27 +12,72 @@ interface CreateBunnyModalProps {
     onClose: () => void;
 }
 
-export default function CreateBunnyModal({
-    isOpen,
-    onClose,
-}: CreateBunnyModalProps) {
-    const [bunnyName, setBunnyName] = useState("");
-    const [selectedType, setSelectedType] = useState<"A" | "B" | "C">("B");
-    const [agreement1, setAgreement1] = useState(false);
-    const [agreement2, setAgreement2] = useState(false);
-    const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
+export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalProps) {
+  const [bunnyName, setBunnyName] = useState('');
+  const [selectedType, setSelectedType] = useState<'A' | 'B' | 'C'>('B');
+  const [agreement1, setAgreement1] = useState(false);
+  const [agreement2, setAgreement2] = useState(false);
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
+  const [nameError, setNameError] = useState('');
 
-    React.useEffect(() => {
-        if (!isOpen) {
-            setBunnyName("");
-            setSelectedType("B");
-            setAgreement1(false);
-            setAgreement2(false);
-            setIsCheckingDuplicate(false);
-        }
-    }, [!isOpen]);
+  React.useEffect(() => {
+    if (!isOpen) {
+      setBunnyName('');
+      setSelectedType('B');
+      setAgreement1(false);
+      setAgreement2(false);
+      setIsCheckingDuplicate(false);
+      setNameError('');
+    }
+  }, [!isOpen]);
 
-    const marketCap = 100000000;
+  // 버니 이름 검증 함수
+  const validateBunnyName = (name: string): string => {
+    if (!name.trim()) {
+      return '';
+    }
+
+    // 대문자를 소문자로 변환
+    const normalizedName = name.toLowerCase();
+    
+    // 길이 검증
+    if (normalizedName.length < 3) {
+      return '버니 이름은 3자 이상이어야 합니다.';
+    }
+    if (normalizedName.length > 20) {
+      return '버니 이름은 20자 이하여야 합니다.';
+    }
+
+    // 허용 문자 검증 (영어 소문자, 숫자, 하이픈만)
+    const allowedPattern = /^[a-z0-9-]+$/;
+    if (!allowedPattern.test(normalizedName)) {
+      return '영어 소문자, 숫자, 하이픈만 사용할 수 있습니다.';
+    }
+
+    // 하이픈으로 시작하거나 끝나는지 검증
+    if (normalizedName.startsWith('-') || normalizedName.endsWith('-')) {
+      return '하이픈으로 시작하거나 끝날 수 없습니다.';
+    }
+
+    // 연속된 하이픈 검증
+    if (normalizedName.includes('--')) {
+      return '연속된 하이픈을 사용할 수 없습니다.';
+    }
+
+    return '';
+  };
+
+  // 버니 이름 변경 핸들러
+  const handleBunnyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    setBunnyName(value);
+    
+    // 실시간 검증
+    const error = validateBunnyName(value);
+    setNameError(error);
+  };
+
+  const marketCap = 100000000;
 
     const getTypeValues = (type: "A" | "B" | "C") => {
         switch (type) {
@@ -53,43 +98,57 @@ export default function CreateBunnyModal({
 
     if (!isOpen) return null;
 
-    const handleSubmit = async () => {
-        try {
-            await postFundBunny(bunnyName, selectedType);
-            alert("상장심사 신청이 완료되었습니다.");
-            onClose();
-        } catch (error) {
-            console.error("상장심사 신청 오류:", error);
-            alert("상장심사 신청 중 오류가 발생했습니다.");
-        }
-    };
+  const handleSubmit = async () => {
+    // 버니 이름 검증
+    const error = validateBunnyName(bunnyName);
+    if (error) {
+      alert('올바른 버니 이름을 입력해주세요.');
+      return;
+    }
 
-    const handleCheckDuplicate = async () => {
-        if (!bunnyName.trim()) {
-            alert("버니 이름을 입력해주세요.");
-            return;
-        }
+    try {
+      await postFundBunny(bunnyName.toLowerCase(), selectedType);
+      alert('상장심사 신청이 완료되었습니다.');
+      onClose();
+    } catch (error) {
+      console.error('상장심사 신청 오류:', error);
+      alert('상장심사 신청 중 오류가 발생했습니다.');
+    }
+  };
 
-        setIsCheckingDuplicate(true);
-        try {
-            const response = await checkBunnyName(bunnyName);
+  const handleCheckDuplicate = async () => {
+    if (!bunnyName.trim()) {
+      alert('버니 이름을 입력해주세요.');
+      return;
+    }
 
-            if (response?.isDuplicate) {
-                alert("이미 사용 중인 버니 이름입니다.");
-            } else {
-                alert("사용 가능한 버니 이름입니다.");
-            }
-        } catch (error) {
-            console.error("중복 체크 오류:", error);
-            alert("중복 체크 중 오류가 발생했습니다.");
-        } finally {
-            setIsCheckingDuplicate(false);
-        }
-    };
+    // 검증 오류가 있으면 중복 체크 불가
+    const error = validateBunnyName(bunnyName);
+    if (error) {
+      alert('올바른 버니 이름을 입력해주세요.');
+      return;
+    }
+    
+    setIsCheckingDuplicate(true);
+    try {
+      const response = await checkBunnyName(bunnyName.toLowerCase());
+      
+      if (response?.isDuplicate) {
+        alert('이미 사용 중인 버니 이름입니다.');
+      } else {
+        alert('사용 가능한 버니 이름입니다.');
+      }
+    } catch (error) {
+      console.error('중복 체크 오류:', error);
+      alert('중복 체크 중 오류가 발생했습니다.');
+    } finally {
+      setIsCheckingDuplicate(false);
+    }
+  };
 
-    return (
+  return (
         <ModalOverlay onClick={onClose}>
-            <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ModalContent onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                 <ModalHeader>
                     <Image
                         src="/images/personal/funding/astronaut.png"
@@ -109,9 +168,7 @@ export default function CreateBunnyModal({
                                 <NameInput
                                     type="text"
                                     value={bunnyName}
-                                    onChange={(e) =>
-                                        setBunnyName(e.target.value)
-                                    }
+                                    onChange={handleBunnyNameChange}
                                     placeholder="버니 이름을 입력하세요"
                                 />
                                 <CheckDuplicateButton
@@ -128,6 +185,11 @@ export default function CreateBunnyModal({
                             이름은 영어 소문자, 숫자, 하이픈(연속, 시작/끝 위치
                             불가)으로 이루어진 3~20 자리 이름만 가능합니다.
                         </InputDescription>
+                        {nameError && (
+                            <ErrorMessage>
+                                {nameError}
+                            </ErrorMessage>
+                        )}
                     </Section>
 
                     {/* 버니 타입 선택 섹션 */}
@@ -190,7 +252,7 @@ export default function CreateBunnyModal({
                             <Checkbox
                                 type="checkbox"
                                 checked={agreement1}
-                                onChange={(e) =>
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setAgreement1(e.target.checked)
                                 }
                             />
@@ -204,7 +266,7 @@ export default function CreateBunnyModal({
                             <Checkbox
                                 type="checkbox"
                                 checked={agreement2}
-                                onChange={(e) =>
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setAgreement2(e.target.checked)
                                 }
                             />
@@ -558,4 +620,11 @@ const AgreementText = styled.span`
     font-size: 14px;
     line-height: 1.4;
     flex: 1;
+`;
+
+const ErrorMessage = styled.div`
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 0.5rem;
+    text-align: right;
 `;

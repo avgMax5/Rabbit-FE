@@ -61,7 +61,7 @@ export default function EndingSoon() {
                     end_at: bunny.timeLeftFormatted,
                     collected_bny: bunny.collected_bny,
                     target_bny: bunny.target_bny,
-                    avatarSrc: "/images/personal/funding/astronaut.png",
+                    avatarSrc: bunny.image || "/images/personal/funding/astronaut.png",
                 };
             });
 

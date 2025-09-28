@@ -82,7 +82,7 @@ export default function Profile({ bunny }: ProfileProps) {
           )}
           
           <Avatar>
-            <img src="/images/login/personalProfile.png" alt="Profile" />
+            <img src={bunny.image || "/images/login/personalProfile.png"} alt="Profile" />
           </Avatar>
           <ProfileInfo>
             <BunnyName>{bunny.bunny_name}</BunnyName>

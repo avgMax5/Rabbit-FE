@@ -15,6 +15,7 @@ export interface Bunny {
     bunny_id: string;
     user_name: string;
     bunny_name: string;
+    image: string;
     developer_type: string;
     bunny_type: string;
     position: string;
