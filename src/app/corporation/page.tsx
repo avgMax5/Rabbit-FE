@@ -56,7 +56,8 @@ export default function Corporation() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [activeTab, setActiveTab] = useState<'search' | 'matching'>('search');
   const router = useRouter();
-  const { bunnies, isLoading, fetchBunnies } = useBunnyStore();
+  const { bunnies, fetchBunnies } = useBunnyStore();
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleUnreleasedFeature = () => {
     alert('아직 출시되지 않은 기능입니다.');
@@ -64,7 +65,9 @@ export default function Corporation() {
 
   useEffect(() => {
     // Bunny 데이터 가져오기
-    fetchBunnies({ size: 3 });
+    fetchBunnies({ size: 3 }).then(() => {
+      setIsLoading(false);
+    });
     
     // 스크롤 애니메이션 설정
     const observerOptions = {
@@ -173,7 +176,7 @@ export default function Corporation() {
               <MatchingHeroContent>
                 <MatchingHeroText>
                   <MatchingHeroTitle>개발자 채용,<br />Rabbit에서 더 빠르고 똑똑하게</MatchingHeroTitle>
-                  <MatchingHeroSubtitle>Rabbit에 등록된 <span style={{fontWeight: '900', color: 'yellow'}}>32</span>명의 개발자 중에서<br />회사에게 필요한 개발자를 매칭해 드립니다</MatchingHeroSubtitle>
+                  <MatchingHeroSubtitle>Rabbit에 등록된 <span style={{fontWeight: '900'}}>32</span>명의 개발자 중에서<br />회사에게 필요한 개발자를 매칭해 드립니다</MatchingHeroSubtitle>
                   <MatchingCtaButton onClick={handleUnreleasedFeature}>시작하기</MatchingCtaButton>
                 </MatchingHeroText>
                 <MatchingHeroVisual>
@@ -700,8 +703,8 @@ const VisualPlaceholder = styled.div`
 `;
 
 const FloatingRocket = styled.div`
-  width: 300px;
-  height: 300px;
+  width: 400px;
+  height: 400px;
   background-image: url('/images/corporation/rbt_rocket.png');
   background-size: contain;
   background-repeat: no-repeat;
@@ -735,8 +738,8 @@ const FallingStar = styled.div<{ $delay: string; $left: string; $top: string }>`
   position: absolute;
   left: ${({ $left }) => $left};
   top: ${({ $top }) => $top};
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   background-image: url('/images/corporation/rbt_star.png');
   background-size: contain;
   background-repeat: no-repeat;

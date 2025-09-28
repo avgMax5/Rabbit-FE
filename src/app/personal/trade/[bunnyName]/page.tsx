@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import { useBunnyStore, Bunny } from "../../../_store/bunnyStore";
 import { getChart, ChartData } from "../../../_api/bunnyAPI";
 import { Cctv } from "lucide-react";
+import SpaceBackground from "../../../_shared/components/SpaceBackground";
 
 
 
@@ -66,72 +67,98 @@ export default function Trade() {
 
   if (status.allBunnies.isLoading) {
     return (
-      <Wrapper>
-        <Header />
-        <Container>
-          <div>로딩 중...</div>
-        </Container>
-      </Wrapper>
+      <SpaceBackground>
+        <TradeBackground />
+        <Wrapper>
+          <Header />
+          <Container>
+            <div>로딩 중...</div>
+          </Container>
+        </Wrapper>
+      </SpaceBackground>
     );
   }
 
   if (!currentBunny) {
     return (
-      <Wrapper>
-        <Header />
-        <Container>
-          <div>버니를 찾을 수 없습니다.</div>
-        </Container>
-      </Wrapper>
+      <SpaceBackground>
+        <TradeBackground />
+        <Wrapper>
+          <Header />
+          <Container>
+            <div>버니를 찾을 수 없습니다.</div>
+          </Container>
+        </Wrapper>
+      </SpaceBackground>
     );
   }
 
   return (
-    <Wrapper>
-      <Header />
-      <Container>
-        <LayoutGrid>
-          <TopLeftBlock>
-            <Profile bunny={currentBunny} />
-          </TopLeftBlock>
-          <MiddleLeftBlock>
-            <BunnyType bunny={currentBunny} />
-          </MiddleLeftBlock>
-          <BottomLeftBlock>
-            <BunnySpec bunny={currentBunny} />
-          </BottomLeftBlock>
-          
-          <RightCard>
-            <MainContent>
-              <LeftSection>
-                <NewTopBlock>
-                  {currentBunny.ai_review}
-                </NewTopBlock>
-                <TopRow>
-                  <ChartTopLeftBlock>
-                    <PentagonChart data={currentBunny} />
-                  </ChartTopLeftBlock>
-                  <TopRightBlock>
-                    <CurrentPrice bunny={currentBunny} />
-                  </TopRightBlock>
-                </TopRow>
-                <ChartBottomLeftBlock>
-                  <Chart chartData={chartData} isLoading={chartLoading} onPeriodChange={handlePeriodChange} />
-                </ChartBottomLeftBlock>
-              </LeftSection>
-              
-              <RightSection>
-                <TradeBlock bunny={currentBunny} />
-              </RightSection>
-            </MainContent>
-          </RightCard>
-        </LayoutGrid>
-      </Container>
-    </Wrapper>
+    <SpaceBackground>
+      <TradeBackground />
+      <Wrapper>
+        <Header />
+        <Container>
+          <LayoutGrid>
+            <TopLeftBlock>
+              <Profile bunny={currentBunny} />
+            </TopLeftBlock>
+            <MiddleLeftBlock>
+              <BunnyType bunny={currentBunny} />
+            </MiddleLeftBlock>
+            <BottomLeftBlock>
+              <BunnySpec bunny={currentBunny} />
+            </BottomLeftBlock>
+            
+            <RightCard>
+              <MainContent>
+                <LeftSection>
+                  <NewTopBlock>
+                    {currentBunny.ai_review}
+                  </NewTopBlock>
+                  <TopRow>
+                    <ChartTopLeftBlock>
+                      <PentagonChart data={currentBunny} />
+                    </ChartTopLeftBlock>
+                    <TopRightBlock>
+                      <CurrentPrice bunny={currentBunny} />
+                    </TopRightBlock>
+                  </TopRow>
+                  <ChartBottomLeftBlock>
+                    <Chart chartData={chartData} isLoading={chartLoading} onPeriodChange={handlePeriodChange} />
+                  </ChartBottomLeftBlock>
+                </LeftSection>
+                
+                <RightSection>
+                  <TradeBlock bunny={currentBunny} />
+                </RightSection>
+              </MainContent>
+            </RightCard>
+          </LayoutGrid>
+        </Container>
+      </Wrapper>
+    </SpaceBackground>
   );
 }
 
-const Wrapper = styled.div``;
+const TradeBackground = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("/images/personal/shared/background2.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    z-index: 5;
+    pointer-events: none;
+`;
+
+const Wrapper = styled.div`
+    position: relative;
+    z-index: 10;
+`;
 
 const Container = styled.div`
   margin-top: 8rem;

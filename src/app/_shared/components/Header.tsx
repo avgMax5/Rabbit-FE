@@ -4,13 +4,15 @@ import styled from "styled-components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import ShopModal from "./Shop";
+import { createPortal } from "react-dom";
 import { useUserStore } from "@/app/_store/userStore";
+import ShopModal from "./Shop";
 
 function Header() {
     const [mouseEnter, setMouseEnter] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isShopModalOpen, setIsShopModalOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
 
     const carrot = useUserStore((state) => state.user?.carrot);
@@ -24,6 +26,10 @@ function Header() {
         if (!user && !isLoading) {
             fetchUser();
         }
+    }, []);
+
+    useEffect(() => {
+        setMounted(true);
     }, []);
 
     console.log("user_role", user_role);
@@ -54,6 +60,7 @@ function Header() {
     const handleMoneyClick = () => {
         setIsShopModalOpen(true);
     };
+
     const handleCloseModal = () => {
         setIsShopModalOpen(false);
     };
@@ -106,7 +113,10 @@ function Header() {
                 <CarrotImg src="/images/personal/home/carrot.png" alt="당근" />
                 {Number(carrot).toLocaleString()}
             </Money>
-            <ShopModal isOpen={isShopModalOpen} onClose={handleCloseModal} />
+            {mounted && createPortal(
+                <ShopModal isOpen={isShopModalOpen} onClose={handleCloseModal} />,
+                document.body
+            )}
         </Div>
     );
 }
