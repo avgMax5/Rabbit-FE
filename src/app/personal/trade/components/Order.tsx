@@ -2,11 +2,15 @@
 import styled from "styled-components";
 import Button from '../../../_shared/components/Button';
 import { useState, useEffect } from "react";
-import { Bunny, useBunnyStore } from "../../../_store/bunnyStore";
+import { Bunny } from "../../../_store/bunnyStore"; // useBunnyStore는 이 파일에서 안 써서 제거
 import { useUserStore } from "../../../_store/userStore";
 import { validateOrderAmount, handlePriceIncrease } from '../utils/orderValidate';
 import { createOrder, getBunnyContext } from '../../../_api/bunnyAPI';
-import { webSocketService, OrderBookSnapshot, OrderBookDiff } from '../../../_utils/websocket';
+import {
+  webSocketService,
+  OrderBookSnapshot,
+  OrderBookDiff
+} from '../../../_utils/websocket';
 
 interface OrderProps {
   activeTab: string;
@@ -20,8 +24,15 @@ interface BunnyContext {
   sellable_quantity: number;
 }
 
+/** 숫자만 허용(정수), 앞자리 0 정리 */
+const toIntInput = (v: string) => {
+  const onlyDigits = v.replace(/[^\d]/g, "");
+  // 불필요한 선행 0 제거 (단, "0" 자체는 허용)
+  return onlyDigits.replace(/^0+(?=\d)/, "");
+};
+
 export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
-  const [quantity, setQuantity] = useState('');
+  const [quantity, setQuantity] = useState(''); // 문자열 입력 상태
   const [price, setPrice] = useState('');
   const [showTooltip, setShowTooltip] = useState(false);
   const [bunnyContext, setBunnyContext] = useState<BunnyContext | null>(null);
@@ -29,131 +40,135 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const { user } = useUserStore();
 
+  // 1) 컨텍스트(주문 가능 수량/액수 등) 로드
   useEffect(() => {
-    const fetchBunnyContext = async () => {
+    let mounted = true;
+    (async () => {
       try {
         const context = await getBunnyContext(bunny.bunny_name);
+        if (!mounted) return;
         setBunnyContext(context);
       } catch (error) {
         console.error('Bunny context 가져오기 실패:', error);
       }
-    };
-
-    fetchBunnyContext();
+    })();
+    return () => { mounted = false; };
   }, [bunny.bunny_name]);
 
-  // 웹소켓 연결 및 호가창 구독
+  // 2) 웹소켓 연결 + 호가창 스냅샷 요청 + 구독 설정
   useEffect(() => {
-    const connectWebSocket = async () => {
+    let mounted = true;
+
+    (async () => {
       try {
         await webSocketService.connect();
+        if (!mounted) return;
         setIsWebSocketConnected(true);
-        
-        // 호가창 스냅샷 요청
+
+        // 최초 1회 스냅샷 요청
         webSocketService.requestOrderBookSnapshot(bunny.bunny_name);
-        
-        // 호가창 구독
-        const subscription = webSocketService.subscribeToOrderBook(
+
+        // 실시간 호가창 구독(스냅샷/디프 분기)
+        webSocketService.subscribeToOrderBook(
           bunny.bunny_name,
           (snapshot: OrderBookSnapshot) => {
-            console.log('호가창 스냅샷 수신:', snapshot);
             setOrderBook(snapshot);
           },
           (diff: OrderBookDiff) => {
-            console.log('호가창 차이 수신:', diff);
-            // 차이 데이터를 기반으로 호가창 업데이트
-            setOrderBook(prev => {
+            setOrderBook((prev) => {
               if (!prev) return null;
-              
-              // 새로운 호가창 데이터 생성
-              const newOrderBook = { ...prev };
-              
-              // 매수 호가 업데이트
-              diff.bidUpserts.forEach(upsert => {
-                const existingIndex = newOrderBook.bids.findIndex(bid => bid.price === upsert.price);
-                if (existingIndex >= 0) {
-                  newOrderBook.bids[existingIndex] = upsert;
-                } else {
-                  newOrderBook.bids.push(upsert);
-                }
+
+              const next = { ...prev };
+
+              // 매수 upsert
+              diff.bidUpserts.forEach((u) => {
+                const i = next.bids.findIndex((b) => b.price === u.price);
+                if (i >= 0) next.bids[i] = u;
+                else next.bids.push(u);
               });
-              
-              diff.bidDeletes.forEach(del => {
-                newOrderBook.bids = newOrderBook.bids.filter(bid => bid.price !== del.price);
+              // 매수 delete (숫자 배열: 가격)
+              diff.bidDeletes.forEach((price) => {
+                next.bids = next.bids.filter((b) => b.price !== price);
               });
-              
-              // 매도 호가 업데이트
-              diff.askUpserts.forEach(upsert => {
-                const existingIndex = newOrderBook.asks.findIndex(ask => ask.price === upsert.price);
-                if (existingIndex >= 0) {
-                  newOrderBook.asks[existingIndex] = upsert;
-                } else {
-                  newOrderBook.asks.push(upsert);
-                }
+
+              // 매도 upsert
+              diff.askUpserts.forEach((u) => {
+                const i = next.asks.findIndex((a) => a.price === u.price);
+                if (i >= 0) next.asks[i] = u;
+                else next.asks.push(u);
               });
-              
-              diff.askDeletes.forEach(del => {
-                newOrderBook.asks = newOrderBook.asks.filter(ask => ask.price !== del.price);
+              // 매도 delete (숫자 배열: 가격)
+              diff.askDeletes.forEach((price) => {
+                next.asks = next.asks.filter((a) => a.price !== price);
               });
-              
-              // 가격 정렬
-              newOrderBook.bids.sort((a, b) => b.price - a.price);
-              newOrderBook.asks.sort((a, b) => a.price - b.price);
-              
-              // 현재 가격 업데이트
-              if (diff.currentPrice) {
-                newOrderBook.currentPrice = diff.currentPrice;
+
+              // 정렬 (매수: 내림차순, 매도: 오름차순)
+              next.bids.sort((a, b) => b.price - a.price);
+              next.asks.sort((a, b) => a.price - b.price);
+
+              // 현재가 갱신(optional)
+              if (typeof diff.currentPrice === 'number') {
+                next.currentPrice = diff.currentPrice;
               }
-              
-              return newOrderBook;
+
+              return next;
             });
           }
         );
-        
-        return () => {
-          if (subscription) {
-            webSocketService.unsubscribeFromOrderBook(bunny.bunny_name);
-          }
-        };
       } catch (error) {
         console.error('웹소켓 연결 실패:', error);
-        setIsWebSocketConnected(false);
+        if (mounted) setIsWebSocketConnected(false);
       }
-    };
+    })();
 
-    connectWebSocket();
-    
-    // 컴포넌트 언마운트 시 웹소켓 연결 해제
+    // cleanup: 구독 해제만 여기서 수행
     return () => {
+      mounted = false;
       webSocketService.unsubscribeFromOrderBook(bunny.bunny_name);
     };
   }, [bunny.bunny_name]);
 
-
+  // 가격 +% 버튼
   const onPriceIncrease = (percentage: number) => {
     const currentPrice = orderBook?.currentPrice || bunny.current_price;
     const newPrice = handlePriceIncrease(price, currentPrice, percentage);
-    setPrice(newPrice);
+    setPrice(toIntInput(newPrice)); // 정수만 유지
   };
 
-  // 호가창에서 가격 선택
+  // 호가 클릭하여 가격 입력
   const selectPrice = (selectedPrice: number) => {
-    setPrice(selectedPrice.toString());
+    setPrice(String(selectedPrice));
   };
 
+  // 주문 유효성 (금액은 기존 로직 유지)
   const orderValidation = validateOrderAmount(quantity, price);
   const isOrderValid = orderValidation.isValid;
 
+  // 주문 처리
   const handleOrder = async () => {
     try {
-      const orderRequest = {
-        quantity: parseFloat(quantity),
-        unit_price: parseFloat(price),
-        order_type: activeTab === '매수' ? 'BUY' : 'SELL'
-      };
+      // 입력을 정수로 강제(백엔드: BigDecimal 정수 + @Digits(fraction=0))
+      const qtyStr = toIntInput(quantity);
+      const unitStr = toIntInput(price);
 
-      await createOrder(bunny.bunny_name, orderRequest);
-      
+      const qty = Number(qtyStr);
+      const unit = Number(unitStr);
+
+      if (!Number.isFinite(qty) || qty <= 0) {
+        alert("수량은 0보다 큰 정수여야 합니다.");
+        return;
+      }
+      if (!Number.isFinite(unit) || unit <= 0) {
+        alert("가격은 0보다 큰 정수여야 합니다.");
+        return;
+      }
+
+      await createOrder(bunny.bunny_name, {
+        quantity: qty,
+        unit_price: unit,
+        order_type: activeTab === '매수' ? 'BUY' : 'SELL',
+      });
+
       setQuantity('');
       setPrice('');
       alert(`${activeTab} 주문이 성공적으로 처리되었습니다.`);
@@ -170,102 +185,90 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
   return (
     <>
       <TabContainer>
-        <TabButton 
-          $active={activeTab === '매수'} 
+        <TabButton
+          $active={activeTab === '매수'}
           $type="buy"
           onClick={() => setActiveTab('매수')}
         >
           매수
         </TabButton>
-        <TabButton 
-          $active={activeTab === '매도'} 
+        <TabButton
+          $active={activeTab === '매도'}
           $type="sell"
           onClick={() => setActiveTab('매도')}
         >
           매도
         </TabButton>
       </TabContainer>
+
       <TradeArea>
         <OrderForm>
           {/* 현재 가격 및 웹소켓 연결 상태 */}
           <OrderRow>
             <OrderLabel>현재 가격</OrderLabel>
             <OrderValue>
-              {orderBook?.currentPrice?.toLocaleString() || bunny.current_price?.toLocaleString() || 0} C
+              {orderBook?.currentPrice?.toLocaleString() ||
+                bunny.current_price?.toLocaleString() ||
+                0}{' '}
+              C
               {isWebSocketConnected && <ConnectionStatus $connected={true}>●</ConnectionStatus>}
               {!isWebSocketConnected && <ConnectionStatus $connected={false}>●</ConnectionStatus>}
             </OrderValue>
           </OrderRow>
-          
+
           <OrderRow>
             <OrderLabel>{activeTab === '매수' ? '주문 가능' : '매도 가능'}</OrderLabel>
             <OrderValue>
-              {activeTab === '매수' 
+              {activeTab === '매수'
                 ? `${bunnyContext?.buyable_amount?.toLocaleString() || 0} C`
-                : `${bunnyContext?.sellable_quantity || 0} C`
-              }
+                : `${bunnyContext?.sellable_quantity || 0} C`}
             </OrderValue>
           </OrderRow>
-          
+
           <OrderRow>
             <OrderLabel>주문 수량</OrderLabel>
             <OrderInput>
-              <input 
-                type="text" 
-                placeholder="0" 
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="0"
                 value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
+                onChange={(e) => setQuantity(toIntInput(e.target.value))}
               />
               <span>BNY</span>
             </OrderInput>
           </OrderRow>
-          
+
           <OrderRow>
             <OrderLabel>{activeTab === '매수' ? '매수 가격' : '매도 가격'}</OrderLabel>
             <OrderInput>
-              <input 
-                type="text" 
-                placeholder="0" 
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder="0"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => setPrice(toIntInput(e.target.value))}
               />
               <span>C</span>
             </OrderInput>
           </OrderRow>
-          
+
           <PercentageButtons>
-            <PercentageButton 
-              onClick={() => onPriceIncrease(10)}
-            >
-              +10%
-            </PercentageButton>
-            <PercentageButton 
-              onClick={() => onPriceIncrease(20)}
-            >
-              +20%
-            </PercentageButton>
-            <PercentageButton 
-              onClick={() => onPriceIncrease(50)}
-            >
-              +50%
-            </PercentageButton>
-            <PercentageButton 
-              onClick={() => onPriceIncrease(100)}
-            >
-              +100%
-            </PercentageButton>
+            <PercentageButton onClick={() => onPriceIncrease(10)}>+10%</PercentageButton>
+            <PercentageButton onClick={() => onPriceIncrease(20)}>+20%</PercentageButton>
+            <PercentageButton onClick={() => onPriceIncrease(50)}>+50%</PercentageButton>
+            <PercentageButton onClick={() => onPriceIncrease(100)}>+100%</PercentageButton>
           </PercentageButtons>
-          
+
           <OrderRow>
             <OrderLabel>주문 총액</OrderLabel>
             <OrderValue>
-              {quantity && price 
-                ? `${Math.round(parseFloat(quantity) * parseFloat(price) * 1.001).toLocaleString()} C`
-                : '0 C'
-              }
+              {quantity && price
+                ? `${Math.round(Number(quantity) * Number(price) * 1.001).toLocaleString()} C`
+                : '0 C'}
             </OrderValue>
           </OrderRow>
-          
+
           {/* 간단한 호가창 표시 */}
           {orderBook && (
             <OrderBookSection>
@@ -273,8 +276,8 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
               <OrderBookContainer>
                 <BidSection>
                   <BidTitle>매수</BidTitle>
-                  {orderBook.bids.slice(0, 3).map((bid, index) => (
-                    <OrderBookRow 
+                  {orderBook.bids.slice(0, 3).map((bid) => (
+                    <OrderBookRow
                       key={`bid-${bid.price}`}
                       onClick={() => selectPrice(bid.price)}
                       $type="bid"
@@ -286,8 +289,8 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
                 </BidSection>
                 <AskSection>
                   <AskTitle>매도</AskTitle>
-                  {orderBook.asks.slice(0, 3).map((ask, index) => (
-                    <OrderBookRow 
+                  {orderBook.asks.slice(0, 3).map((ask) => (
+                    <OrderBookRow
                       key={`ask-${ask.price}`}
                       onClick={() => selectPrice(ask.price)}
                       $type="ask"
@@ -300,28 +303,26 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
               </OrderBookContainer>
             </OrderBookSection>
           )}
-          
+
           <ActionButtons>
-            <Button variant="secondary" size="small" onClick={handleReset}>초기화</Button>
+            <Button variant="secondary" size="small" onClick={handleReset}>
+              초기화
+            </Button>
             <ButtonContainer>
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 size="small"
                 disabled={!isOrderValid}
                 onClick={handleOrder}
                 onMouseEnter={() => {
-                  if (!isOrderValid) {
-                    setShowTooltip(true);
-                  }
+                  if (!isOrderValid) setShowTooltip(true);
                 }}
                 onMouseLeave={() => setShowTooltip(false)}
               >
                 {activeTab === '매수' ? '매수하기' : '매도하기'}
               </Button>
               {showTooltip && !isOrderValid && (
-                <Tooltip>
-                  최소 주문 금액은 1,000C입니다
-                </Tooltip>
+                <Tooltip>최소 주문 금액은 1,000C입니다</Tooltip>
               )}
             </ButtonContainer>
           </ActionButtons>
@@ -331,6 +332,7 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
   );
 }
 
+/* ==== styled-components (변경 없음) ==== */
 
 const TabContainer = styled.div`
   display: flex;
@@ -349,8 +351,8 @@ const TabButton = styled.button<{ $active: boolean; $type: 'buy' | 'sell' }>`
   cursor: pointer;
   transition: all 0.3s ease;
   border-radius: 0.5rem 0.5rem 0 0;
-  
-  ${({ $active, $type }) => {
+
+  ${({ $active }) => {
     if ($active) {
       return `
         background-color: rgba(252, 252, 252, 0.34);
@@ -409,7 +411,7 @@ const OrderInput = styled.div`
   padding: 0.4rem;
   min-width: 100px;
   max-width: 110px;
-  
+
   input {
     border: none;
     background: transparent;
@@ -418,12 +420,12 @@ const OrderInput = styled.div`
     font-size: 0.85rem;
     color: #333;
     min-width: 0;
-    
+
     &::placeholder {
       color: #999;
     }
   }
-  
+
   span {
     font-size: 0.75rem;
     color: #666;
@@ -449,12 +451,12 @@ const PercentageButton = styled.button`
   transition: all 0.3s ease;
   color: white;
   background-color: rgba(27, 101, 164, 1);
-  
+
   &:hover {
     background-color: rgba(16, 145, 255, 0.7);
     transform: translateY(-1px);
   }
-  
+
   &:active {
     transform: translateY(0);
     background-color: rgba(16, 145, 255, 0.9);
@@ -489,7 +491,7 @@ const Tooltip = styled.div`
   z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   pointer-events: none;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -503,7 +505,7 @@ const Tooltip = styled.div`
 
 const ConnectionStatus = styled.span<{ $connected: boolean }>`
   margin-left: 0.5rem;
-  color: ${({ $connected }) => $connected ? '#4CAF50' : '#F44336'};
+  color: ${({ $connected }) => ($connected ? '#4CAF50' : '#F44336')};
   font-size: 0.8rem;
 `;
 
@@ -561,27 +563,21 @@ const OrderBookRow = styled.div<{ $type: 'bid' | 'ask' }>`
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.8rem;
-  
-  background-color: ${({ $type }) => 
-    $type === 'bid' 
-      ? 'rgba(76, 175, 80, 0.1)' 
-      : 'rgba(244, 67, 54, 0.1)'
-  };
-  
+
+  background-color: ${({ $type }) =>
+    $type === 'bid' ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)'};
+
   &:hover {
-    background-color: ${({ $type }) => 
-      $type === 'bid' 
-        ? 'rgba(76, 175, 80, 0.2)' 
-        : 'rgba(244, 67, 54, 0.2)'
-    };
+    background-color: ${({ $type }) =>
+      $type === 'bid' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)'};
     transform: translateY(-1px);
   }
-  
+
   span:first-child {
     font-weight: 600;
     color: #333;
   }
-  
+
   span:last-child {
     color: #666;
   }

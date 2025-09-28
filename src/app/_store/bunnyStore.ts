@@ -1,5 +1,12 @@
 import { create } from "zustand";
 import axios from "axios";
+import { webSocketService } from "../_utils/websocket";
+import {
+  PriceTick,
+  ClosingPriceUpdate,
+  toNum,
+  calcFluctuationRate,
+} from "../_utils/websocket";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const TEST_TOKEN = process.env.NEXT_PUBLIC_TEST_TOKEN;
@@ -63,6 +70,10 @@ interface BunnyState {
     updateBunnyLikeCount: (bunnyName: string, delta: number) => void;
     getBunnyLikeCount: (bunnyName: string) => number;
 
+    // 실시간 가격 스트림 제어
+    startPriceRealtime: (bunnyName: string) => Promise<void>;
+    stopPriceRealtime: (bunnyName: string) => void;
+
     filters: Filters;
     setFilter: (key: string, value: number | number[] | null) => void;
 }
@@ -102,7 +113,7 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
                 },
             });
 
-            const newBunnies = response.data.content;
+            const newBunnies: Bunny[] = response.data.content;
             if (page === 0) {
             set((state) => ({
                 bunnies: newBunnies,
@@ -157,7 +168,7 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
                 },
             });
 
-            const bunnies = response.data.content;
+            const bunnies: Bunny[] = response.data.content;
 
             set((state) => ({
                 allBunnies: bunnies,
@@ -212,6 +223,62 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
         const bunny = bunnies.find((b) => b.bunny_name === bunnyName);
         return bunny ? bunny.like_count : 0;
     },
+
+    startPriceRealtime: async (bunnyName: string) => {
+        // 1) ws 연결 보장
+        await webSocketService.connect();
+
+        // 2) 현재가 틱 구독
+        webSocketService.subscribeToCurrentPrice(bunnyName, (tick: PriceTick) => {
+            const cur = toNum(tick.currentPrice);
+
+            set((state) => {
+                const updateList = (list: Bunny[]) =>
+                    list.map((bunny) =>
+                        bunny.bunny_name === bunnyName
+                            ? {
+                                  ...bunny,
+                                  current_price: cur,
+                                  fluctuation_rate: calcFluctuationRate(cur, bunny.closing_price),
+                            }
+                            : bunny
+                    );
+                return {
+                    bunnies: updateList(state.bunnies),
+                    allBunnies: updateList(state.allBunnies),
+                };
+            });
+        });
+
+        // 3) 종가(자정 1회) 구독
+        webSocketService.subscribeToClosingPrice(bunnyName, (close: ClosingPriceUpdate) => {
+            const closing = toNum(close.closingPrice);
+
+            set((state) => {
+                const updateList = (list: Bunny[]) =>
+                    list.map((bunny) =>
+                        bunny.bunny_name === bunnyName
+                            ? {
+                                ...bunny,
+                                closing_price: closing,
+                                fluctuation_rate: calcFluctuationRate(bunny.current_price, closing),
+                            }
+                            : bunny
+                    );
+
+                return {
+                    bunnies: updateList(state.bunnies),
+                    allBunnies: updateList(state.allBunnies),
+                };
+            });
+        });
+    },
+
+    stopPriceRealtime: (bunnyName: string) => {
+        webSocketService.unsubscribeFromCurrentPrice(bunnyName);
+        webSocketService.unsubscribeFromClosingPrice(bunnyName);
+    },
+
 
     filters: {
         bunnyType: null,
