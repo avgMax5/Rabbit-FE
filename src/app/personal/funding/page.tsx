@@ -14,6 +14,7 @@ import Loading from "@/app/_shared/components/Loading";
 import { useFundingStore } from "../../_store/fundingStore";
 import WithAuth from "@/app/_components/WithAuth";
 import HeaderForCorporation from "@/app/_shared/components/HeaderForCorporation";
+import { SpaceBackground } from "@/app/_shared/components";
 
 function Funding() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,7 +77,7 @@ function Funding() {
     }
 
     return (
-        <>
+        <Wrapper>
             <MainContainer />
 
             <ContentContainer>
@@ -226,9 +227,14 @@ function Funding() {
             </ContentContainer>
 
             <CreateBunnyModal isOpen={isModalOpen} onClose={handleCloseModal} />
-        </>
+        </Wrapper>
     );
 }
+
+const Wrapper = styled.div`
+    width: 100%;
+    min-height: 100vh;
+`;
 
 const MainContainer = styled.div`
     width: 100vw !important;

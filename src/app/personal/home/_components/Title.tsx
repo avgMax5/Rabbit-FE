@@ -8,11 +8,19 @@ interface TitleProps {
     content: string;
     isNoti: boolean;
     notification?: string;
-    icon: string;
-    time: boolean
+    icon?: string;
+    time: boolean;
+    notiWidth?: string;
 }
 
-function Title({ content, isNoti, notification, icon, time }: TitleProps) {
+function Title({
+    content,
+    isNoti,
+    notification,
+    icon,
+    time,
+    notiWidth = "220px",
+}: TitleProps) {
     const [mouseEnter, setMouseEnter] = useState(false);
     const getNotiModal = () => {
         setMouseEnter(true);
@@ -21,18 +29,21 @@ function Title({ content, isNoti, notification, icon, time }: TitleProps) {
         setMouseEnter(false);
     };
     const date = getYesterdayMidnight();
-    const formatted = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 00:00`;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // 1 → 01
+    const day = String(date.getDate()).padStart(2, "0");
+    const formatted = `${year}-${month}-${day} 00:00`;
 
     return (
         <Container>
             <div>
-                <Icon icon={icon} width="24px" color="#020e60" />
+                <Icon icon={icon ?? "none"} width="24px" color="#ffffff" />
                 <Content>{content}</Content>
                 {isNoti && (
                     <IconContainer>
                         <Icon
                             icon="mingcute:question-fill"
-                            color="#000"
+                            color="#fcfcfc"
                             width="18px"
                             onMouseEnter={getNotiModal}
                             onMouseLeave={handleMouseLeave}
@@ -40,7 +51,7 @@ function Title({ content, isNoti, notification, icon, time }: TitleProps) {
                         {mouseEnter && notification && (
                             <Notification
                                 notification={notification}
-                                width="220px"
+                                width={notiWidth}
                             />
                         )}
                     </IconContainer>
@@ -54,21 +65,40 @@ function Title({ content, isNoti, notification, icon, time }: TitleProps) {
 const Container = styled.div`
     width: 100%;
     height: 3.5rem;
+    line-height: 2.6rem;
     display: flex;
-    text-align: center;
-    justify-content: space-between;
-    align-items: center;
     gap: 1.7rem;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    cursor: pointer;
+
     padding: 0 1rem;
     margin-bottom: 1.2rem;
+    border: none;
     border-radius: 8px;
-    background: #a9c7ef;
-    box-shadow: -2px -4px 10px 0 #597296 inset, 6px 4px 10px 0 #d8e8ff inset,
-        3px 3px 8px 0 rgba(11, 61, 131, 0.64);
+    background-size: 300% 100%;
+    background-image: linear-gradient(
+        to right,
+        #667eeabb,
+        #a86ce5a1,
+        #89acf7fe,
+        #9539e1ba
+    );
+    box-shadow: 4px 4px 4px 0 rgba(116, 79, 168, 0.242);
+    transition: all 0.4s ease-in-out;
 
-    font-family: var(--font-nanum-squar);
-    font-weight: 900;
-    font-size: 19px;
+    &:hover {
+        background-position: 100% 0;
+        transition: all 0.4s ease-in-out;
+    }
+
+    &:focus {
+        outline: none;
+    }
 
     & > div {
         display: flex;
@@ -86,18 +116,20 @@ const IconImg = styled.div`
 
 const Content = styled.div`
     width: auto;
+    color: #fff;
 `;
 
 const IconContainer = styled.div`
     position: relative;
-    width: 1rem;
-    height: 1rem;
+    text-align: center;
+    width: 1.2rem;
+    height: 2rem;
     cursor: pointer;
 `;
 
 const Time = styled.div`
     font-size: 12.5px;
-    color: #343235;
+    color: #ffffff;
 `;
 
 export default Title;

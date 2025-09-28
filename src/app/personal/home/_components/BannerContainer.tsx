@@ -77,7 +77,7 @@ function Banner() {
                 speed={800}
                 loop={true}
                 style={{
-                    width: "1350x",
+                    width: "1350px",
                     height: "100%",
                     overflow: "visible",
                 }}
@@ -150,7 +150,7 @@ const CustomPagination = styled.div`
         width: 0.7rem;
         height: 0.7rem;
         border-radius: 50%;
-        background: #ecececa6;
+        background: #eaeaea6e;
         opacity: 1;
     }
 

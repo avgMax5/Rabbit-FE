@@ -88,14 +88,18 @@ function renderValue(
     }
 
     if (fieldKey === "fluctuation_rate" && typeof value === "number") {
-        const color = value > 0 ? "red" : value < 0 ? "blue" : "black";
-        return <span style={{ color }}>{value}%</span>;
+        const color = value > 0 ? "red" : value < 0 ? "#60a5fa" : "black";
+        return <span style={{ color, fontWeight: "800" }}>{value}%</span>;
     }
 
     if (fieldKey === "current_price") {
         const rate = rowData["fluctuation_rate"];
-        const color = rate > 0 ? "red" : rate < 0 ? "blue" : "black";
-        return <span style={{ color }}>{Number(value).toLocaleString()}</span>;
+        const color = rate > 0 ? "red" : rate < 0 ? "#60a5fa" : "black";
+        return (
+            <span style={{ color, fontWeight: "800" }}>
+                {Number(value).toLocaleString()}
+            </span>
+        );
     }
 
     const position = PositionData.find((b) => b.name === value);
@@ -220,24 +224,84 @@ const RowContainer = styled.div`
     }
 `;
 
+// const Erow = styled(Row)`
+//     background: #ffffffd8;
+//     box-shadow: 1px 1px 10px 0 rgba(204, 204, 204, 0.25) inset,
+//         0 2px 2px 0 rgba(0, 0, 0, 0.25);
+//     cursor: pointer;
+
+//     &:hover {
+//         background: #e0f2feeb;
+//     }
+// `;
+
 const Erow = styled(Row)`
-    background: #fff;
-    box-shadow: 1px 1px 10px 0 rgba(204, 204, 204, 0.25) inset,
-        0 2px 2px 0 rgba(0, 0, 0, 0.25);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(176, 106, 179, 0.12) 30%,
+        rgba(28, 181, 224, 0.08) 70%,
+        rgba(0, 0, 70, 0.15) 100%
+    );
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.9);
 
     &:hover {
-        background: #e0f2fe;
+        transform: scale(1.02);
+        background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.12) 0%,
+            rgba(176, 106, 179, 0.18) 30%,
+            rgba(28, 181, 224, 0.12) 70%,
+            rgba(0, 0, 70, 0.425) 100%
+        );
+        box-shadow: 0 4px 10px rgba(176, 106, 179, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 `;
 
+// const Orow = styled(Row)`
+//     background: #e3e3e3e7;
+//     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
+//     cursor: pointer;
+
+//     &:hover {
+//         background: #dbeafe;
+//     }
+// `;
+
 const Orow = styled(Row)`
-    background: #f1f1f1;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.06) 0%,
+        rgba(28, 181, 224, 0.1) 30%,
+        rgba(176, 106, 179, 0.08) 70%,
+        rgba(0, 0, 70, 0.12) 100%
+    );
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
     cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.85);
 
     &:hover {
-        background: #dbeafe;
+        transform: scale(1.02);
+        background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(28, 181, 224, 0.15) 30%,
+            rgba(176, 106, 179, 0.12) 70%,
+            rgba(0, 0, 70, 0.18) 100%
+        );
+        box-shadow: 0 8px 32px rgba(28, 181, 224, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 `;
 

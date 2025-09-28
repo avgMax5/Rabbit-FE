@@ -10,35 +10,35 @@ function Rank({ rank, data }: RankProps) {
     return (
         <Div>
             <Line>
-                <div>
+                <LeftBox>
                     <Number>{rank}</Number>
                     <CoinName>{data.bunny_name}</CoinName>
-                </div>
-                <div>
+                </LeftBox>
+                <RightBox>
                     <Percent>{Math.min(data.pressure, 500)}</Percent>
                     <span>%</span>
-                </div>
+                </RightBox>
             </Line>
         </Div>
     );
 }
 
 const Div = styled.div`
-    display: flex;
-    justify-content: flex-end;
     width: 100%;
     height: 3rem;
-    padding: 0 0.8rem;
+    display: flex;
     align-items: center;
-    flex-shrink: 0;
+    padding: 10px 8px;
+    border-radius: 7px;
+    background-color: #f0f8ff38;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    cursor: pointer;
 
-    background: rgba(255, 255, 255, 0.7);
-    box-shadow: 2px 2px 4px 0 rgba(255, 255, 255, 0.25) inset,
-        3px 3px 4px 0 #c0c0c0;
-
-    font-family: var(--font-nanum-squar);
-    font-weight: 900;
-    font-size: 16px;
+    &:hover {
+        transform: scale(1.02);
+    }
 `;
 
 const Line = styled.div`
@@ -55,19 +55,39 @@ const Line = styled.div`
     }
 `;
 
-const Number = styled.div`
-    width: 1.8rem;
-    height: 1%.8;
-    border-radius: 2rem;
-    text-align: center;
-    line-height: 2rem;
-    background-color: #facdc2;
-    box-shadow: -2px -2px 2px 0 #ffaa97 inset, 2px 2px 2px 0 #ffdcd4 inset;
-    filter: drop-shadow(2px 2px 2px #dfb8af);
+const LeftBox = styled.div`
+    display: flex;
+    align-items: center;
 `;
 
-const CoinName = styled.div``;
+const Number = styled.div`
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+    font-size: 10px;
+    font-weight: 900;
+    background: linear-gradient(to right, #c654e3e8, #d77f9cdd);
+    flex-shrink: 0;
+`;
 
+const CoinName = styled.div`
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`;
+
+const RightBox = styled.div`
+    font-size: 16px;
+    font-weight: 900;
+    color: #8696ff;
+`;
 const Percent = styled.div``;
 
 export default Rank;

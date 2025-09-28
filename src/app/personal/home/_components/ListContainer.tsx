@@ -6,7 +6,6 @@ import List from "./List";
 import { useEffect, useMemo, useState } from "react";
 import { Loading } from "@/app/_shared/components";
 
-
 export function getYesterdayMidnight(): Date {
     const d = new Date();
     d.setHours(0, 0, 0, 0); // 오늘 0시
@@ -16,7 +15,7 @@ export function getYesterdayMidnight(): Date {
 
 export function ListContainer() {
     const { allBunnies, fetchAllBunnies } = useBunnyStore();
-    
+
     useEffect(() => {
         if (!allBunnies || allBunnies.length === 0) {
             fetchAllBunnies();
@@ -27,8 +26,8 @@ export function ListContainer() {
         const threshold = getYesterdayMidnight().getTime();
 
         return allBunnies.filter(
-                (bunny) => new Date(bunny.created_at).getTime() >= threshold
-            );
+            (bunny) => new Date(bunny.created_at).getTime() >= threshold
+        );
     }, [allBunnies]);
 
     return (
@@ -46,19 +45,33 @@ export function BunnyListContainer() {
     const [size, setSize] = useState(10);
 
     const filteredBunnies = bunnies.filter((bunny) => {
-        if (filters.bunnyType !== null && bunny.bunny_type !== SelectData[0][filters.bunnyType]) {
+        if (
+            filters.bunnyType !== null &&
+            bunny.bunny_type !== SelectData[0][filters.bunnyType]
+        ) {
             return false;
         }
 
-        if (filters.position !== null && bunny.position !== SelectData[1][filters.position]) {
+        if (
+            filters.position !== null &&
+            bunny.position !== SelectData[1][filters.position]
+        ) {
             return false;
         }
 
-        if (filters.bunnyTraits !== null && bunny.developer_type !== SelectData[2][filters.bunnyTraits]) {
+        if (
+            filters.bunnyTraits !== null &&
+            bunny.developer_type !== SelectData[2][filters.bunnyTraits]
+        ) {
             return false;
         }
 
-        if (filters.badges.length > 0 && !filters.badges.every((i) => bunny.badges.includes(SelectData[3][i]))) {
+        if (
+            filters.badges.length > 0 &&
+            !filters.badges.every((i) =>
+                bunny.badges.includes(SelectData[3][i])
+            )
+        ) {
             return false;
         }
 
@@ -101,18 +114,17 @@ export function BunnyListContainer() {
     );
 }
 
-
 const LoadMoreButton = styled.button`
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  border: none;
-  background: #94bcf1;
-  color: #fff;
-  cursor: pointer;
-  width: 98%;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    background: #9ea6c781;
+    color: #fff;
+    cursor: pointer;
+    width: 98%;
 
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
+    &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
 `;

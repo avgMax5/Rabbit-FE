@@ -7,6 +7,7 @@ import Loading from "@/app/_shared/components/Loading";
 import FundBunnyCard from "../_components/FundBunnyCard";
 import { useFundingStore, FundBunny } from "@/app/_store/fundingStore";
 import Link from "next/link";
+import { SpaceBackground } from "@/app/_shared/components";
 
 // 정렬 타입 정의
 type SortType = "latest" | "oldest" | "highInvestment" | "lowInvestment";
