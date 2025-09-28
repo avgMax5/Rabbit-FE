@@ -95,8 +95,8 @@ function Link({ linkData, name }: LinkProps) {
                         <Row key={i}>
                             <Favicon $src={faviconSrc} />
                             <LinkInput
-                                {...(register(`${name}[${i}].url`),
-                                getValidationRules())}
+                                {...register(`${name}[${i}].url`)}
+                                // getValidationRules())}
                                 defaultValue={typedLink.url}
                             />
                             <DeleteBtn

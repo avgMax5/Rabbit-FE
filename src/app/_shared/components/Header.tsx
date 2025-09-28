@@ -38,6 +38,7 @@ function Header() {
         if (pathname === "/personal/home") return "home";
         if (pathname.startsWith("/personal/mypage")) return "mypage";
         if (pathname.startsWith("/personal/funding")) return "funding";
+        if (pathname.startsWith("/personal/trade")) return "trade";
         return null;
     };
     const activate = getActive();
@@ -108,15 +109,28 @@ function Header() {
                         </Funding>
                     </Link>
                 )}
+                {pathname.startsWith("/personal/trade") && (
+                    <Trade
+                        $activate={activate === "trade"}
+                        $isLoaded={isLoaded}
+                        style={{ cursor: "pointer" }}
+                    >
+                        거래
+                    </Trade>
+                )}
             </Navigate>
             <Money onClick={handleMoneyClick}>
                 <CarrotImg src="/images/personal/home/carrot.png" alt="당근" />
                 {Number(carrot).toLocaleString()}
             </Money>
-            {mounted && createPortal(
-                <ShopModal isOpen={isShopModalOpen} onClose={handleCloseModal} />,
-                document.body
-            )}
+            {mounted &&
+                createPortal(
+                    <ShopModal
+                        isOpen={isShopModalOpen}
+                        onClose={handleCloseModal}
+                    />,
+                    document.body
+                )}
         </Div>
     );
 }
@@ -207,6 +221,8 @@ const Home = styled(NavButton)``;
 const MyPage = styled(NavButton)``;
 
 const Funding = styled(NavButton)``;
+
+const Trade = styled(NavButton)``;
 
 const CarrotImg = styled.img`
     height: 1.5rem;
