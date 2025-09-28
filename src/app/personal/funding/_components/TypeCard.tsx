@@ -74,7 +74,7 @@ export default function TypeCard({ type, isSelected, onClick }: TypeCardProps) {
 const StyledTypeCard = styled.div.withConfig({
     shouldForwardProp: (prop) => prop !== "isSelected",
 })<{ isSelected: boolean }>`
-    background: ${(props) => (props.isSelected ? "#FFAC9B" : "#2a2a3e")};
+    background: ${(props) => (props.isSelected ? "#8c9bfd" : "#e1e1f553")};
     border-radius: 0.9375rem;
     padding: 1.25rem;
     cursor: pointer;
@@ -131,7 +131,7 @@ const Bar = styled.div.withConfig({
     width: 0.75rem;
     height: 0.75rem;
     border-radius: 50%;
-    background: ${(props) => (props.filled ? "#ffd700" : "#555")};
+    background: ${(props) => (props.filled ? "#ffbf00" : "#e2e2e2c5")};
 `;
 
 const AttributeText = styled.span`

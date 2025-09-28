@@ -49,19 +49,27 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContainer = styled.div`
-    background: linear-gradient(135deg, #164e79 0%, #031d31 100%);
+    background-image: linear-gradient(
+        135deg,
+        #89acf7fe,
+        #7287e6b3,
+        #a86ce5a1,
+        #b458ffb9
+    );
+    backdrop-filter: blur(40px);
     border-radius: 10px;
     padding: 32px;
     max-width: 480px;
     width: 90%;
     max-height: 80vh;
+    padding: 32px;
     overflow-y: auto;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15),
-        inset 8px 8px 8px rgba(136, 135, 135, 0.2),
-        inset -8px -8px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15),
+        inset 3px 3px 3px rgba(136, 135, 135, 0.2),
+        inset -3px -3px 3px rgba(0, 0, 0, 0.342);
     position: absolute;
-    top: 20vh;
-    left: 50% - 240px;
+    top: 18%;
+    left: 35%;
     animation: ${fadeIn} 0.3s ease-out;
 `;
 
@@ -75,8 +83,8 @@ const CloseButton = styled.button`
         0.125rem 0.0625rem 0.25rem rgba(254, 226, 167, 0.3);
     border: none;
     border-radius: 50%;
-    width: 2rem;
-    height: 2rem;
+    width: 1.4rem;
+    height: 1.4rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -94,7 +102,7 @@ const Title = styled.h1`
     text-align: center;
     margin-bottom: 24px;
     color: #ffffff;
-    font-size: 28px;
+    font-size: 22px;
     font-weight: bold;
     display: flex;
     align-items: center;
@@ -105,8 +113,8 @@ const Title = styled.h1`
 `;
 
 const CarrotIcon = styled.img`
-    width: 4rem;
-    height: 4rem;
+    width: 2.2rem;
+    height: 2.2rem;
     position: relative;
     animation: ${bounce} 2s infinite;
 `;
@@ -130,7 +138,7 @@ const CarrotBalance = styled.div`
     animation: ${goldShimmer} 8s linear infinite;
     border-radius: 0.5rem;
     border: 1px solid rgba(230, 211, 163, 0.7);
-    box-shadow: 0 8px 32px rgba(230, 211, 163, 0.5),
+    box-shadow: 0 8px 22px rgba(230, 211, 163, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.7),
         inset 0 -1px 0 rgba(230, 211, 163, 0.5);
     position: relative;
@@ -182,7 +190,7 @@ const BalanceLabel = styled.span`
 
 const BalanceAmount = styled.span`
     color: rgb(114, 60, 19);
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
     font-family: var(--font-nanum-square);
     font-weight: 900;
@@ -201,7 +209,7 @@ const TabContainer = styled.div`
     display: flex;
     margin-bottom: 24px;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.333);
     padding: 4px;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
@@ -213,7 +221,7 @@ const TabSlider = styled.div<{ $activeIndex: number }>`
     left: 4px;
     width: calc(25% - 3px);
     height: calc(100% - 8px);
-    background: linear-gradient(135deg, #164e79, #031d31);
+    background-color: #ffffffa1;
     border-radius: 8px;
     transition: transform 0.3s ease;
     transform: translateX(${({ $activeIndex }) => $activeIndex * 100}%);
@@ -224,16 +232,17 @@ const Tab = styled.button<{ $active?: boolean }>`
     padding: 12px 16px;
     border: none;
     border-radius: 10px;
-    font-weight: 600;
+    font-weight: ${({ $active }) => ($active ? "800" : "600")};
     cursor: pointer;
     transition: color 0.3s ease;
     background: transparent;
-    color: ${({ $active }) => ($active ? "white" : "#64748b")};
+    color: ${({ $active }) => ($active ? "#202020" : "#dfecff")};
     position: relative;
     z-index: 1;
 
     &:hover {
-        color: ${({ $active }) => ($active ? "white" : "#031D31")};
+        color: ${({ $active }) => ($active ? "white" : "#2c004c")};
+        font-weight: 800;
     }
 `;
 
@@ -244,16 +253,16 @@ const ItemGrid = styled.div`
 `;
 
 const ItemCard = styled.div`
-    background: linear-gradient(135deg, #e7e7e7, #f8fafc);
+    background: linear-gradient(135deg, #efcff99b, #fbf5ffc2);
     border-radius: 10px;
     padding: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05),
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05),
         inset 2px 2px 4px rgba(255, 255, 255, 0.8),
-        inset -2px -2px 4px rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(59, 130, 246, 0.1);
+        inset -2px -2px 4px rgba(0, 0, 0, 0.4); */
+
     transition: all 0.3s ease;
     font-family: var(--font-nanum-square);
 
@@ -275,6 +284,7 @@ const CurrencyIcon = styled.div`
     width: 32px;
     height: 32px;
     background: rgba(16, 185, 129, 0.3);
+    border: 0.5px solid #08795554;
     border-radius: 8px;
     margin-right: 16px;
     display: flex;
@@ -310,19 +320,20 @@ const ItemName = styled.h3`
 
 const ItemPrice = styled.p`
     margin: 0;
-    color: #64748b;
+    color: #313131;
     font-size: 14px;
+    font-weight: 800;
 `;
 
 const DiscountPrice = styled.span`
-    color: #ef4444;
+    color: #f50909;
     font-weight: 800;
     margin-right: 8px;
 `;
 
 const OriginalPrice = styled.span`
     text-decoration: line-through;
-    color: #94a3b8;
+    color: #ffffff;
     font-weight: 600;
 `;
 

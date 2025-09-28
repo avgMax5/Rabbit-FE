@@ -13,11 +13,16 @@ interface AsideProps {
 function Aside({ activeTab, setActiveTab, onLogout }: AsideProps) {
     const getActiveIndex = () => {
         switch (activeTab) {
-            case "info": return 0;
-            case "bunny": return 1;
-            case "list": return 2;
-            case "logout": return 3;
-            default: return 0;
+            case "info":
+                return 0;
+            case "bunny":
+                return 1;
+            case "list":
+                return 2;
+            case "logout":
+                return 3;
+            default:
+                return 0;
         }
     };
 
@@ -57,14 +62,11 @@ function Aside({ activeTab, setActiveTab, onLogout }: AsideProps) {
                 />
                 <div>Bunny List</div>
             </BunnyListBtn>
-            <LogoutBtn
-                $active={activeTab === "logout"}
-                onClick={onLogout}
-            >
-                <StyledIcon 
-                    icon="tabler:logout" 
-                    color={activeTab === "logout" ? "#fff" : "#57B8FF"} 
-                    width={24} 
+            <LogoutBtn $active={activeTab === "logout"} onClick={onLogout}>
+                <StyledIcon
+                    icon="tabler:logout"
+                    color={activeTab === "logout" ? "#fff" : "#57B8FF"}
+                    width={24}
                 />
                 <div>Logout</div>
             </LogoutBtn>
@@ -89,7 +91,7 @@ const Div = styled.div`
     box-shadow: 2px 2px 8px 0 #dedede inset,
         3px 3px 8px 0 rgba(70, 104, 148, 0.88);
     backdrop-filter: blur(20px);
-    background-color: rgb(7 45 74);
+    background-image: linear-gradient(135deg, #1e459bfc, #1e3187b3, #3a3cc19f);
 `;
 
 const Btn = styled.div<{ $active: boolean }>`
@@ -111,7 +113,7 @@ const Btn = styled.div<{ $active: boolean }>`
 
     &:hover {
         color: #fff;
-        
+
         svg {
             color: #fff !important;
         }
@@ -124,13 +126,10 @@ const Slider = styled.div<{ $activeIndex: number }>`
     left: 0.7rem;
     width: 4.6rem;
     height: 3.6rem;
-    background: #4E85C9;
+    background: #ffffff69;
     border-radius: 9px;
     transition: transform 0.2s ease;
     transform: translateY(${({ $activeIndex }) => $activeIndex * 4.6}rem);
-    box-shadow: 1px 1px 2px 0 #354e73,
-        3px 3px 4px 0 rgba(255, 255, 255, 0.18) inset,
-        -2px -2px 4px 0 rgba(36, 57, 86, 0.72) inset;
     z-index: 0;
 `;
 
