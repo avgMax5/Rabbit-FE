@@ -145,8 +145,8 @@ export default function List() {
                                 endAt={item.end_at}
                                 currentAmount={item.collected_bny}
                                 targetBny={item.target_bny}
-                                avatarSrc="/images/login/personalProfile.png"
-                                showCountdown={false}
+                                avatarSrc={item.image || "/images/login/personalProfile.png"}
+                                showCountdown={true}
                             />
                         ))
                     )}

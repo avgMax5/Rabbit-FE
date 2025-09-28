@@ -28,7 +28,7 @@ function List<T>({ fieldList, dataList, backgroundColor }: ListProps<T>) {
             <RowContainer>
                 {!dataList || dataList.length === 0 ? (
                     <EmptyRowMessage>
-                        로켓에 탑승한 버니가 없어요
+                        로켓에 탑승하고 있는 버니가 없어요
                     </EmptyRowMessage>
                 ) : (
                     dataList.map((data, i) => {
@@ -100,6 +100,10 @@ function renderValue(
                 {Number(value).toLocaleString()}
             </span>
         );
+    }
+
+    if (fieldKey === "user_name") {
+        return <span style={{ fontWeight: "600", color: "rgba(255, 255, 255, 0.9)" }}>{value ?? "-"}</span>;
     }
 
     const position = PositionData.find((b) => b.name === value);

@@ -40,19 +40,19 @@ function Personal() {
 
                         <Container>
                             <Title
-                                content={"기업"}
+                                content={"기업에게 인정받은 버니들"}
                                 isNoti={false}
-                                icon="flowbite:rocket-solid"
+                                icon="solar:medal-star-bold"
                                 time={false}
                             />
                             <CorporationCotainer>
                                 <BadgeContainer />
                             </CorporationCotainer>
                             <Title
-                                content={"로켓에 탑승한 버니들"}
+                                content={"래빗의 로켓에 탑승하고 있는 버니들"}
                                 isNoti={false}
                                 icon="flowbite:rocket-solid"
-                                time={true}
+                                time={false}
                             />
                             <SortButtons>
                                 <SortButton
@@ -106,7 +106,7 @@ function Personal() {
                                     type=""
                                 />
                                 <Top5
-                                    standard="개발자 성향별 Top 1"
+                                    standard="개발자 유형별 Top 1"
                                     isSwipper={false}
                                     type="dev"
                                 />

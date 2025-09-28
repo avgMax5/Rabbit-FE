@@ -20,7 +20,7 @@ export default function NowFunding() {
             end_at: bunny.end_at,
             collected_bny: bunny.collected_bny,
             target_bny: bunny.target_bny,
-            avatarSrc: "/images/personal/funding/astronaut.png",
+            avatarSrc: bunny.image || "/images/personal/funding/astronaut.png",
         }));
     }, [fundBunnies]);
 

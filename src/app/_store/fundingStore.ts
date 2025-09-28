@@ -14,6 +14,7 @@ export interface FetchFundBunniesParams {
 export interface FundBunny {
     fund_bunny_id: string;
     bunny_name: string;
+    image: string;
     bunny_type: string;
     target_bny: number;
     collected_bny: number;
