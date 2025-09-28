@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
-import { useFormContext, Controller } from "react-hook-form";
+import { useFormContext, Controller, get } from "react-hook-form";
 import styled from "styled-components";
 
 type InputProps = {
@@ -38,13 +38,18 @@ export const StringInput = ({ value, inputName, type }: InputProps) => {
         formState: { errors },
     } = useFormContext();
 
+    const errorMessage = get(errors, inputName)?.message;
+
     return (
         <>
             <InputString
                 type="string"
                 defaultValue={value}
+                hasError={!!errorMessage}
+                placeholder={errorMessage || ""}
                 {...register(inputName, getValidationRules(type))}
             />
+            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </>
     );
 };
@@ -136,7 +141,7 @@ export const SelectInput = ({ value, inputName, name, type }: InputProps) => {
     );
 };
 
-const Input = styled.input`
+const Input = styled.input<{ hasError?: boolean }>`
     width: 100%;
     height: 100%;
     box-sizing: border-box;
@@ -145,10 +150,12 @@ const Input = styled.input`
     border: none;
 
     font-weight: 600;
-    background-color: #ffffff98;
+    background-color: ${({ hasError }) => (hasError ? "#ffe6e6" : "#ffffff98")};
+    border: ${({ hasError }) => (hasError ? "1.2px solid #af072e" : "none")};
 
     &:focus {
-        border: 1px solid #0558f4;
+        border: 1px solid
+            ${({ hasError }) => (hasError ? "#af072e" : "#0558f4")};
         background: #ffffff !important;
     }
 `;
@@ -156,6 +163,7 @@ const Input = styled.input`
 const InputDate = styled(Input)``;
 
 const InputString = styled(Input)`
+    position: relative;
     padding: 6px;
 `;
 
@@ -227,6 +235,8 @@ const Option = styled.option`
 `;
 
 const ErrorMessage = styled.div`
+    position: absolute;
+    top: 0;
     margin-top: 3.5px;
     text-align: end;
     font-size: 10px;
