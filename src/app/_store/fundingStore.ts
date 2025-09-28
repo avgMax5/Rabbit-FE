@@ -29,6 +29,7 @@ interface FundingState {
     isLoading: boolean;
     error: string | null;
     fetchFundBunnies: (params?: FetchFundBunniesParams) => Promise<void>;
+    clearFundBunnies: () => void;
     clearError: () => void;
 }
 
@@ -60,19 +61,27 @@ export const useFundingStore = create<FundingState>((set, get) => ({
                 }
             });
             
-            const fundBunnies = response.data.fund_bunnies;
+            const newFundBunnies = response.data.fund_bunnies;
 
-            console.log('받은 데이터:', fundBunnies);
+            console.log('받은 데이터:', newFundBunnies);
             
-            set({ fundBunnies, isLoading: false });
+            // 페이지가 0이면 교체, 0보다 크면 추가
+            if (page === 0) {
+                set({ fundBunnies: newFundBunnies, isLoading: false });
+            } else {
+                const currentFundBunnies = get().fundBunnies;
+                set({ fundBunnies: [...currentFundBunnies, ...newFundBunnies], isLoading: false });
+            }
         } catch (error) {
-            console.warn('API 호출 실패, 더미 데이터를 사용합니다:', error);
+            console.error('API 호출 실패:', error);
             set({ 
-                isLoading: false, 
-                error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.' 
+                error: '데이터를 불러오는데 실패했습니다.',
+                isLoading: false
             });
         }
     },
+
+    clearFundBunnies: () => set({ fundBunnies: [] }),
 
     clearError: () => set({ error: null }),
 }));

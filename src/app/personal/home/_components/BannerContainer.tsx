@@ -302,7 +302,7 @@ function Banner() {
                     el: ".custom-pagination",
                 }}
                 autoplay={{ delay: 5000, disableOnInteraction: false }}
-                modules={[Pagination]}
+                modules={[Pagination, Autoplay]}
                 observer={true}
                 observeParents={true}
                 slidesPerView={1}

@@ -11,6 +11,7 @@ import CreateBunnyModal from "./_modal/CreateBunnyModal";
 import Button from "@/app/_shared/components/Button";
 import Header from "@/app/_shared/components/Header";
 import Loading from "@/app/_shared/components/Loading";
+import Footer from "@/app/_shared/components/Footer";
 import { useFundingStore } from "../../_store/fundingStore";
 import WithAuth from "@/app/_components/WithAuth";
 import HeaderForCorporation from "@/app/_shared/components/HeaderForCorporation";
@@ -223,9 +224,11 @@ function Funding() {
 
                     <EndingSoon />
                     <NowFunding />
+                    <Footer />
                 </FundingSection>
             </ContentContainer>
 
+            
             <CreateBunnyModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </Wrapper>
     );

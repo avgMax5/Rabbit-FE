@@ -12,3 +12,4 @@ export { default as PentagonChart } from "./PentagonChart";
 export { default as Portfolio } from "./Portfolio";
 export { default as Shop } from "./Shop";
 export { default as SpaceBackground } from "./SpaceBackground";
+export { default as Footer } from "./Footer";

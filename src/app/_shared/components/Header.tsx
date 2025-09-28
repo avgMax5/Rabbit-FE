@@ -95,7 +95,7 @@ function Header() {
                             $activate={activate === "funding"}
                             $isLoaded={isLoaded}
                         >
-                            심사 리스트
+                            모든 펀딩
                         </Funding>
                     </Link>
                 ) : (
@@ -104,7 +104,7 @@ function Header() {
                             $activate={activate === "funding"}
                             $isLoaded={isLoaded}
                         >
-                            심사 메인
+                            펀딩
                         </Funding>
                     </Link>
                 )}
