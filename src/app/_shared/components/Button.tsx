@@ -89,7 +89,6 @@ const StyledButton = styled.button.withConfig({
           background: linear-gradient(135deg, #2a2a3e, #3a3a4e);
           color: #ffffff;
           border: 1px solid #555;
-          box-shadow: inset -1.91px -3.83px 6.38px rgba(42, 42, 62, 0.8), inset 5.74px 3.83px 6.38px rgba(58, 58, 78, 0.8), 3px 3px 4px rgba(0, 0, 0, 0.3);
           text-shadow: 1.28px 1.28px 0.64px rgba(0, 0, 0, 0.25);
           
           &:hover:not(:disabled) {
@@ -100,22 +99,20 @@ const StyledButton = styled.button.withConfig({
         `;
             case "danger":
                 return `
-          background-color: #FD6D6D;
+          background-color: #da4949;
           color: #ffffff;
-          box-shadow: inset -1.91px -3.83px 6.38px rgba(236, 86, 86, 1), inset 5.74px 3.83px 6.38px rgba(255, 166, 166, 1), 2.55px 2.55px 3.83px rgba(251, 106, 106, 1);
           text-shadow: 1.28px 1.28px 0.64px rgba(0, 0, 0, 0.25);
           
           &:hover:not(:disabled) {
             background-color: #e55a5a;
             transform: translateY(-2px);
-            box-shadow: inset -1.91px -3.83px 6.38px rgba(236, 86, 86, 1), inset 5.74px 3.83px 6.38px rgba(255, 166, 166, 1), 2.55px 2.55px 3.83px rgba(251, 106, 106, 1);
+            box-shadow: inset -1.91px -3.83px 6.38px rgba(236, 86, 86, 1),  2.55px 2.55px 3.83px rgba(251, 106, 106, 1);
           }
         `;
             default:
                 return `
           background-color: rgba(254, 226, 167, 0.88);
           color: #000;
-          box-shadow: inset -1.91px -3.83px 6.38px rgba(255, 177, 14, 0.84), inset 5.74px 3.83px 6.38px #ffefce, 3px 3px 4px rgba(0, 32, 101, 0.64);
           text-shadow: 1.28px 1.28px 0.64px rgba(0, 0, 0, 0.25);
           
           &:hover:not(:disabled) {

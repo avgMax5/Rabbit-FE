@@ -311,41 +311,6 @@ const CoinType = styled.div`
     justify-content: space-between;
 `;
 
-// const ProgressCircle = styled.div<{ progress: number }>`
-//     width: 3.75rem;
-//     height: 3.75rem;
-//     border-radius: 50%;
-//     background: conic-gradient(
-//         #db7dfa90 ${(props) => props.progress * 3.6}deg,
-//         #e2e2e2b0 ${(props) => props.progress * 3.6}deg,
-//         #e0e0e088 360deg
-//     );
-//     box-shadow: inset 0.125rem 0.125rem 0.25rem rgba(0, 0, 0, 0.37);
-//     //0.1875rem 0.1875rem 0.1875rem rgba(225, 87, 57, 0.25);
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//     position: relative;
-//     animation: ${scaleIn} 0.8s ease-out 0.3s both;
-
-//     &::before {
-//         content: "";
-//         position: absolute;
-//         width: 2.5rem;
-//         height: 2.5rem;
-//         background-color: #fffffff1;
-//         border-radius: 50%;
-//     }
-// `;
-
-// const ProgressText = styled.div`
-//     font-size: 12px;
-//     font-weight: 900;
-//     color: #000000;
-//     z-index: 1;
-//     animation: ${fadeIn} 0.3s ease-out 1s both;
-// `;
-
 const ScaleIn = keyframes`
   from {
     transform: scale(0);

@@ -25,7 +25,7 @@ function Personal() {
                 <Header />
                 {/* <HeaderForCorporation /> */}
                 <Banner />
-                <Alarm updateData={updateData} />
+                {/* <Alarm updateData={updateData} /> */}
                 <Main>
                     <LeftSection>
                         <Container>
@@ -175,11 +175,13 @@ const Wrapper = styled.div`
     position: relative;
     z-index: 10;
     overflow-y: auto;
+    overflow-x: hidden;
 `;
 
 const Main = styled.div`
     width: 100%;
     height: 100%;
+    margin-top: 6rem;
     padding: 0rem 2rem;
     display: grid;
     grid-template-columns: 2.5fr 1fr;
