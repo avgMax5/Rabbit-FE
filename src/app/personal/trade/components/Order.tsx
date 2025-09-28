@@ -203,19 +203,6 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
 
       <TradeArea>
         <OrderForm>
-          {/* 현재 가격 및 웹소켓 연결 상태 */}
-          <OrderRow>
-            <OrderLabel>현재 가격</OrderLabel>
-            <OrderValue>
-              {orderBook?.currentPrice?.toLocaleString() ||
-                bunny.current_price?.toLocaleString() ||
-                0}{' '}
-              C
-              {isWebSocketConnected && <ConnectionStatus $connected={true}>●</ConnectionStatus>}
-              {!isWebSocketConnected && <ConnectionStatus $connected={false}>●</ConnectionStatus>}
-            </OrderValue>
-          </OrderRow>
-
           <OrderRow>
             <OrderLabel>{activeTab === '매수' ? '주문 가능' : '매도 가능'}</OrderLabel>
             <OrderValue>

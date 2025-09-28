@@ -17,6 +17,7 @@ import { ListContainer, BunnyListContainer } from "./_components/ListContainer";
 import { BadgeContainer } from "./_components/BadgeContainer";
 import { RankList } from "./_components/RankList";
 import HeaderForCorporation from "@/app/_shared/components/HeaderForCorporation";
+import Footer from "@/app/_shared/components/Footer";
 
 function Personal() {
     return (
@@ -159,6 +160,7 @@ function Personal() {
                         </Container> */}
                     </RightSection>
                 </Main>
+                <Footer />
             </Wrapper>
         </SpaceBackground>
     );

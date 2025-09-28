@@ -247,6 +247,8 @@ const CardContainer = styled.div`
     box-shadow: 0 0.25rem 1.25rem rgba(0, 0, 0, 0.1);
     min-width: 22rem;
     min-height: 12rem;
+    position: relative;
+    z-index: 1;
 
     display: flex;
     flex-shrink: 0;

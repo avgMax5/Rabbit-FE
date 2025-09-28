@@ -280,8 +280,7 @@ const SpaceContainer = styled.div`
   position: relative;
   min-height: 100vh;
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 `;
 
 const GradientBackground = styled.div`

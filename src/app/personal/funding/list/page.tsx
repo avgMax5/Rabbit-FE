@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Header from "@/app/_shared/components/Header";
 import Loading from "@/app/_shared/components/Loading";
+import Footer from "@/app/_shared/components/Footer";
 import FundBunnyCard from "../_components/FundBunnyCard";
 import { useFundingStore, FundBunny } from "@/app/_store/fundingStore";
 import Link from "next/link";
@@ -15,7 +16,7 @@ type SortType = "latest" | "oldest" | "highInvestment" | "lowInvestment";
 export default function List() {
     const [sortType, setSortType] = useState<SortType>("latest");
     const [mounted, setMounted] = useState(false);
-    const { fundBunnies, isLoading, error, fetchFundBunnies } =
+    const { fundBunnies, isLoading, error, fetchFundBunnies, clearFundBunnies } =
         useFundingStore();
 
     useEffect(() => {
@@ -25,6 +26,7 @@ export default function List() {
 
     const handleSort = (type: SortType) => {
         setSortType(type);
+        clearFundBunnies(); // 기존 데이터 초기화
 
         let apiSortType: string;
         switch (type) {
@@ -35,10 +37,10 @@ export default function List() {
                 apiSortType = "oldest";
                 break;
             case "highInvestment":
-                apiSortType = "high_investment";
+                apiSortType = "mostInvested";
                 break;
             case "lowInvestment":
-                apiSortType = "low_investment";
+                apiSortType = "leastInvested";
                 break;
             default:
                 apiSortType = "newest";
@@ -47,118 +49,130 @@ export default function List() {
         fetchFundBunnies({ sortType: apiSortType, page: 0, size: 50 });
     };
 
+
     if (!mounted || isLoading) {
         return (
-            <Container>
-                <Header />
-                <MainContent>
-                    <LoadingContainer>
-                        <Loading
-                            variant="dots"
-                            size="large"
-                            text="펀딩 목록을 불러오는 중..."
-                        />
-                    </LoadingContainer>
-                </MainContent>
-            </Container>
+            <SpaceBackground>
+                <Container>
+                    <Header />
+                    <MainContent>
+                        <LoadingContainer>
+                            <Loading
+                                variant="dots"
+                                size="large"
+                                text="펀딩 목록을 불러오는 중..."
+                            />
+                        </LoadingContainer>
+                    </MainContent>
+                </Container>
+            </SpaceBackground>
         );
     }
 
     if (error) {
         return (
-            <Container>
-                <Header />
-                <MainContent>
-                    <div
-                        style={{
-                            textAlign: "center",
-                            padding: "2rem",
-                            color: "#ff6b6b",
-                        }}
-                    >
-                        오류가 발생했습니다: {error}
-                    </div>
-                </MainContent>
-            </Container>
+            <SpaceBackground>
+                <Container>
+                    <Header />
+                    <MainContent>
+                        <div
+                            style={{
+                                textAlign: "center",
+                                padding: "2rem",
+                                color: "#ff6b6b",
+                            }}
+                        >
+                            오류가 발생했습니다: {error}
+                        </div>
+                    </MainContent>
+                </Container>
+            </SpaceBackground>
         );
     }
 
     return (
-        <Container>
-            <Header />
-            <Link href="/personal/funding">
-                <GoFundingMain>
-                    &lt; &nbsp; 심사 메인으로 돌아가기
-                </GoFundingMain>
-            </Link>
-            <SortSectionWrapper>
-                <SortSection>
-                    <SortButtons>
-                        <SortButton
-                            active={sortType === "latest"}
-                            onClick={() => handleSort("latest")}
-                        >
-                            최신순
-                        </SortButton>
-                        <SortButton
-                            active={sortType === "oldest"}
-                            onClick={() => handleSort("oldest")}
-                        >
-                            오래된순
-                        </SortButton>
-                        <SortButton
-                            active={sortType === "highInvestment"}
-                            onClick={() => handleSort("highInvestment")}
-                        >
-                            투자 많은순
-                        </SortButton>
-                        <SortButton
-                            active={sortType === "lowInvestment"}
-                            onClick={() => handleSort("lowInvestment")}
-                        >
-                            투자 적은순
-                        </SortButton>
-                    </SortButtons>
-                </SortSection>
-            </SortSectionWrapper>
+        <SpaceBackground>
+            <Container>
+                <Header />
+                <Link href="/personal/funding">
+                    <GoFundingMain>
+                        &lt; &nbsp; 심사 메인으로 돌아가기
+                    </GoFundingMain>
+                </Link>
+                <PageDescription>
+                    <PageTitle>펀드 버니 목록</PageTitle>
+                    <PageSubtitle>
+                        다양한 펀드 버니들의 투자 현황을 확인하고, 원하는 조건으로 정렬해보세요.
+                        <br />
+                        투자 기회를 놓치지 마세요!
+                    </PageSubtitle>
+                </PageDescription>
+                <SortSectionWrapper>
+                    <SortSection>
+                        <SortButtons>
+                            <SortButton
+                                active={sortType === "latest"}
+                                onClick={() => handleSort("latest")}
+                            >
+                                최신순
+                            </SortButton>
+                            <SortButton
+                                active={sortType === "highInvestment"}
+                                onClick={() => handleSort("highInvestment")}
+                            >
+                                상장 임박
+                            </SortButton>
+                            <SortButton
+                                active={sortType === "oldest"}
+                                onClick={() => handleSort("oldest")}
+                            >
+                                마감임박
+                            </SortButton>
+                        </SortButtons>
+                    </SortSection>
+                </SortSectionWrapper>
 
-            <MainContent>
-                <GridContainer>
-                    {fundBunnies.length === 0 ? (
-                        <div
-                            style={{
-                                gridColumn: "1 / -1",
-                                textAlign: "center",
-                                padding: "3rem",
-                                color: "#B8B8B8",
-                            }}
-                        >
-                            등록된 펀드 버니가 없습니다.
-                        </div>
-                    ) : (
-                        fundBunnies.map((item) => (
-                            <FundBunnyCard
-                                key={item.fund_bunny_id}
-                                fundBunnyId={item.fund_bunny_id}
-                                bunnyName={item.bunny_name}
-                                bunnyType={item.bunny_type}
-                                endAt={item.end_at}
-                                currentAmount={item.collected_bny}
-                                targetBny={item.target_bny}
-                                avatarSrc={item.image || "/images/login/personalProfile.png"}
-                                showCountdown={true}
-                            />
-                        ))
-                    )}
-                </GridContainer>
-            </MainContent>
-        </Container>
+                <MainContent>
+                    <GridContainer>
+                        {fundBunnies.length === 0 ? (
+                            <div
+                                style={{
+                                    gridColumn: "1 / -1",
+                                    textAlign: "center",
+                                    padding: "3rem",
+                                    color: "#B8B8B8",
+                                }}
+                            >
+                                등록된 펀드 버니가 없습니다.
+                            </div>
+                        ) : (
+                            fundBunnies.map((item) => (
+                                <FundBunnyCard
+                                    key={item.fund_bunny_id}
+                                    fundBunnyId={item.fund_bunny_id}
+                                    bunnyName={item.bunny_name}
+                                    bunnyType={item.bunny_type}
+                                    endAt={item.end_at}
+                                    currentAmount={item.collected_bny}
+                                    targetBny={item.target_bny}
+                                    avatarSrc={item.image || "/images/login/personalProfile.png"}
+                                    showCountdown={true}
+                                />
+                            ))
+                        )}
+                    </GridContainer>
+                </MainContent>
+                <Footer />
+            </Container>
+        </SpaceBackground>
     );
 }
 
 const Container = styled.div`
     min-height: 100vh;
     padding-top: 120px; /* Header 높이만큼 상단 여백 추가 */
+    display: flex;
+    flex-direction: column;
 `;
 
 const GoFundingMain = styled.div`
@@ -166,9 +180,11 @@ const GoFundingMain = styled.div`
     font-size: 14px;
     color: #ddddddcc;
     padding-bottom: 4.4px;
-    margin-left: 4rem;
-    margin-top: 2rem;
+    margin-left: 3rem;
     border-bottom: 0.8px solid #ddddddcc;
+    position: relative;
+    z-index: 10;
+    display: inline;
 
     &:hover {
         color: #ffffff;
@@ -177,22 +193,67 @@ const GoFundingMain = styled.div`
     }
 `;
 
+const PageDescription = styled.div`
+    max-width: 1400px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    padding: 2rem 2rem 0.5rem 2rem;
+
+    @media (max-width: 768px) {
+        padding: 1.5rem 2rem 0.5rem 2rem;
+    }
+`;
+
+const PageTitle = styled.h1`
+    font-size: 2rem;
+    font-weight: 700;
+    color: #FBC95E;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(251, 201, 94, 0.3);
+
+    @media (max-width: 768px) {
+        font-size: 1.5rem;
+    }
+`;
+
+const PageSubtitle = styled.p`
+    font-size: 1rem;
+    color: #B8B8B8;
+    line-height: 1.5;
+    max-width: 600px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+        font-size: 0.9rem;
+    }
+`;
+
 const MainContent = styled.main`
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
+    flex: 1;
 `;
 
 const SortSectionWrapper = styled.div`
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
+    width: 100%;
+    margin: 0 auto;
     padding: 0 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
 `;
 
 const SortSection = styled.section`
     width: 100%;
     padding: 2rem;
     margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
 `;
 
 const SortButtons = styled.div`
