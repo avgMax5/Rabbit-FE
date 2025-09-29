@@ -141,7 +141,9 @@ export const SelectInput = ({ value, inputName, name, type }: InputProps) => {
     );
 };
 
-const Input = styled.input<{ hasError?: boolean }>`
+const Input = styled.input.withConfig({
+    shouldForwardProp: (prop) => prop !== 'hasError',
+})<{ hasError?: boolean }>`
     width: 100%;
     height: 100%;
     box-sizing: border-box;

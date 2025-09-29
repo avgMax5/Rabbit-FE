@@ -122,6 +122,7 @@ const ProfileSection = styled.div`
   gap: 1rem;
   align-items: center;
   position: relative;
+  width: 100%;
 `;
 
 const HeartSection = styled.div`
@@ -134,7 +135,7 @@ const HeartSection = styled.div`
   border-radius: 1rem;
   position: absolute;
   top: -2rem;
-  left: -30%;
+  left: 10%;
   transform: translateX(-50%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
@@ -184,16 +185,18 @@ const HeartCount = styled.span`
 
 const BadgeSection = styled.div`
   display: flex;
+  flex-direction: row-reverse;
   gap: 0.5rem;
   position: absolute;
-  top: -0.75rem;
-  right: -60%;
+  top: -0.1rem;
+  right: 0;
   z-index: 10;
+  transform: translateX(0);
 `;
 
 const Badge = styled.div`
-  width: 2rem;
-  height: 2rem;
+  width: 1.9rem;
+  height: 1.9rem;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
