@@ -8,6 +8,7 @@ import styled from "styled-components";
 import Aside from "./_components/Aside";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/app/_store/userStore";
+import ResultModal from "@/app/_shared/modal/Result";
 
 function MyPage() {
     const [activeTab, setActiveTab] = useState<
@@ -15,10 +16,27 @@ function MyPage() {
     >("bunny");
     const router = useRouter();
     const { authActions } = useUserStore();
+    
+    // Result 모달 상태 관리
+    const [modalState, setModalState] = useState({
+        isOpen: false,
+        type: 'success' as 'success' | 'error',
+        title: '',
+        message: ''
+    });
 
     const handleLogout = () => {
         authActions.logout();
         router.replace("/"); // 로그인 페이지로 이동
+    };
+
+    const handleShowModal = (type: 'success' | 'error', title: string, message: string) => {
+        setModalState({
+            isOpen: true,
+            type,
+            title,
+            message
+        });
     };
 
     useEffect(() => {
@@ -42,10 +60,20 @@ function MyPage() {
                 onLogout={handleLogout}
             />
             <Div>
-                {activeTab === "info" && <MyInfo />}
+                {activeTab === "info" && <MyInfo onShowModal={handleShowModal} />}
                 {activeTab === "bunny" && <MyBunny />}
                 {activeTab === "list" && <MyBunnyList />}
             </Div>
+            
+            <ResultModal
+                isOpen={modalState.isOpen}
+                onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+                type={modalState.type}
+                title={modalState.title}
+                message={modalState.message}
+                buttonText="확인"
+                blurIntensity="light"
+            />
         </>
     );
 }

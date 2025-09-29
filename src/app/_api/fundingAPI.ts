@@ -164,7 +164,25 @@ export const checkBunnyName = async (bunnyName: string) => {
             };
         }
         
-    } catch (error) {
+    } catch (error: any) {
+        console.error('중복 체크 API 오류:', error);
+        
+        // 409 Conflict는 이름이 이미 존재한다는 의미
+        if (error.response?.status === 409) {
+            console.log("버니 이름이 이미 존재합니다 (409 Conflict)");
+            return {
+                success: true,
+                isDuplicate: true,
+                message: "이미 사용 중인 이름입니다.",
+            };
+        }
+        
+        // 다른 오류의 경우
+        return {
+            success: false,
+            isDuplicate: false,
+            message: "중복 체크 중 오류가 발생했습니다.",
+        };
     }
 }
 

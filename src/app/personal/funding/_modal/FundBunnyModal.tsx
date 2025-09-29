@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Button from "../../../_shared/components/Button";
 import FundingRate from "../_components/FundingRate";
 import Portfolio from "../../../_shared/components/Portfolio";
+import ResultModal from "../../../_shared/modal/Result";
 
 import {
     getFundBunniesDetail,
@@ -30,6 +31,9 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [bnyAmount, setBnyAmount] = useState<number>(0);
+    const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+    const [resultType, setResultType] = useState<'success' | 'error'>('success');
+    const [resultMessage, setResultMessage] = useState('');
 
     useEffect(() => {
         if (isOpen && fundBunnyId) {
@@ -62,12 +66,26 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({
                 fund_bny: bnyAmount,
             };
 
-            await postFundBunnyFunding(fundBunnyId, fundingData);
-            alert("펀딩 참여가 완료되었습니다!");
-            onClose();
-        } catch (err) {
+            const response = await postFundBunnyFunding(fundBunnyId, fundingData);
+            
+            // 성공 시 Result 모달 표시
+            setResultType('success');
+            setResultMessage('펀딩 참여가 성공적으로 완료되었습니다!');
+            setIsResultModalOpen(true);
+        } catch (err: any) {
             console.error("펀딩 참여 실패:", err);
-            alert("펀딩 참여에 실패했습니다. 다시 시도해주세요.");
+            
+            // 실패 시 Result 모달 표시
+            setResultType('error');
+            setResultMessage(err.response?.data?.message || '펀딩 참여에 실패했습니다. 다시 시도해주세요.');
+            setIsResultModalOpen(true);
+        }
+    };
+
+    const handleResultModalClose = () => {
+        setIsResultModalOpen(false);
+        if (resultType === 'success') {
+            onClose(); // 성공 시 모달 닫기
         }
     };
 
@@ -217,7 +235,19 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({
         </ModalOverlay>
     );
 
-    return createPortal(modalContent, document.body);
+    return (
+        <>
+            {createPortal(modalContent, document.body)}
+            <ResultModal
+                isOpen={isResultModalOpen}
+                onClose={handleResultModalClose}
+                type={resultType}
+                title={resultType === 'success' ? '펀딩 참여 완료!' : '펀딩 참여 실패'}
+                message={resultMessage}
+                buttonText="확인"
+            />
+        </>
+    );
 };
 
 // Styled Components

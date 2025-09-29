@@ -32,7 +32,11 @@ interface SpecField {
     certification: FieldData[];
 }
 
-function MyInfo() {
+interface MyInfoProps {
+    onShowModal: (type: 'success' | 'error', title: string, message: string) => void;
+}
+
+function MyInfo({ onShowModal }: MyInfoProps) {
     const methods = useForm();
     const { register } = methods;
     const { onChange: regOnChange, ref, ...rest } = register("image");
@@ -179,9 +183,11 @@ function MyInfo() {
             const response = await putInfo(payload);
             console.log("서버 저장 완료", response);
 
-            alert("정보가 저장되었습니다!");
+            onShowModal('success', '저장 완료! 🎉', '정보가 성공적으로 저장되었습니다.\n변경사항이 반영되었어요!');
         } catch (error) {
             console.error("저장 실패", error);
+            
+            onShowModal('error', '저장 실패 😢', '정보 저장 중 오류가 발생했습니다.\n잠시 후 다시 시도해주세요.');
         }
     };
     const {
