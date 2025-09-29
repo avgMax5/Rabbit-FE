@@ -15,20 +15,6 @@ import { motion } from "framer-motion";
 import { Bunny, useBunnyStore } from "@/app/_store/bunnyStore";
 import { useRouter } from "next/navigation";
 
-const bounceTopVariants = {
-    animate: {
-        y: [-2, -6, 0, -3, 0, -2, -2], // 살짝 위로 올랐다 내려오는 패턴
-    },
-};
-
-const bounceTopTransition = {
-    duration: 1.5,
-    times: [0, 0.2, 0.4, 0.6, 0.75, 0.9, 1],
-    ease: "easeInOut" as const,
-    repeat: Infinity,
-    repeatType: "loop" as const,
-};
-
 const radialObject: Bunny = {
     bunny_id: "",
     user_name: "레빗",
@@ -114,16 +100,6 @@ function MyBunny() {
                         <br /> 상장을 통해 <b>로켓</b>에 탑승해주세요
                     </SmallTitle>
                     <ClosedImage src="/images/personal/mypage/closed_bunny.png" />
-                    <Link href="/personal/funding">
-                        <MoveFundingBtn
-                            variants={bounceTopVariants}
-                            animate="animate"
-                            transition={bounceTopTransition}
-                        >
-                            <SmallRocketImage src="/images/personal/mypage/small_rocket.png" />
-                            상장 페이지로 이동
-                        </MoveFundingBtn>
-                    </Link>
                 </BeforeBunny>
             ) : (
                 <Wrapper>
@@ -243,64 +219,30 @@ const ClosedImage = styled.img`
     height: auto;
 `;
 
-const SmallRocketImage = styled.img`
-    width: 20px;
-    height: 20px;
-`;
-
-const MoveFundingBtn = styled(motion.button)`
-    width: 9.6rem;
-    height: 2.5rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    border-radius: 16px;
-    border: none;
-    background: rgba(254, 226, 167, 0.88);
-    box-shadow: -1.913px -3.825px 6.376px 0 rgba(255, 177, 14, 0.84) inset,
-        5.738px 3.825px 6.376px 0 #ffefce inset,
-        2.55px 2.55px 3.825px 0 rgba(0, 32, 101, 0.366);
-
-    color: #001f38;
-    text-shadow: 1.275px 1.275px 0.638px rgba(0, 0, 0, 0.25);
-    font-size: 13px;
-    font-style: normal;
-    font-weight: 900;
-    line-height: normal;
-
-    cursor: pointer;
-`;
-
 const GoMyTrade = styled.div`
     position: absolute;
     top: 2.2rem;
     left: 15rem;
     display: flex;
-    width: 7.6rem;
+    width: 9rem;
     height: 2.4rem;
     padding: 2px 10px 2px 9px;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
     flex-shrink: 0;
     border-radius: 30px;
     background: #efeeee3e;
     border: 1px solid #ffffffca;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.195);
+    box-shadow: 0 4px 4px 0 rgba(64, 64, 64, 0.189);
 
     cursor: pointer;
-    transition: transform 0.3s ease;
-    &:hover {
-        transform: translateY(-5px);
-        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
-    }
 `;
 
 const GoTradeText = styled.div`
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
-    color: #f6f6f6;
+    color: #fff;
 `;
 
 export default MyBunny;
