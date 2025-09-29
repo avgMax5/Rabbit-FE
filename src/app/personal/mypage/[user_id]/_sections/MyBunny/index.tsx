@@ -7,11 +7,13 @@ import RadialGraph from "./RadialGraph";
 import CoinType from "./CoinType";
 import AiSummarize from "@/app/personal/mypage/[user_id]/_sections/MyBunny/AiFeedBack";
 import CustomerHold from "./CustomerHold";
+import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
 import { BunnyHolder, BunnyInfo, getBunnyMe } from "@/app/_api/bunnyAPI";
 import { useUserStore } from "@/app/_store/userStore";
 import { motion } from "framer-motion";
 import { Bunny, useBunnyStore } from "@/app/_store/bunnyStore";
+import { useRouter } from "next/navigation";
 
 const bounceTopVariants = {
     animate: {
@@ -31,6 +33,7 @@ const radialObject: Bunny = {
     bunny_id: "",
     user_name: "레빗",
     bunny_name: "레빗 코인",
+    image: "/images/login/personalProfile.png",
     developer_type: "디벨로퍼",
     bunny_type: "A형",
     position: "프론트엔드",
@@ -54,6 +57,7 @@ function MyBunny() {
     const [bunnyInfo, setBunnyInfo] = useState<BunnyInfo>();
     const [bunnyHolder, setBunnyHolder] = useState<BunnyHolder[]>([]);
     const { user } = useUserStore();
+    const router = useRouter();
 
     const bunnyRole = user?.role ?? "ROLE_USER";
     const bunnyName = user?.my_bunny_name ?? "";
@@ -123,6 +127,17 @@ function MyBunny() {
                 </BeforeBunny>
             ) : (
                 <Wrapper>
+                    {bunnyRole === "ROLE_BUNNY" && (
+                        <GoMyTrade
+                            onClick={() =>
+                                router.push(`/personal/trade/${bunnyName}`)
+                            }
+                        >
+                            <Icon icon="subway:round-arrow-5" color="#fafafa" />
+                            <GoTradeText>내 코인 거래</GoTradeText>
+                        </GoMyTrade>
+                    )}
+
                     <FirstRow>
                         <Col>
                             <MarketCap
@@ -255,6 +270,37 @@ const MoveFundingBtn = styled(motion.button)`
     line-height: normal;
 
     cursor: pointer;
+`;
+
+const GoMyTrade = styled.div`
+    position: absolute;
+    top: 2.2rem;
+    left: 15rem;
+    display: flex;
+    width: 7.6rem;
+    height: 2.4rem;
+    padding: 2px 10px 2px 9px;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    border-radius: 30px;
+    background: #efeeee3e;
+    border: 1px solid #ffffffca;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.195);
+
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    &:hover {
+        transform: translateY(-5px);
+        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
+    }
+`;
+
+const GoTradeText = styled.div`
+    font-size: 12px;
+    font-weight: 800;
+    color: #f6f6f6;
 `;
 
 export default MyBunny;

@@ -33,8 +33,9 @@ const Div = styled.div`
     gap: 1rem;
     flex-shrink: 0;
     border-radius: 30px;
-    background: #efeeee;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+    background: #efeeee3e;
+    border: 1px solid #ffffffca;
+    box-shadow: 0 4px 4px 0 rgba(64, 64, 64, 0.189);
 `;
 const HearImg = styled.div`
     width: 1.4rem;
@@ -43,7 +44,6 @@ const HearImg = styled.div`
     flex-shrink: 0;
 `;
 const LikeCount = styled.div`
-    background-color: antiquewhite;
     font-family: var(--font-nanum-squar);
     font-weight: 900;
     font-size: 14px;

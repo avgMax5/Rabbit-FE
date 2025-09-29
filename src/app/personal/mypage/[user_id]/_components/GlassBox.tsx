@@ -8,6 +8,7 @@ interface GlassBoxProps {
     text: string;
     isNoti: boolean;
     notification?: string;
+    notiWidth?: string;
     color?: string;
     backgroundColor?: string;
     backgroundImage?: string;
@@ -23,6 +24,7 @@ function GlassBox({
     backgroundColor = "#ffffff",
     backgroundImage = "none",
     iconColor = "#ffffffc2",
+    notiWidth = "10px",
 }: GlassBoxProps) {
     const [mouseEnter, setMouseEnter] = useState(false);
     const getNotiModal = () => {
@@ -49,10 +51,12 @@ function GlassBox({
                             onMouseLeave={handleMouseLeave}
                         />
                         {mouseEnter && notification && (
+                            // <NotificationPortal>
                             <Notification
                                 notification={notification}
-                                width="10px"
+                                width={notiWidth}
                             />
+                            // </NotificationPortal>
                         )}
                     </IconContainer>
                 )}
@@ -80,12 +84,13 @@ const Div = styled.div<{ $backgroundColor: string; $backgroundImage: string }>`
     box-shadow: -2px -2px 4px 0 rgba(0, 0, 0, 0.14) inset,
         2px 2px 4px 0 rgba(231, 231, 231, 0.25) inset;
 
-    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
+    //filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
     transition: transform 0.3s ease;
     cursor: pointer;
 
     &:hover {
         transform: translateY(-2px);
+        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.25));
     }
 `;
 

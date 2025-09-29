@@ -19,16 +19,6 @@ const sliceString = (text: string) => {
     return result;
 };
 
-// const formatValue = (key: string, value: any) => {
-//     if (["matched_at", "ordered_at"].includes(key)) {
-//         return sliceString(String(value));
-//     }
-//     if (typeof value === "number") {
-//         return value.toLocaleString();
-//     }
-//     return value != null ? String(value) : "";
-// };
-
 const OrderTypeStyle = (key: string, value: any) => {
     if (key === "order_type" && String(value) === "BUY") {
         return {

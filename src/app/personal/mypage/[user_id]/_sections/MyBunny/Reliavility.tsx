@@ -23,9 +23,10 @@ function Reliavility({ reliability }: ReliavilityProps) {
         <GlassBox
             text="신뢰도"
             isNoti={true}
-            notification="신뢰도 계산법"
+            notification="계산법: Skill(40%) + Market(30%) + Reputation(30%)"
             color="#e3e1e1f8"
             backgroundColor="#010b20b6"
+            notiWidth="300px"
         >
             <Number>{score}</Number>
             <HalfChart colors={["#f2ad23", "#f0ecec4e"]} data={data} />
