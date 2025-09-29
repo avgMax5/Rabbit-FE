@@ -210,18 +210,24 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
     ),
 
     updateBunnyLikeCount: (bunnyName: string, delta: number) => {
-        const { bunnies } = get();
-        const updatedBunnies = bunnies.map((bunny) =>
-            bunny.bunny_name === bunnyName
-                ? { ...bunny, like_count: bunny.like_count + delta }
-                : bunny
-        );
-        set({ bunnies: updatedBunnies });
+        const { bunnies, allBunnies } = get();
+        const updateList = (list: Bunny[]) =>
+            list.map((bunny) =>
+                bunny.bunny_name === bunnyName
+                    ? { ...bunny, like_count: bunny.like_count + delta }
+                    : bunny
+            );
+        
+        set({ 
+            bunnies: updateList(bunnies),
+            allBunnies: updateList(allBunnies)
+        });
     },
 
     getBunnyLikeCount: (bunnyName: string) => {
-        const { bunnies } = get();
-        const bunny = bunnies.find((b) => b.bunny_name === bunnyName);
+        const { bunnies, allBunnies } = get();
+        const bunny = bunnies.find((b) => b.bunny_name === bunnyName) || 
+                     allBunnies.find((b) => b.bunny_name === bunnyName);
         return bunny ? bunny.like_count : 0;
     },
 
