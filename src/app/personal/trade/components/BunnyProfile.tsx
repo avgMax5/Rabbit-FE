@@ -3,37 +3,33 @@ import styled from "styled-components";
 import { Heart } from "lucide-react";
 import { useState, useEffect } from "react";
 
-import { Bunny, useBunnyStore } from "../../../_store/bunnyStore";
-import { getBunnyContext, postLike, deleteLike } from "../../../_api/bunnyAPI";
+import { Bunny, useBunnyStore, BunnyContext } from "../../../_store/bunnyStore";
+import { postLike, deleteLike } from "../../../_api/bunnyAPI";
 import { getBadgeIcon, getLinkIcon } from "../utils/bunnyInfoMapper";
 
 interface ProfileProps {
   bunny: Bunny;
 }
 
-interface BunnyContext {
-  is_liked: boolean;
-  buyable_amount: number;
-  sellable_quantity: number;
-}
-
 export default function Profile({ bunny }: ProfileProps) {
-  const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { updateBunnyLikeCount, getBunnyLikeCount } = useBunnyStore();
+  const { 
+    updateBunnyLikeCount, 
+    getBunnyLikeCount, 
+    fetchBunnyContext, 
+    getBunnyContext,
+    updateBunnyContext 
+  } = useBunnyStore();
+
+  const bunnyContext = getBunnyContext(bunny.bunny_name);
+  const isLiked = bunnyContext?.is_liked ?? false;
 
   useEffect(() => {
-    const fetchBunnyContext = async () => {
-      try {
-        const context = await getBunnyContext(bunny.bunny_name);
-        setIsLiked(context.is_liked);
-      } catch (error) {
-        console.error('Bunny context 가져오기 실패:', error);
-      }
-    };
-
-    fetchBunnyContext();
-  }, [bunny.bunny_name]);
+    // 컨텍스트가 없으면 가져오기
+    if (!bunnyContext) {
+      fetchBunnyContext(bunny.bunny_name);
+    }
+  }, [bunny.bunny_name, bunnyContext, fetchBunnyContext]);
 
   const handleHeartClick = async () => {
     if (isLoading) return;
@@ -42,12 +38,12 @@ export default function Profile({ bunny }: ProfileProps) {
     try {
       if (isLiked) {
         await deleteLike(bunny.bunny_name);
-        setIsLiked(false);
-        updateBunnyLikeCount(bunny.bunny_name, -1); // bunnyStore에서 좋아요 수 감소
+        updateBunnyContext(bunny.bunny_name, { is_liked: false });
+        updateBunnyLikeCount(bunny.bunny_name, -1);
       } else {
         await postLike(bunny.bunny_name);
-        setIsLiked(true);
-        updateBunnyLikeCount(bunny.bunny_name, 1); // bunnyStore에서 좋아요 수 증가
+        updateBunnyContext(bunny.bunny_name, { is_liked: true });
+        updateBunnyLikeCount(bunny.bunny_name, 1);
       }
     } catch (error) {
       console.error('좋아요 처리 중 오류 발생:', error);
@@ -220,6 +216,16 @@ const Avatar = styled.div`
   align-items: center;
   justify-content: center;
   
+  @media (max-width: 768px) {
+    width: 3rem;
+    height: 3rem;
+  }
+  
+  @media (max-width: 480px) {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
   img {
     width: 100%;
     height: 100%;
@@ -243,6 +249,14 @@ const BunnyName = styled.h3`
   color: #FBC95E;
   text-shadow: 0px 5px 5px rgba(254, 226, 167, 0.25);
   margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const KoreanName = styled.p`
@@ -250,6 +264,14 @@ const KoreanName = styled.p`
   color: #FBC95E;
   font-weight: 700;
   margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const SocialLinks = styled.div`
@@ -265,6 +287,16 @@ const SocialLink = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  
+  @media (max-width: 768px) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  
+  @media (max-width: 480px) {
+    width: 1rem;
+    height: 1rem;
+  }
   
   img {
     width: 100%;

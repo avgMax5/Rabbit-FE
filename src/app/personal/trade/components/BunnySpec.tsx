@@ -167,18 +167,42 @@ const EducationSection = styled.div`
   flex: 1;
   display: flex;
   gap: 0.75rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.25rem;
+  }
 `;
 
 const ExperienceSection = styled.div`
   flex: 1;
   display: flex;
   gap: 0.75rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.25rem;
+  }
 `;
 
 const CertificationSection = styled.div`
   flex: 1;
   display: flex;
   gap: 0.75rem;
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.25rem;
+  }
 `;
 
 const SkillsSection = styled.div`
@@ -192,6 +216,14 @@ const SectionHeader = styled.div`
   gap: 0.25rem;
   flex: 0 0 auto;
   min-width: 3rem;
+  
+  @media (max-width: 768px) {
+    min-width: 2.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    min-width: 2rem;
+  }
 `;
 
 const SectionIcon = styled.div`
@@ -199,6 +231,14 @@ const SectionIcon = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const SectionTitle = styled.h4`
@@ -207,6 +247,14 @@ const SectionTitle = styled.h4`
   color: #ffd700;
   margin: 0;
   text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.6rem;
+  }
 `;
 
 const SectionContent = styled.div`
@@ -229,17 +277,41 @@ const EducationInfo = styled.div`
   color: #fff;
   line-height: 1.2;
   font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+  }
 `;
 
 const EducationDate = styled.div`
   font-size: 0.7rem;
   color: #ccc;
   line-height: 1.2;
+  
+  @media (max-width: 768px) {
+    font-size: 0.65rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.6rem;
+  }
 `;
 
 const ExperienceItem = styled.div`
   font-size: 0.75rem;
   color: #fff;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+  }
 `;
 
 const CertificationContent = styled.div`
@@ -268,12 +340,28 @@ const CertificationInfo = styled.div`
   color: #fff;
   line-height: 1.2;
   font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+  }
 `;
 
 const CertificationDate = styled.div`
   font-size: 0.7rem;
   color: #ccc;
   line-height: 1.2;
+  
+  @media (max-width: 768px) {
+    font-size: 0.65rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.6rem;
+  }
 `;
 
 const SkillsTags = styled.div`
@@ -289,10 +377,30 @@ const SkillTag = styled.span`
   padding: 0.2rem 0.4rem;
   border-radius: 1rem;
   font-weight: bold;
+  
+  @media (max-width: 768px) {
+    font-size: 0.6rem;
+    padding: 0.15rem 0.3rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.55rem;
+    padding: 0.1rem 0.25rem;
+  }
 `;
 
 const NoDataMessage = styled.div`
   font-size: 0.75rem;
   color: #fff;
   padding: 0.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+    padding: 0.4rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+    padding: 0.3rem;
+  }
 `;

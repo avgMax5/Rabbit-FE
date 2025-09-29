@@ -41,6 +41,14 @@ const CategorySection = styled.div`
   flex-direction: row;
   gap: 0.75rem;
   height: 100%;
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.25rem;
+  }
 `;
 
 const CategoryItem = styled.div`
@@ -53,6 +61,16 @@ const CategoryItem = styled.div`
   border-radius: 0.75rem;
   flex: 1;
   text-align: center;
+  
+  @media (max-width: 768px) {
+    gap: 0.4rem;
+    padding: 0.6rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.3rem;
+    padding: 0.4rem;
+  }
 `;
 
 const CategoryIcon = styled.div`
@@ -61,6 +79,16 @@ const CategoryIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  
+  @media (max-width: 768px) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
   
   img {
     width: 100%;
@@ -73,6 +101,14 @@ const CategoryLabel = styled.span`
   font-size: 0.75rem;
   color: #000;
   font-weight: 400;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+  }
 `;
 
 const CategoryValue = styled.span`
@@ -80,4 +116,12 @@ const CategoryValue = styled.span`
   font-weight: 900;
   color: #ffa500;
   text-shadow: 1px 1px 2px rgba(251, 201, 94, 0.25);
+  
+  @media (max-width: 768px) {
+    font-size: 11px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
 `;

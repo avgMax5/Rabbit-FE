@@ -2,7 +2,7 @@
 import styled from "styled-components";
 import Button from '../../../_shared/components/Button';
 import { useState, useEffect } from "react";
-import { Bunny } from "../../../_store/bunnyStore"; // useBunnyStore는 이 파일에서 안 써서 제거
+import { Bunny, useBunnyStore } from "../../../_store/bunnyStore";
 import { useUserStore } from "../../../_store/userStore";
 import { validateOrderAmount, handlePriceIncrease } from '../utils/orderValidate';
 import { createOrder, getBunnyContext } from '../../../_api/bunnyAPI';
@@ -39,6 +39,7 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
   const [orderBook, setOrderBook] = useState<OrderBookSnapshot | null>(null);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
   const { user } = useUserStore();
+  const { getBunnyByName } = useBunnyStore();
 
   // 1) 컨텍스트(주문 가능 수량/액수 등) 로드
   useEffect(() => {
@@ -128,21 +129,56 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
     };
   }, [bunny.bunny_name]);
 
+  // 현재 가격 가져오기 (실시간 업데이트된 가격 우선)
+  const getCurrentPrice = () => {
+    const storeBunny = getBunnyByName(bunny.bunny_name);
+    return storeBunny?.current_price || orderBook?.currentPrice || bunny.current_price;
+  };
+
+  // 가격 범위 계산 (±50%)
+  const getPriceRange = () => {
+    const currentPrice = getCurrentPrice();
+    const minPrice = Math.floor(currentPrice * 0.5); // -50%
+    const maxPrice = Math.floor(currentPrice * 1.5); // +50%
+    return { minPrice, maxPrice, currentPrice };
+  };
+
+  // 가격 유효성 검사
+  const isPriceInRange = (priceValue: string) => {
+    if (!priceValue) return true; // 빈 값은 허용
+    const numPrice = Number(priceValue);
+    const { minPrice, maxPrice } = getPriceRange();
+    return numPrice >= minPrice && numPrice <= maxPrice;
+  };
+
   // 가격 +% 버튼
   const onPriceIncrease = (percentage: number) => {
-    const currentPrice = orderBook?.currentPrice || bunny.current_price;
+    const currentPrice = getCurrentPrice();
     const newPrice = handlePriceIncrease(price, currentPrice, percentage);
-    setPrice(toIntInput(newPrice)); // 정수만 유지
+    const { minPrice, maxPrice } = getPriceRange();
+    
+    // 범위 내로 제한
+    const limitedPrice = Math.max(minPrice, Math.min(maxPrice, Number(newPrice)));
+    setPrice(toIntInput(limitedPrice.toString()));
   };
 
   // 호가 클릭하여 가격 입력
   const selectPrice = (selectedPrice: number) => {
-    setPrice(String(selectedPrice));
+    const { minPrice, maxPrice } = getPriceRange();
+    const limitedPrice = Math.max(minPrice, Math.min(maxPrice, selectedPrice));
+    setPrice(String(limitedPrice));
+  };
+
+  // 가격 입력 핸들러
+  const handlePriceChange = (value: string) => {
+    const cleanValue = toIntInput(value);
+    setPrice(cleanValue);
   };
 
   // 주문 유효성 (금액은 기존 로직 유지)
   const orderValidation = validateOrderAmount(quantity, price);
-  const isOrderValid = orderValidation.isValid;
+  const isPriceValid = isPriceInRange(price);
+  const isOrderValid = orderValidation.isValid && isPriceValid;
 
   // 주문 처리
   const handleOrder = async () => {
@@ -207,8 +243,8 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
             <OrderLabel>{activeTab === '매수' ? '주문 가능' : '매도 가능'}</OrderLabel>
             <OrderValue>
               {activeTab === '매수'
-                ? `${bunnyContext?.buyable_amount?.toLocaleString() || 0} C`
-                : `${bunnyContext?.sellable_quantity || 0} C`}
+                ? `${bunnyContext?.buyable_amount?.toLocaleString() || 0} BNY`
+                : `${bunnyContext?.sellable_quantity || 0} BNY`}
             </OrderValue>
           </OrderRow>
 
@@ -234,7 +270,11 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
                 inputMode="numeric"
                 placeholder="0"
                 value={price}
-                onChange={(e) => setPrice(toIntInput(e.target.value))}
+                onChange={(e) => handlePriceChange(e.target.value)}
+                style={{
+                  border: !isPriceValid && price ? '1px solid #e74c3c' : 'none',
+                  backgroundColor: !isPriceValid && price ? '#ffeaea' : 'transparent'
+                }}
               />
               <span>C</span>
             </OrderInput>
@@ -254,43 +294,7 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
                 ? `${Math.round(Number(quantity) * Number(price) * 1.001).toLocaleString()} C`
                 : '0 C'}
             </OrderValue>
-          </OrderRow>
-
-          {/* 간단한 호가창 표시 */}
-          {orderBook && (
-            <OrderBookSection>
-              <OrderBookTitle>호가창</OrderBookTitle>
-              <OrderBookContainer>
-                <BidSection>
-                  <BidTitle>매수</BidTitle>
-                  {orderBook.bids.slice(0, 3).map((bid) => (
-                    <OrderBookRow
-                      key={`bid-${bid.price}`}
-                      onClick={() => selectPrice(bid.price)}
-                      $type="bid"
-                    >
-                      <span>{bid.price.toLocaleString()}</span>
-                      <span>{bid.quantity}</span>
-                    </OrderBookRow>
-                  ))}
-                </BidSection>
-                <AskSection>
-                  <AskTitle>매도</AskTitle>
-                  {orderBook.asks.slice(0, 3).map((ask) => (
-                    <OrderBookRow
-                      key={`ask-${ask.price}`}
-                      onClick={() => selectPrice(ask.price)}
-                      $type="ask"
-                    >
-                      <span>{ask.price.toLocaleString()}</span>
-                      <span>{ask.quantity}</span>
-                    </OrderBookRow>
-                  ))}
-                </AskSection>
-              </OrderBookContainer>
-            </OrderBookSection>
-          )}
-
+          </OrderRow>      
           <ActionButtons>
             <Button variant="secondary" size="small" onClick={handleReset}>
               초기화
@@ -309,7 +313,12 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
                 {activeTab === '매수' ? '매수하기' : '매도하기'}
               </Button>
               {showTooltip && !isOrderValid && (
-                <Tooltip>최소 주문 금액은 1,000C입니다</Tooltip>
+                <Tooltip>
+                  {!isPriceValid && price 
+                    ? `가격은 현재가의 ±50% 범위 내에서만 입력 가능합니다`
+                    : '최소 주문 금액은 1,000C입니다'
+                  }
+                </Tooltip>
               )}
             </ButtonContainer>
           </ActionButtons>
@@ -328,7 +337,7 @@ const TabContainer = styled.div`
 `;
 
 const TabButton = styled.button<{ $active: boolean; $type: 'buy' | 'sell' }>`
-  flex: 1;
+  flex: 0.5;
   padding: 0.5rem 0.75rem;
   border: none;
   border-bottom: none;
@@ -361,31 +370,32 @@ const TradeArea = styled.div`
   flex: 1;
   background-color: rgba(252, 252, 252, 0.34);
   border-radius: 0 0 0.75rem 0.75rem;
-  padding: 1rem;
+  padding: 0.8rem;
 `;
 
 const OrderForm = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  height: 100%;
+  gap: 0.6rem;
+  height: auto;
+  max-height: 400px;
 `;
 
 const OrderRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
 `;
 
 const OrderLabel = styled.span`
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 800;
   color: #333;
 `;
 
 const OrderValue = styled.span`
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #FAE7C1;
   font-weight: 700;
 `;
@@ -394,17 +404,17 @@ const OrderInput = styled.div`
   display: flex;
   align-items: center;
   background: #f0f8ff;
-  border-radius: 0.5rem;
-  padding: 0.4rem;
-  min-width: 100px;
-  max-width: 110px;
+  border-radius: 0.4rem;
+  padding: 0.3rem;
+  min-width: 90px;
+  max-width: 100px;
 
   input {
     border: none;
     background: transparent;
     outline: none;
     flex: 1;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #333;
     min-width: 0;
 
@@ -414,7 +424,7 @@ const OrderInput = styled.div`
   }
 
   span {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #666;
     margin-left: 0.2rem;
     white-space: nowrap;
@@ -424,15 +434,15 @@ const OrderInput = styled.div`
 
 const PercentageButtons = styled.div`
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
   justify-content: flex-end;
 `;
 
 const PercentageButton = styled.button`
-  padding: 0.3rem 0.6rem;
+  padding: 0.25rem 0.5rem;
   border: none;
-  border-radius: 0.4rem;
-  font-size: 0.7rem;
+  border-radius: 0.3rem;
+  font-size: 0.65rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -452,9 +462,9 @@ const PercentageButton = styled.button`
 
 const ActionButtons = styled.div`
   display: flex;
-  gap: 1rem;
+  gap: 0.8rem;
   justify-content: flex-end;
-  margin-top: 1rem;
+  margin-top: 0.8rem;
 `;
 
 const ButtonContainer = styled.div`

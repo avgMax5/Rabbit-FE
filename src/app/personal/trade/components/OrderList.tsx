@@ -86,7 +86,7 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
       bids: snapshot.bids,
       asks: snapshot.asks,
       currentPrice: snapshot.currentPrice,
-      serverTime: snapshot.serverTime
+      serverTime: Date.now()
     });
   };
 
@@ -125,8 +125,8 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
         }
       });
 
-      diff.askDeletes.forEach(del => {
-        newAsks = newAsks.filter(ask => ask.price !== del.price);
+      diff.askDeletes.forEach(price => {
+        newAsks = newAsks.filter(ask => ask.price !== price);
       });
 
       // 가격순 정렬
@@ -137,7 +137,7 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
         ...prevData,
         bids: newBids,
         asks: newAsks,
-        currentPrice: diff.currentPrice,
+        currentPrice: diff.currentPrice ?? prevData.currentPrice,
         serverTime: diff.serverTime
       };
     });
@@ -378,7 +378,7 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
 const OrderListWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex:1;
   border-radius: 0.75rem;
   overflow: hidden;
 `;
@@ -417,7 +417,10 @@ const OrderTabButton = styled.button<{ $active: boolean }>`
 `;
 
 const OrderArea = styled.div`
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  max-height: 400px;
   border-radius: 0 0 0.75rem 0.75rem;
   padding: 0;
   overflow: hidden;
@@ -454,22 +457,28 @@ const HeaderRightSection = styled.div`
 const OrderItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   overflow-y: auto;
   gap: 0.5rem;
   padding: 0.5rem 0;
   background-color: rgba(252, 252, 252, 0.25);
+  
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
   
   &::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
   }
   
   &::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.3);
-    border-radius: 3px;
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
   }
 `;
 
@@ -529,24 +538,30 @@ const OrderChange = styled.span<{ $isPositive: boolean }>`
 `;
 
 // Order History Styles
+
 const OrderHistoryContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
   overflow-y: auto;
   background-color: rgba(252, 252, 252, 0.25);
   
   &::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
   
   &::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
   }
   
   &::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.3);
-    border-radius: 3px;
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
   }
 `;
 
@@ -555,7 +570,7 @@ const OrderHistoryHeader = styled.div`
   grid-template-columns: 1fr 1fr 0.8fr 1fr 1.2fr;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background-color: rgba(252, 252, 252, 0.4);
+  background-color: rgba(252, 252, 252, 0.5);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 0.8rem;
   font-weight: 600;

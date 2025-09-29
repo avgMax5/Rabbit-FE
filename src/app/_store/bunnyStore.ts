@@ -35,6 +35,12 @@ export interface Bunny {
     created_at: string;
 }
 
+export interface BunnyContext {
+    is_liked: boolean;
+    buyable_amount: number;
+    sellable_quantity: number;
+}
+
 export interface FetchBunniesParams {
     sortType?: string;
     page?: number;
@@ -51,6 +57,7 @@ export interface Filters {
 interface BunnyState {
     bunnies: Bunny[];
     allBunnies: Bunny[];
+    bunnyContexts: Record<string, BunnyContext>; // bunnyName을 키로 하는 컨텍스트 맵
 
     status: {
         bunnies: {
@@ -61,15 +68,22 @@ interface BunnyState {
             isLoading: boolean;
             error: string | null;
         },
+        bunnyContexts: {
+            isLoading: boolean;
+            error: string | null;
+        }
     }
 
     fetchBunnies: (params?: FetchBunniesParams) => Promise<void>;
     fetchAllBunnies: (params?: FetchBunniesParams) => Promise<void>;
+    fetchBunnyContext: (bunnyName: string) => Promise<void>;
 
     getBunnyByName: (bunnyName: string) => Bunny | undefined;
+    getBunnyContext: (bunnyName: string) => BunnyContext | undefined;
     clearError: () => void;
     updateBunnyLikeCount: (bunnyName: string, delta: number) => void;
     getBunnyLikeCount: (bunnyName: string) => number;
+    updateBunnyContext: (bunnyName: string, context: Partial<BunnyContext>) => void;
 
     // 실시간 가격 스트림 제어
     startPriceRealtime: (bunnyName: string) => Promise<void>;
@@ -82,10 +96,12 @@ interface BunnyState {
 export const useBunnyStore = create<BunnyState>((set, get) => ({
     bunnies: [],
     allBunnies: [],
+    bunnyContexts: {},
 
     status: {
         bunnies: { isLoading: false, error: null },
         allBunnies: { isLoading: false, error: null },
+        bunnyContexts: { isLoading: false, error: null },
     },
 
     fetchBunnies: async (params: FetchBunniesParams = {}) => {
@@ -195,9 +211,58 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
         }
     },
 
+    fetchBunnyContext: async (bunnyName: string) => {
+        set((state) => ({
+            status: {
+                ...state.status,
+                bunnyContexts: { isLoading: true, error: null },
+            },
+        }));
+
+        try {
+            const response = await axios.get(
+                `${API_BASE_URL}/bunnies/${bunnyName}/user-context`,
+                {
+                    withCredentials: true,
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${TEST_TOKEN}`,
+                    },
+                }
+            );
+
+            set((state) => ({
+                bunnyContexts: {
+                    ...state.bunnyContexts,
+                    [bunnyName]: response.data,
+                },
+                status: {
+                    ...state.status,
+                    bunnyContexts: { isLoading: false, error: null },
+                },
+            }));
+        } catch (error) {
+            console.error('Bunny context 가져오기 실패:', error);
+            set((state) => ({
+                status: {
+                    ...state.status,
+                    bunnyContexts: {
+                        isLoading: false,
+                        error: error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.",
+                    },
+                },
+            }));
+        }
+    },
+
     getBunnyByName: (bunnyName: string) => {
         const { allBunnies } = get();
         return allBunnies.find((bunny) => bunny.bunny_name === bunnyName);
+    },
+
+    getBunnyContext: (bunnyName: string) => {
+        const { bunnyContexts } = get();
+        return bunnyContexts[bunnyName];
     },
 
     clearError: () =>
@@ -205,9 +270,22 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
             status: {
                 bunnies: { ...state.status.bunnies, error: null },
                 allBunnies: { ...state.status.allBunnies, error: null },
+                bunnyContexts: { ...state.status.bunnyContexts, error: null },
             },
         })
     ),
+
+    updateBunnyContext: (bunnyName: string, context: Partial<BunnyContext>) => {
+        set((state) => ({
+            bunnyContexts: {
+                ...state.bunnyContexts,
+                [bunnyName]: {
+                    ...state.bunnyContexts[bunnyName],
+                    ...context,
+                },
+            },
+        }));
+    },
 
     updateBunnyLikeCount: (bunnyName: string, delta: number) => {
         const { bunnies, allBunnies } = get();
