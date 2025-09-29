@@ -565,12 +565,13 @@ const OrderHistoryContainer = styled.div`
   }
 `;
 
+
 const OrderHistoryHeader = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 0.8fr 1fr 1.2fr;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background-color: rgba(252, 252, 252, 0.5);
+  background: rgba(252, 252, 252, 0.4);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 0.8rem;
   font-weight: 600;
