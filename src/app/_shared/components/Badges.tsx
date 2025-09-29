@@ -21,11 +21,12 @@ function Badges({ badges }: { badges: string[] }) {
 const Div = styled.div`
     display: flex;
     gap: 12px;
-    width: 20rem;
+    width: auto;
+    max-width: 20rem;
     padding: 10px 10px;
     overflow-x: auto;
-    background-color: #ffffff49;
-    border-radius: 8px;
+    background-color: #f7f7f71b;
+    border-radius: 10px;
 
     & img {
         width: 1.5rem;

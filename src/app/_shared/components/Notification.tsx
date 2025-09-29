@@ -11,11 +11,13 @@ function Notification({ notification, width }: NotificationProps) {
 
 const Div = styled.div<{ $width: string }>`
     position: absolute;
+    top: 100%;
+    left: 0;
     display: flex;
     text-align: start;
     line-height: 1.2;
     justify-content: start;
-    z-index: 999;
+    z-index: 9999;
     left: 0.2rem;
     width: ${(props) => props.$width};
     height: auto;

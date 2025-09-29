@@ -119,10 +119,19 @@ function Header() {
                     </Trade>
                 )}
             </Navigate>
-            <Money onClick={handleMoneyClick}>
-                <CarrotImg src="/images/personal/home/carrot.png" alt="당근" />
-                {Number(carrot).toLocaleString()}
-            </Money>
+            <RightContainer>
+                <ProfileImage
+                    $url={user?.image ?? "/images/login/personalProfile.png"}
+                />
+                <ProfileName>{user?.name}</ProfileName>
+                <Money onClick={handleMoneyClick}>
+                    <CarrotImg
+                        src="/images/personal/home/carrot.png"
+                        alt="당근"
+                    />
+                    {Number(carrot).toLocaleString()}
+                </Money>
+            </RightContainer>
             {mounted &&
                 createPortal(
                     <ShopModal
@@ -227,6 +236,7 @@ const Trade = styled(NavButton)``;
 const CarrotImg = styled.img`
     height: 1.5rem;
 `;
+
 const Money = styled(WhiteContainer)`
     padding: 0.5rem 1.2rem;
     border-radius: 45px;
@@ -239,6 +249,37 @@ const Money = styled(WhiteContainer)`
     &:hover {
         transform: scale(1.05);
     }
+`;
+
+const RightContainer = styled.div`
+    display: flex;
+    gap: 3px;
+    height: 3.5rem;
+    padding: 0 0.2rem 0 0.3rem;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 45px;
+    background: rgba(245, 245, 245, 0.446);
+    box-shadow: 5px 5px 8px 0 rgba(130, 150, 176, 0.25);
+`;
+
+const ProfileName = styled.div`
+    margin-right: 15px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+`;
+
+const ProfileImage = styled.div<{ $url: string }>`
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 2.8rem;
+    margin-right: 3px;
+    background-image: url(${(props) => props.$url});
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-shadow: 1px 1px 3px #3d3d3d7f;
 `;
 
 export default Header;
