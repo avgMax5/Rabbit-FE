@@ -22,6 +22,8 @@ function LikeBox({ like }: { like: number }) {
 }
 
 const Div = styled.div`
+    position: absolute;
+    left: 7.4rem;
     display: flex;
     width: 6.5rem;
     height: 2.4rem;

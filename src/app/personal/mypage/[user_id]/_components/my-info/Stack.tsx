@@ -54,11 +54,14 @@ function Stack({ skillData, name }: StackProps) {
 
     useEffect(() => {
         if (skillData.length) {
-            setValue(name, skillData);
+            console.log(skillData, "skilldata");
+            const uniqueSkills = Array.from(new Set(skillData));
+            console.log(uniqueSkills, "unique");
+            setValue(name, uniqueSkills);
         }
     }, [skillData, name, setValue]);
 
-    console.log(watch("skill"));
+    console.log(watch("skill"), "<:skill");
 
     const toggleStack = (skill: string) => {
         const newStacks = selectedStacks.includes(skill)

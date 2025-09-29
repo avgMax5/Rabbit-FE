@@ -38,6 +38,7 @@ function MyPageLayout({ children }: MyPageLayoutProps) {
     const { user } = useUserStore();
     const bunnyName = user?.my_bunny_name ?? "";
     const bunnyProfile = user?.image;
+    const bunnyRole = user?.role;
     const data: DataType = getBadgeAndLike(bunnyName);
 
     return (
@@ -51,7 +52,9 @@ function MyPageLayout({ children }: MyPageLayoutProps) {
                     </ProfileLogoSection>
                     <MainSection>
                         <TopContainer>
-                            <LikeBox like={data.like} />
+                            {bunnyRole === "ROLE_BUNNY" && (
+                                <LikeBox like={data.like} />
+                            )}
                             <Badges badges={data.badges} />
                         </TopContainer>
                         <Main>{children}</Main>
@@ -68,7 +71,7 @@ const MyPageBackground = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("/images/shared/background2.png");
+    background-image: url("/images/personal/shared/background2.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -136,7 +139,7 @@ const TopContainer = styled.div`
     width: 100%;
     height: 2.3rem;
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     grid-row: 1;
 `;
