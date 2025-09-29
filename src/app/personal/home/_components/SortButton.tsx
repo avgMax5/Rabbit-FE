@@ -20,12 +20,6 @@ function SortButton({ text, data, isMulti, filterKey }: SortButtonProps) {
     const [display, setDisplay] = useState(false);
 
     const selectedValue = filters[filterKey];
-    const badgeImages = [
-        "/images/personal/home/kakao_sort.png",
-        "/images/personal/home/naver_sort.png",
-        "/images/personal/home/shinhan_sort.png",
-    ];
-
     const handleSelect = (index: number) => {
         if (isMulti) {
             const prev = Array.isArray(selectedValue) ? selectedValue : [];
@@ -44,10 +38,12 @@ function SortButton({ text, data, isMulti, filterKey }: SortButtonProps) {
     let displayBadges: string[] = [];
 
     if (isMulti && Array.isArray(selectedValue) && selectedValue.length > 0) {
-        displayBadges = selectedValue.map((i) => badgeImages[i]);
+        displayBadges = selectedValue.map((i) => {
+            const badge = BadgeData.find((b) => b.id === i);
+            return badge ? badge.src: "";
+        }).filter(Boolean);
     } else if (!isMulti && typeof selectedValue === "number") {
-        // 기본값
-        displayText = data[selectedValue];
+        displayText = data[selectedValue]; // 기본값
 
         // alias 매핑
         if (filterKey === "badges") {

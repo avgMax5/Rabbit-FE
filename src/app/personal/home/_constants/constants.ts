@@ -4,7 +4,7 @@ export const SelectData: string[][] = [
     ["A", "B", "C"],
     ["BACKEND", "FRONTEND", "FULLSTACK"],
     ["GROWTH", "STABLE", "VALUE", "POPULAR", "BALANCE", "BASIC"],
-    ["KAKAO", "NAVER", "SHINHAN"],
+    ["KAKAO", "NAVER", "SHINHAN", "COUPANG", "DAANGN", "HYUNDAI", "LG", "LINE", "SAMSUNG", "SK", "TOSS", "WOOWAHAN"],
 ];
 
 export const BadgeData: BadgeType[] = [
