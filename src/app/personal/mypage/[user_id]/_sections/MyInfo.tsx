@@ -17,6 +17,8 @@ import {
     putInfo,
 } from "@/app/_api/userAPI";
 import { useUserStore } from "@/app/_store/userStore";
+import { Loading } from "@/app/_shared/components";
+import LoadingComponent from "../_components/my-info/LoadingComponent";
 
 type FieldType = "string" | "select" | "date" | "file";
 
@@ -68,7 +70,7 @@ function MyInfo({ onShowModal }: MyInfoProps) {
         }
     }, [MyData]);
 
-    if (!MyData) return <div>로딩중...</div>;
+    if (!MyData) return <LoadingComponent />;
 
     const infoField = [
         { key: "name", text: "이름", disabled: false, value: MyData.name },
