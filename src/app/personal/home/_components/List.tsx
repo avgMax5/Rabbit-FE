@@ -57,6 +57,7 @@ function List<T>({ fieldList, dataList, backgroundColor }: ListProps<T>) {
                                                 value,
                                                 data as Record<string, any>
                                             )}
+                                            {/* {field.key === "badges" && } */}
                                         </div>
                                     );
                                 })}
@@ -75,26 +76,42 @@ function renderValue(
     rowData: Record<string, any>
 ) {
     if (Array.isArray(value)) {
-        if (value.length === 0) return "-";
+        if (value.length === 0) return <NoBadge>미보유</NoBadge>;
 
-        return value.map((name: string) => {
-            const badge = BadgeData.find((b) => b.name === name);
-            return badge ? (
-                <SmallBadge key={badge.id} src={badge.src} alt={badge.name} />
-            ) : (
-                <span key={name}>{name}</span>
-            );
-        });
+        const visibleBadges = value.slice(0, 4);
+        const extraCount = value.length - 4;
+
+        return (
+            <>
+                {visibleBadges.map((name: string) => {
+                    const badge = BadgeData.find((b) => b.name === name);
+                    return badge ? (
+                        <SmallBadge
+                            key={badge.id}
+                            src={badge.src}
+                            alt={badge.name}
+                        />
+                    ) : (
+                        <span key={name}>{name}</span>
+                    );
+                })}
+                {extraCount > 0 && (
+                    <span style={{ marginLeft: "2px", fontSize: "10px" }}>
+                        +{extraCount}
+                    </span>
+                )}
+            </>
+        );
     }
 
     if (fieldKey === "fluctuation_rate" && typeof value === "number") {
-        const color = value > 0 ? "red" : value < 0 ? "#60a5fa" : "black";
+        const color = value > 0 ? "#ff5a5a" : value < 0 ? "#60a5fa" : "#fff";
         return <span style={{ color, fontWeight: "800" }}>{value}%</span>;
     }
 
     if (fieldKey === "current_price") {
         const rate = rowData["fluctuation_rate"];
-        const color = rate > 0 ? "red" : rate < 0 ? "#60a5fa" : "black";
+        const color = rate > 0 ? "#ff5a5a" : rate < 0 ? "#60a5fa" : "#fff";
         return (
             <span style={{ color, fontWeight: "800" }}>
                 {Number(value).toLocaleString()}
@@ -103,7 +120,11 @@ function renderValue(
     }
 
     if (fieldKey === "user_name") {
-        return <span style={{ fontWeight: "600", color: "rgba(255, 255, 255, 0.9)" }}>{value ?? "-"}</span>;
+        return (
+            <span style={{ fontWeight: "600", color: "#fff" }}>
+                {value ?? "-"}
+            </span>
+        );
     }
 
     const position = PositionData.find((b) => b.name === value);
@@ -196,7 +217,7 @@ const FieldContainer = styled.div<{ $fieldNum: number }>`
 
 const RowContainer = styled.div`
     width: 100%;
-    height: 100%; // Div의 첫 행 + gap 빼기
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -204,13 +225,12 @@ const RowContainer = styled.div`
     gap: 0.4rem;
     padding: 0.5rem;
 
-    /* Custom scrollbar */
-    -ms-overflow-style: none; /* IE, Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 
     &::-webkit-scrollbar {
         width: 6px;
-        display: none; /* Chrome, Safari */
+        display: none;
     }
 
     &::-webkit-scrollbar-track {
@@ -227,17 +247,6 @@ const RowContainer = styled.div`
         border-radius: 3px;
     }
 `;
-
-// const Erow = styled(Row)`
-//     background: #ffffffd8;
-//     box-shadow: 1px 1px 10px 0 rgba(204, 204, 204, 0.25) inset,
-//         0 2px 2px 0 rgba(0, 0, 0, 0.25);
-//     cursor: pointer;
-
-//     &:hover {
-//         background: #e0f2feeb;
-//     }
-// `;
 
 const Erow = styled(Row)`
     background: linear-gradient(
@@ -268,16 +277,6 @@ const Erow = styled(Row)`
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 `;
-
-// const Orow = styled(Row)`
-//     background: #e3e3e3e7;
-//     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.25);
-//     cursor: pointer;
-
-//     &:hover {
-//         background: #dbeafe;
-//     }
-// `;
 
 const Orow = styled(Row)`
     background: linear-gradient(
@@ -310,8 +309,8 @@ const Orow = styled(Row)`
 `;
 
 const SmallBadge = styled.img`
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
     object-fit: cover;
 `;
 
@@ -319,9 +318,19 @@ const EmptyRowMessage = styled.div`
     width: 100%;
     padding: 1rem 0;
     text-align: center;
-    color: #94a3b8; /* 연한 회색 */
+    color: #94a3b8;
     font-size: 14px;
     font-style: italic;
+`;
+
+const NoBadge = styled.span`
+    width: 3.5rem;
+    height: 1.3rem;
+    border-radius: 1rem;
+    text-align: center;
+    line-height: 1.3rem;
+    font-size: 8px;
+    background-color: #d5ebff51;
 `;
 
 export default List;

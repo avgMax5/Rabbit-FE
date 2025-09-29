@@ -110,7 +110,7 @@ function Banner() {
                                 </IconContainer>
                                 <div>
                                     <FeatureTitle>
-                                        3개+ 기업 뱃지 보유시 특별 혜택
+                                        기업 뱃지 보유시 특별 혜택
                                     </FeatureTitle>
                                     <FeatureDescription>
                                         상위 리스트 등록, 채용 추천과 컨퍼런스
@@ -229,7 +229,7 @@ function Banner() {
                             관심 가진 기업과
                             <br />
                             <CoffeeTitleHighlight>
-                                커피 한 잔 하실래요?
+                                커피 한 잔 할래요~🎵
                             </CoffeeTitleHighlight>
                         </CoffeeTitle>
 
