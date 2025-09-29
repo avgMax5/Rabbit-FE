@@ -1,4 +1,3 @@
-
 import { BadgeType } from "../_types/interfaces";
 
 export const SelectData: string[][] = [
@@ -11,23 +10,86 @@ export const SelectData: string[][] = [
 export const BadgeData: BadgeType[] = [
     {
         id: 0,
-        src: "/images/personal/shared/kakao-badge.png",
+        src: "/images/badge/kakao.png",
         name: "KAKAO",
-        alias: "카카오", 
+        alias: "카카오",
         raise: true,
     },
     {
         id: 1,
-        src: "/images/personal/shared/naver-badge.png",
+        src: "/images/badge/naver.png",
         name: "NAVER",
-        alias: "네이버", 
+        alias: "네이버",
         raise: false,
     },
     {
         id: 2,
-        src: "/images/personal/shared/shinhan-badge.png",
+        src: "/images/badge/shinhan.png",
         name: "SHINHAN",
-        alias: "신한", 
+        alias: "신한",
+        raise: true,
+    },
+    {
+        id: 3,
+        src: "/images/badge/coupang.png",
+        name: "COUPANG",
+        alias: "쿠팡",
+        raise: true,
+    },
+    {
+        id: 4,
+        src: "/images/badge/daangn.png",
+        name: "DAANGN",
+        alias: "당근",
+        raise: true,
+    },
+    {
+        id: 5,
+        src: "/images/badge/hyundai.png",
+        name: "HYUNDAI",
+        alias: "현대",
+        raise: true,
+    },
+    {
+        id: 6,
+        src: "/images/badge/lg.png",
+        name: "LG",
+        alias: "엘지",
+        raise: true,
+    },
+    {
+        id: 7,
+        src: "/images/badge/line.png",
+        name: "LINE",
+        alias: "라인",
+        raise: true,
+    },
+    {
+        id: 8,
+        src: "/images/badge/samsung.png",
+        name: "SAMSUNG",
+        alias: "삼성",
+        raise: true,
+    },
+    {
+        id: 9,
+        src: "/images/badge/sk.png",
+        name: "SK",
+        alias: "에스케이",
+        raise: true,
+    },
+    {
+        id: 10,
+        src: "/images/badge/toss.png",
+        name: "TOSS",
+        alias: "토스",
+        raise: true,
+    },
+    {
+        id: 11,
+        src: "/images/badge/woowahan.png",
+        name: "WOOWAHAN",
+        alias: "우아한",
         raise: true,
     },
 ];
@@ -44,7 +106,7 @@ export const PositionData = [
     { id: 2, alias: "풀스택", name: "FULLSTACK" },
 ];
 
-export const BunnyTraitsData = [   
+export const BunnyTraitsData = [
     { id: 0, alias: "성장형", name: "GROWTH" },
     { id: 1, alias: "안정형", name: "STABLE" },
     { id: 2, alias: "가치형", name: "VALUE" },
@@ -64,14 +126,17 @@ export const fieldList = [
 ];
 
 export const notificationData = [
-    { value: "reliavility", noti: `Rabbit 지수
+    {
+        value: "reliavility",
+        noti: `Rabbit 지수
 
     - 체결 강도 + 거래량 + 급등락 횟수 종합
     - 일 매수 체결 강도 수치 → 점수화 ⇒ 시장 심리 점수 산출
 
     - 지수 200 이상 : 심리 90점 (매우 긍정적)
     - 지수 100 이상: 심리 50점 (중립)
-    - 지수 50 이상: 심리 20점 (매우 부정적)` },
+    - 지수 50 이상: 심리 20점 (매우 부정적)`,
+    },
     {
         value: "tradeStrength",
         noti: `· 거래된 매수 체결과 매도 체결의 비율을 의미하며, 아래의 수식으로 체결강도를 계산합니다.

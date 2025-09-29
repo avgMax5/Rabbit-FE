@@ -41,7 +41,7 @@ function Personal() {
 
                         <Container>
                             <Title
-                                content={"기업에게 인정받은 버니들"}
+                                content={"기업에게 인정받은 버니 수"}
                                 isNoti={false}
                                 icon="solar:medal-star-bold"
                                 time={false}
@@ -192,6 +192,7 @@ const Main = styled.div`
 
 const LeftSection = styled.div`
     width: 100%;
+    min-width: 0;
     display: grid;
     grid-template-rows: 0.45fr 2fr;
     gap: 2rem;
@@ -216,21 +217,16 @@ const RightSection = styled.div`
 
 const Container = styled.div`
     width: 100%;
+    min-width: 0;
 `;
 
 const CorporationCotainer = styled.div`
     width: 100%;
     height: 5.5rem;
-
-    display: inline-flex;
     padding: 10px;
-    justify-content: center;
-    align-items: center;
-    gap: 60px;
-    flex-shrink: 0;
-
     margin-bottom: 5rem;
-    background-color: #ffffff2b;
+    //background-color: #ffffff2b;
+    background-color: #b108082b;
     border-radius: 8px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);

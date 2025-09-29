@@ -24,11 +24,7 @@ export const DateInput = ({ value, inputName, type }: InputProps) => {
         formState: { errors },
     } = useFormContext();
     return (
-        <InputDate
-            type="date"
-            defaultValue={value}
-            {...register(inputName, getValidationRules(type))}
-        />
+        <InputDate type="date" defaultValue={value} {...register(inputName)} />
     );
 };
 
@@ -49,7 +45,6 @@ export const StringInput = ({ value, inputName, type }: InputProps) => {
                 placeholder={errorMessage || ""}
                 {...register(inputName, getValidationRules(type))}
             />
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </>
     );
 };
@@ -142,7 +137,7 @@ export const SelectInput = ({ value, inputName, name, type }: InputProps) => {
 };
 
 const Input = styled.input.withConfig({
-    shouldForwardProp: (prop) => prop !== 'hasError',
+    shouldForwardProp: (prop) => prop !== "hasError",
 })<{ hasError?: boolean }>`
     width: 100%;
     height: 100%;
