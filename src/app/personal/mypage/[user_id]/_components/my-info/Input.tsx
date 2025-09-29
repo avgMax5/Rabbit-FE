@@ -147,6 +147,7 @@ const Input = styled.input.withConfig({
     border: none;
 
     font-weight: 600;
+    color: #000000;
     background-color: ${({ hasError }) => (hasError ? "#ffe6e6" : "#ffffff98")};
     border: ${({ hasError }) => (hasError ? "1.2px solid #af072e" : "none")};
 
