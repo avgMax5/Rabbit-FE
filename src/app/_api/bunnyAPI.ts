@@ -58,21 +58,6 @@ export const getOrderList = async (bunnyName: string) => {
     return response.data;
 };
 
-export const postOrder = async (bunnyName: string, order: Order) => {
-    const response = await axios.post(
-        `${API_BASE_URL}/${bunnyName}/order`,
-        order,
-        {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${TEST_TOKEN}`,
-            },
-        }
-    );
-    return response.data;
-};
-
 export const createOrder = async (
   bunnyName: string,
   orderRequest: { quantity: number; unit_price: number; order_type: "BUY" | "SELL" }

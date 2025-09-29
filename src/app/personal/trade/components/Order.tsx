@@ -11,6 +11,7 @@ import {
   OrderBookSnapshot,
   OrderBookDiff
 } from '../../../_utils/websocket';
+import ResultModal from '../../../_shared/modal/Result';
 
 interface OrderProps {
   activeTab: string;
@@ -38,6 +39,9 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
   const [bunnyContext, setBunnyContext] = useState<BunnyContext | null>(null);
   const [orderBook, setOrderBook] = useState<OrderBookSnapshot | null>(null);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [resultType, setResultType] = useState<'success' | 'error'>('success');
+  const [resultMessage, setResultMessage] = useState('');
   const { user } = useUserStore();
   const { getBunnyByName } = useBunnyStore();
 
@@ -191,11 +195,15 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
       const unit = Number(unitStr);
 
       if (!Number.isFinite(qty) || qty <= 0) {
-        alert("수량은 0보다 큰 정수여야 합니다.");
+        setResultType('error');
+        setResultMessage('수량은 0보다 큰 정수여야 합니다.');
+        setIsResultModalOpen(true);
         return;
       }
       if (!Number.isFinite(unit) || unit <= 0) {
-        alert("가격은 0보다 큰 정수여야 합니다.");
+        setResultType('error');
+        setResultMessage('가격은 0보다 큰 정수여야 합니다.');
+        setIsResultModalOpen(true);
         return;
       }
 
@@ -207,10 +215,19 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
 
       setQuantity('');
       setPrice('');
-      alert(`${activeTab} 주문이 성공적으로 처리되었습니다.`);
-    } catch (error) {
+      setResultType('success');
+      setResultMessage(`${activeTab} 주문이 성공적으로 처리되었습니다.`);
+      setIsResultModalOpen(true);
+    } catch (error: any) {
       console.error('주문 처리 중 오류 발생:', error);
+      setResultType('error');
+      setResultMessage(error.response?.data?.message || '주문 처리 중 오류가 발생했습니다.');
+      setIsResultModalOpen(true);
     }
+  };
+
+  const handleResultModalClose = () => {
+    setIsResultModalOpen(false);
   };
 
   const handleReset = () => {
@@ -324,6 +341,15 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
           </ActionButtons>
         </OrderForm>
       </TradeArea>
+      
+      <ResultModal
+        isOpen={isResultModalOpen}
+        onClose={handleResultModalClose}
+        type={resultType}
+        title={resultType === 'success' ? '주문 완료!' : '주문 실패'}
+        message={resultMessage}
+        buttonText="확인"
+      />
     </>
   );
 }
