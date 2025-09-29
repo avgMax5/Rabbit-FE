@@ -1,10 +1,8 @@
-
 export interface DataType {
     id: number;
     bunny_name: string;
     percent: number;
 }
-
 
 export interface BadgeType {
     id: number;

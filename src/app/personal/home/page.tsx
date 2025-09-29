@@ -11,7 +11,6 @@ import Alarm from "./_components/Alarm";
 import WithAuth from "@/app/_components/WithAuth";
 import SpaceBackground from "../../_shared/components/SpaceBackground";
 
-import { updateData } from "./_mocks/mocks";
 import { SelectData, notificationData } from "./_constants/constants";
 import { ListContainer, BunnyListContainer } from "./_components/ListContainer";
 import { BadgeContainer } from "./_components/BadgeContainer";
@@ -144,20 +143,6 @@ function Personal() {
                                 <RankList type="sell" />
                             </RankContainer>
                         </Container>
-                        {/*                         
-                        <Container>
-                            <Title
-                                content={"지표"}
-                                isNoti={false}
-                                icon="solar:graph-new-bold"
-                                time={false}
-                            />
-                            <RankContainer>
-                                <GraphContainer />
-                                <GraphContainer />
-                                <GraphContainer />
-                            </RankContainer>
-                        </Container> */}
                     </RightSection>
                 </Main>
                 <Footer />

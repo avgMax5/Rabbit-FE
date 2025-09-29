@@ -71,7 +71,7 @@ const Data: ListDataType[] = [
     },
 ];
 
-export const updateData = [
+const updateData = [
     { coin_name: "min", fund_bunny_id: "123" },
     { coin_name: "minwoo", fund_bunny_id: "123" },
     { coin_name: "minw", fund_bunny_id: "125" },

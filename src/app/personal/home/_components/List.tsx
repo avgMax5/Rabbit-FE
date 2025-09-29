@@ -88,13 +88,13 @@ function renderValue(
     }
 
     if (fieldKey === "fluctuation_rate" && typeof value === "number") {
-        const color = value > 0 ? "red" : value < 0 ? "#60a5fa" : "black";
+        const color = value > 0 ? "red" : value < 0 ? "#60a5fa" : "rgba(255, 255, 255, 0.9)";
         return <span style={{ color, fontWeight: "800" }}>{value}%</span>;
     }
 
     if (fieldKey === "current_price") {
         const rate = rowData["fluctuation_rate"];
-        const color = rate > 0 ? "red" : rate < 0 ? "#60a5fa" : "black";
+        const color = rate > 0 ? "red" : rate < 0 ? "#60a5fa" : "rgba(255, 255, 255, 0.9)";
         return (
             <span style={{ color, fontWeight: "800" }}>
                 {Number(value).toLocaleString()}
@@ -200,7 +200,7 @@ const RowContainer = styled.div`
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    max-height: 800px;
+    max-height: 1000px;
     gap: 0.4rem;
     padding: 0.5rem;
 
