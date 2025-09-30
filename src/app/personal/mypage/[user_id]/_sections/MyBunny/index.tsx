@@ -59,6 +59,7 @@ function MyBunny() {
         const fetchBunnyInfo = async () => {
             try {
                 const data = await getBunnyMe();
+                console.log(data, "홀더스");
 
                 const customInfoData: BunnyInfo = {
                     bunny_type: data.bunny_type,
@@ -70,9 +71,9 @@ function MyBunny() {
                     like_count: data.like_count,
                 };
 
-                const customHolderData: BunnyHolder[] = data.holders.map(
+                const customHolderData: BunnyHolder[] = data.holder_types.map(
                     (hold: BunnyHolder) => ({
-                        developer_type: hold.developer_type,
+                        developerType: hold.developerType,
                         percentage: hold.percentage,
                         count: hold.count,
                     })
