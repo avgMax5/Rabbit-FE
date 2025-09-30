@@ -1,5 +1,6 @@
 import GlassBox from "@/app/personal/mypage/[user_id]/_components/GlassBox";
 import styled from "styled-components";
+import { notificationData } from "../../_constants/constants";
 
 interface MarketCapProps {
     total: string;
@@ -11,8 +12,9 @@ function MarketCap({ total, price }: MarketCapProps) {
         <GlassBox
             text="시가총액"
             isNoti={true}
-            notification="시가총액계산"
+            notification={notificationData[0].noti}
             iconColor="#2d2d2d"
+            notiWidth="150px"
         >
             <TotalContainer>
                 <Total>{total}</Total>

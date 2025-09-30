@@ -1,6 +1,8 @@
 import GlassBox from "@/app/personal/mypage/[user_id]/_components/GlassBox";
 import styled from "styled-components";
 import HalfChart, { ChartData } from "../../_components/chart/HalfChart";
+import { notificationData } from "../../_constants/constants";
+import { useState } from "react";
 
 interface ReliavilityProps {
     reliability: number;
@@ -23,10 +25,10 @@ function Reliavility({ reliability }: ReliavilityProps) {
         <GlassBox
             text="신뢰도"
             isNoti={true}
-            notification="계산법: Skill(40%) + Market(30%) + Reputation(30%)"
+            notification={notificationData[1].noti}
             color="#e3e1e1f8"
             backgroundColor="#010b20b6"
-            notiWidth="300px"
+            notiWidth="240px"
         >
             <Number>{score}</Number>
             <HalfChart colors={["#f2ad23", "#f0ecec4e"]} data={data} />

@@ -48,9 +48,7 @@ function CoinType({ type }: CoinTypeProps) {
     return (
         <GlassBox
             text="코인 유형"
-            isNoti={true}
-            notification="코인유형에 대한 설명"
-            notiWidth="150px"
+            isNoti={false}
             color="#e3e1e1f8"
             backgroundImage="/images/personal/shared/space.jpeg"
         >

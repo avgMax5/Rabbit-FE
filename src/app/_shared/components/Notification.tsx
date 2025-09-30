@@ -1,12 +1,19 @@
 import styled from "styled-components";
+import { createPortal } from "react-dom";
 
 interface NotificationProps {
     notification: string;
     width: string;
+    top: number;
+    left: number;
 }
 
-function Notification({ notification, width }: NotificationProps) {
-    return <Div $width={width}>{notification}</Div>;
+function Notification({ notification, width, top, left }: NotificationProps) {
+    return (
+        <Div $width={width} style={{ top: `${top}px`, left: `${left}px` }}>
+            {notification}
+        </Div>
+    );
 }
 
 const Div = styled.div<{ $width: string }>`
