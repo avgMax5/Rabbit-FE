@@ -255,7 +255,7 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
             <OrderLabel>{activeTab === '매수' ? '주문 가능' : '매도 가능'}</OrderLabel>
             <OrderValue>
               {activeTab === '매수'
-                ? `${bunnyContext?.buyable_amount?.toLocaleString() || 0} BNY`
+                ? `${bunnyContext?.buyable_amount?.toLocaleString() || 0} C`
                 : `${bunnyContext?.sellable_quantity || 0} BNY`}
             </OrderValue>
           </OrderRow>

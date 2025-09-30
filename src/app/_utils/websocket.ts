@@ -51,25 +51,49 @@ export function toNum(n: string | number | null | undefined): number {
 }
 
 export function calcFluctuationRate(currentPrice: number, closingPrice: number): number {
-  if (!closingPrice || closingPrice === 0) return 0;
-  return ((currentPrice - closingPrice) / closingPrice) * 100;
+  // closingPrice가 유효하지 않으면 null 반환 (0이 아닌)
+  if (!closingPrice || closingPrice === 0 || !Number.isFinite(closingPrice)) {
+    return null as any; // null을 반환하여 "표시 안함"을 의미
+  }
+  
+  // currentPrice도 유효하지 않으면 null 반환
+  if (!currentPrice || !Number.isFinite(currentPrice)) {
+    return null as any;
+  }
+  
+  const rate = ((currentPrice - closingPrice) / closingPrice) * 100;
+  return Number.isFinite(rate) ? rate : null as any;
 }
 
 class WebSocketService {
   public client: Client | null = null;
   private subscriptions: Map<string, StompSubscription> = new Map();
   private desiredSubscriptions: Map<string, (data: any) => void> = new Map();
+  private reconnectAttempts: number = 0;
+  private maxReconnectAttempts: number = 10;
+  private isConnecting: boolean = false;
 
   connect() {
     if (this.client?.connected) return Promise.resolve();
+    if (this.isConnecting) return Promise.resolve();
+
+    // 최대 재연결 시도 횟수 초과 시 에러
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      return Promise.reject(new Error(`최대 재연결 시도 횟수(${this.maxReconnectAttempts})를 초과했습니다.`));
+    }
+
+    this.isConnecting = true;
+    this.reconnectAttempts++;
 
     return new Promise<void>((resolve, reject) => {
+      console.log(`웹소켓 연결 시도 ${this.reconnectAttempts}/${this.maxReconnectAttempts}: ${API_BASE_URL}/ws/orderBook`);
+      
       this.client = new Client({
         webSocketFactory: () =>
           new SockJS(`${API_BASE_URL}/ws/orderBook`, { withCredentials: true } as any),
 
         // 자동 재연결 & 하트비트
-        reconnectDelay: 5000,     // 5초 간격 재시도
+        reconnectDelay: Math.min(5000 * this.reconnectAttempts, 30000), // 지수 백오프 (최대 30초)
         heartbeatIncoming: 10000, // 서버 → 클라
         heartbeatOutgoing: 10000, // 클라 → 서버
 
@@ -79,13 +103,15 @@ class WebSocketService {
           this.client!.connectHeaders = { Authorization: `Bearer ${token}` };
         },
 
-        debug: (str) => {
-          // 개발 중에는 켜두고, 운영에서는 끄는 걸 권장
-          console.log('STOMP Debug:', str);
-        },
+        // debug: (str) => {
+        //   // 개발 중에는 켜두고, 운영에서는 끄는 걸 권장
+        //   console.log('STOMP Debug:', str);
+        // },
 
         onConnect: () => {
           console.log('WebSocket 연결 성공');
+          this.reconnectAttempts = 0; // 연결 성공 시 재시도 횟수 리셋
+          this.isConnecting = false;
           // (재)연결 시 의도한 모든 구독 복구
           this.resubscribeAll();
           resolve();
@@ -93,6 +119,7 @@ class WebSocketService {
 
         onStompError: (frame) => {
           console.error('STOMP 에러:', frame);
+          this.isConnecting = false;
           if (!this.client?.connected) {
             reject(new Error(frame.headers['message'] || 'WebSocket 연결 실패'));
           }
@@ -100,6 +127,7 @@ class WebSocketService {
 
         onWebSocketError: (error) => {
           console.error('WebSocket 에러:', error);
+          this.isConnecting = false;
           if (!this.client?.connected) {
             reject(error);
           }
@@ -107,6 +135,7 @@ class WebSocketService {
 
         onWebSocketClose: () => {
           console.warn('WebSocket 닫힘: 자동 재연결 대기 중...');
+          this.isConnecting = false;
         },
       });
 
@@ -124,6 +153,8 @@ class WebSocketService {
       this.client?.deactivate();
     } finally {
       this.client = null;
+      this.reconnectAttempts = 0;
+      this.isConnecting = false;
     }
   }
 

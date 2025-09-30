@@ -320,15 +320,23 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
 
             set((state) => {
                 const updateList = (list: Bunny[]) =>
-                    list.map((bunny) =>
-                        bunny.bunny_name === bunnyName
-                            ? {
-                                  ...bunny,
-                                  current_price: cur,
-                                  fluctuation_rate: calcFluctuationRate(cur, bunny.closing_price),
-                            }
-                            : bunny
-                    );
+                    list.map((bunny) => {
+                        if (bunny.bunny_name === bunnyName) {
+                            // 현재가만 업데이트하고, fluctuation_rate는 백엔드에서 받은 원본 값 유지
+                            // (백엔드에서 이미 정확한 fluctuation_rate를 계산해서 보내주므로)
+                            console.log(`웹소켓 현재가 업데이트 ${bunnyName}:`, {
+                                old_current_price: bunny.current_price,
+                                new_current_price: cur,
+                                original_fluctuation_rate: bunny.fluctuation_rate
+                            });
+                            return {
+                                ...bunny,
+                                current_price: cur,
+                                // fluctuation_rate는 백엔드 원본 값 유지
+                            };
+                        }
+                        return bunny;
+                    });
                 return {
                     bunnies: updateList(state.bunnies),
                     allBunnies: updateList(state.allBunnies),
@@ -342,15 +350,21 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
 
             set((state) => {
                 const updateList = (list: Bunny[]) =>
-                    list.map((bunny) =>
-                        bunny.bunny_name === bunnyName
-                            ? {
+                    list.map((bunny) => {
+                        if (bunny.bunny_name === bunnyName) {
+                            console.log(`웹소켓 종가 업데이트 ${bunnyName}:`, {
+                                old_closing_price: bunny.closing_price,
+                                new_closing_price: closing,
+                                original_fluctuation_rate: bunny.fluctuation_rate
+                            });
+                            return {
                                 ...bunny,
                                 closing_price: closing,
-                                fluctuation_rate: calcFluctuationRate(bunny.current_price, closing),
-                            }
-                            : bunny
-                    );
+                                // fluctuation_rate는 백엔드에서 새로 계산된 값을 REST API로 받아올 때까지 유지
+                            };
+                        }
+                        return bunny;
+                    });
 
                 return {
                     bunnies: updateList(state.bunnies),

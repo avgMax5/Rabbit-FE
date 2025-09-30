@@ -37,7 +37,9 @@ export default function CurrentPrice({ bunny }: CurrentPriceProps) {
   const price = Number(current).toLocaleString();
   const change = (Number(current) - Number(close)).toLocaleString();
   const changePercentage = `(${rate > 0 ? '+' : ''}${Number(rate).toFixed(2)}%)`;
-  const isPositive = Number(rate) >= 0;
+  const rateValue = Number(rate);
+  const isPositive = rateValue > 0;
+  const isNeutral = rateValue === 0;
   
   return (
     <DashboardContent>
@@ -46,9 +48,11 @@ export default function CurrentPrice({ bunny }: CurrentPriceProps) {
         <StatusDot $isConnected={isWebSocketConnected()} />
       </PriceSection>
       <ChangeInfo>
-        <ChangeValue $isPositive={isPositive}>{change}</ChangeValue>
-        <ChangePercentage $isPositive={isPositive}>{changePercentage}</ChangePercentage>
-        <ChangeArrow $isPositive={isPositive}>{isPositive ? '▲' : '▼'}</ChangeArrow>
+        <ChangeValue $isPositive={isPositive} $isNeutral={isNeutral}>{change}</ChangeValue>
+        <ChangePercentage $isPositive={isPositive} $isNeutral={isNeutral}>{changePercentage}</ChangePercentage>
+        <ChangeArrow $isPositive={isPositive} $isNeutral={isNeutral}>
+          {isNeutral ? '—' : isPositive ? '▲' : '▼'}
+        </ChangeArrow>
       </ChangeInfo>
     </DashboardContent>
   );
@@ -110,20 +114,26 @@ const ChangeInfo = styled.div`
   right: 1rem;
 `;
 
-const ChangeValue = styled.span<{ $isPositive: boolean }>`
+const ChangeValue = styled.span<{ $isPositive: boolean; $isNeutral: boolean }>`
   font-size: 0.8rem;
-  color: ${({ $isPositive }) => $isPositive ? 'rgb(255, 90, 90)' : 'rgb(96, 165, 250);'};
+  color: ${({ $isPositive, $isNeutral }) => 
+    $isNeutral ? 'white' : $isPositive ? 'rgb(255, 90, 90)' : 'rgb(96, 165, 250)'
+  };
   font-weight: bold;
 `;
 
-const ChangePercentage = styled.span<{ $isPositive: boolean }>`
+const ChangePercentage = styled.span<{ $isPositive: boolean; $isNeutral: boolean }>`
   font-size: 0.8rem;
-  color: ${({ $isPositive }) => $isPositive ? 'rgb(255, 90, 90)' : 'rgb(96, 165, 250);'};
+  color: ${({ $isPositive, $isNeutral }) => 
+    $isNeutral ? 'white' : $isPositive ? 'rgb(255, 90, 90)' : 'rgb(96, 165, 250)'
+  };
   font-weight: bold;
 `;
 
-const ChangeArrow = styled.span<{ $isPositive: boolean }>`
+const ChangeArrow = styled.span<{ $isPositive: boolean; $isNeutral: boolean }>`
   font-size: 0.8rem;
-  color: ${({ $isPositive }) => $isPositive ? 'rgb(255, 90, 90)' : 'rgb(96, 165, 250);'};
+  color: ${({ $isPositive, $isNeutral }) => 
+    $isNeutral ? 'white' : $isPositive ? 'rgb(255, 90, 90)' : 'rgb(96, 165, 250)'
+  };
   font-weight: bold;
 `;
