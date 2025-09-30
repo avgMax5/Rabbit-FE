@@ -30,14 +30,19 @@ export interface OrderBookData {
 }
 
 // REST API로 호가창 스냅샷 가져오기
-export const getOrderBookSnapshot = async (bunnyName: string): Promise<OrderBookData> => {
-    const response = await axios.get(`${API_BASE_URL}/bunnies/${bunnyName}/orderbook`, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TEST_TOKEN}`
+export const getOrderBookSnapshot = async (
+    bunnyName: string
+): Promise<OrderBookData> => {
+    const response = await axios.get(
+        `${API_BASE_URL}/bunnies/${bunnyName}/orderbook`,
+        {
+            withCredentials: true,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${TEST_TOKEN}`,
+            },
         }
-    });
+    );
     return response.data;
 };
 
@@ -59,40 +64,43 @@ export const getOrderList = async (bunnyName: string) => {
 };
 
 export const createOrder = async (
-  bunnyName: string,
-  orderRequest: { quantity: number; unit_price: number; order_type: "BUY" | "SELL" }
+    bunnyName: string,
+    orderRequest: {
+        quantity: number;
+        unit_price: number;
+        order_type: "BUY" | "SELL";
+    }
 ) => {
-  // 정수 강제 + 문자열로 전송(BigDecimal 정밀도 안전)
-  const payload = {
-    quantity: Math.trunc(orderRequest.quantity).toString(),
-    unit_price: Math.trunc(orderRequest.unit_price).toString(),
-    order_type: orderRequest.order_type, // "BUY" | "SELL"
-  };
+    // 정수 강제 + 문자열로 전송(BigDecimal 정밀도 안전)
+    const payload = {
+        quantity: Math.trunc(orderRequest.quantity).toString(),
+        unit_price: Math.trunc(orderRequest.unit_price).toString(),
+        order_type: orderRequest.order_type, // "BUY" | "SELL"
+    };
 
-  try {
-    const response = await axios.post(
-      `${API_BASE_URL}/bunnies/${encodeURIComponent(bunnyName)}/orders`,
-      payload,
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${TEST_TOKEN}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (err: any) {
-    // 서버가 내려주는 에러 메시지 확인
-    console.error(
-      "createOrder error:",
-      err.response?.status,
-      err.response?.data || err.message
-    );
-    throw err;
-  }
+    try {
+        const response = await axios.post(
+            `${API_BASE_URL}/bunnies/${encodeURIComponent(bunnyName)}/orders`,
+            payload,
+            {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${TEST_TOKEN}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (err: any) {
+        // 서버가 내려주는 에러 메시지 확인
+        console.error(
+            "createOrder error:",
+            err.response?.status,
+            err.response?.data || err.message
+        );
+        throw err;
+    }
 };
-
 
 export const cancelOrder = async (bunnyName: string, orderId: string) => {
     const response = await axios.delete(
@@ -176,7 +184,7 @@ export interface BunnyInfo {
 }
 
 export interface BunnyHolder {
-    developer_type: string;
+    developerType: string;
     percentage: number;
     count: number;
 }
@@ -263,7 +271,6 @@ export const getBunnyContext = async (bunnyName: string) => {
     return response.data;
 };
 
-
 export const getPressureTop5 = async () => {
     const response = await axios.get(`${API_BASE_URL}/bunnies/pressure-top5`, {
         withCredentials: true,
@@ -272,6 +279,6 @@ export const getPressureTop5 = async () => {
             Authorization: `Bearer ${TEST_TOKEN}`,
         },
     });
-    
+
     return response.data;
 };
