@@ -9,6 +9,7 @@ import { Icon } from "@iconify/react";
 
 interface Top1ContainerProps {
     data: Top[];
+    myRole?: string;
 }
 
 interface getTypeNameProps {
@@ -52,9 +53,11 @@ const getTypeName = ({ title, type }: getTypeNameProps) => {
     return match?.name;
 };
 
-function Top1Container({ data }: Top1ContainerProps) {
+function Top1Container({ data, myRole }: Top1ContainerProps) {
+    const isRoleUser = myRole === "ROLE_USER";
+
     return (
-        <Wrapper>
+        <Wrapper $isRoleUser={isRoleUser}>
             <Container>
                 <Swiper
                     direction="vertical"
@@ -96,14 +99,14 @@ function Top1Container({ data }: Top1ContainerProps) {
     );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $isRoleUser: boolean }>`
     height: 2.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
     position: absolute;
     top: -57px;
-    left: 13%;
+    left: ${(props) => (props.$isRoleUser ? "0" : "13%")};
 `;
 
 const Container = styled.div`
