@@ -90,6 +90,7 @@ export const createOrder = async (
                 },
             }
         );
+        console.log("createOrder response:", response.data);
         return response.data;
     } catch (err: any) {
         // 서버가 내려주는 에러 메시지 확인

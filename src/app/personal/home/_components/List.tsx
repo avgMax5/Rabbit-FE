@@ -1,6 +1,7 @@
 "use client";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import {
     BadgeData,
     PositionData,
@@ -13,6 +14,67 @@ interface ListProps<T> {
     width?: string;
     height?: string;
     backgroundColor: string;
+}
+
+// 깜빡이는 애니메이션 keyframes
+const flashAnimation = keyframes`
+    0% { 
+        background-color: rgba(255, 255, 255, 0); 
+        transform: scale(1);
+    }
+    25% { 
+        background-color: rgba(59, 130, 246, 0.4); 
+        transform: scale(1.02);
+    }
+    50% { 
+        background-color: rgba(255, 255, 255, 0.3); 
+        transform: scale(1.05);
+    }
+    75% { 
+        background-color: rgba(59, 130, 246, 0.2); 
+        transform: scale(1.02);
+    }
+    100% { 
+        background-color: rgba(255, 255, 255, 0); 
+        transform: scale(1);
+    }
+`;
+
+// 가격 변경 감지 및 깜빡이는 효과를 위한 컴포넌트
+function PriceCell({ value, fieldKey, rowData }: { value: any; fieldKey: string; rowData: Record<string, any> }) {
+    const [isFlashing, setIsFlashing] = useState(false);
+    const prevValueRef = useRef(value);
+    
+    useEffect(() => {
+        // 가격 관련 필드에서 값이 변경되었을 때만 깜빡이는 효과 적용
+        if ((fieldKey === 'current_price' || fieldKey === 'fluctuation_rate') && 
+            prevValueRef.current !== value && 
+            prevValueRef.current !== undefined &&
+            prevValueRef.current !== null &&
+            value !== null &&
+            value !== undefined) {
+            
+            // 숫자 값이 실제로 변경되었는지 확인
+            const prevNum = typeof prevValueRef.current === 'number' ? prevValueRef.current : Number(prevValueRef.current);
+            const currentNum = typeof value === 'number' ? value : Number(value);
+            
+            if (!isNaN(prevNum) && !isNaN(currentNum) && prevNum !== currentNum) {
+                setIsFlashing(true);
+                const timer = setTimeout(() => {
+                    setIsFlashing(false);
+                }, 800); // 0.8초 동안 깜빡임
+                
+                return () => clearTimeout(timer);
+            }
+        }
+        prevValueRef.current = value;
+    }, [value, fieldKey]);
+    
+    return (
+        <PriceCellContainer $isFlashing={isFlashing}>
+            {renderValue(fieldKey, value, rowData)}
+        </PriceCellContainer>
+    );
 }
 
 function List<T>({ fieldList, dataList, backgroundColor }: ListProps<T>) {
@@ -51,10 +113,18 @@ function List<T>({ fieldList, dataList, backgroundColor }: ListProps<T>) {
                                     ];
                                     return (
                                         <div key={field.key}>
-                                            {renderValue(
-                                                field.key,
-                                                value,
-                                                data as Record<string, any>
+                                            {field.key === 'current_price' || field.key === 'fluctuation_rate' ? (
+                                                <PriceCell
+                                                    value={value}
+                                                    fieldKey={field.key}
+                                                    rowData={data as Record<string, any>}
+                                                />
+                                            ) : (
+                                                renderValue(
+                                                    field.key,
+                                                    value,
+                                                    data as Record<string, any>
+                                                )
                                             )}
                                             {/* {field.key === "badges" && } */}
                                         </div>
@@ -103,14 +173,21 @@ function renderValue(
         );
     }
 
-    if (fieldKey === "fluctuation_rate" && typeof value === "number") {
-        const color = value > 0 ? "#ff5a5a" : value < 0 ? "#60a5fa" : "#fff";
-        return <span style={{ color, fontWeight: "800" }}>{value.toFixed(2)}%</span>;
+    if (fieldKey === "fluctuation_rate") {
+        if (value === null || value === undefined) {
+            return <span style={{ color: "#999", fontWeight: "400" }}>-</span>;
+        }
+        if (typeof value === "number") {
+            const color = value > 0 ? "#ff5a5a" : value < 0 ? "#60a5fa" : "#fff";
+            return <span style={{ color, fontWeight: "800" }}>{value.toFixed(2)}%</span>;
+        }
     }
 
     if (fieldKey === "current_price") {
         const rate = rowData["fluctuation_rate"];
-        const color = rate > 0 ? "#ff5a5a" : rate < 0 ? "#60a5fa" : "#fff";
+        const color = (rate && typeof rate === "number") 
+            ? (rate > 0 ? "#ff5a5a" : rate < 0 ? "#60a5fa" : "#fff")
+            : "#fff";
         return (
             <span style={{ color, fontWeight: "800" }}>
                 {Number(value).toLocaleString()}
@@ -330,6 +407,21 @@ const NoBadge = styled.span`
     line-height: 1.3rem;
     font-size: 8px;
     background-color: #d5ebff51;
+`;
+
+const PriceCellContainer = styled.div<{ $isFlashing: boolean }>`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    animation: ${props => props.$isFlashing ? flashAnimation : 'none'} 0.8s ease-in-out;
+    
+    &:hover {
+        transform: scale(1.02);
+    }
 `;
 
 export default List;
