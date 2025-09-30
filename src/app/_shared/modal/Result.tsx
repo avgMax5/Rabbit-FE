@@ -117,7 +117,7 @@ const ModalOverlay = styled.div.withConfig({
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 3000;
   animation: cosmicFadeIn 0.4s ease-out;
 
   @keyframes cosmicFadeIn {

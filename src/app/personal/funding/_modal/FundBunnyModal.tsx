@@ -4,7 +4,6 @@ import styled from "styled-components";
 import Button from "../../../_shared/components/Button";
 import FundingRate from "../_components/FundingRate";
 import Portfolio from "../../../_shared/components/Portfolio";
-import ResultModal from "../../../_shared/modal/Result";
 
 import {
     getFundBunniesDetail,
@@ -17,12 +16,14 @@ interface FundBunnyModalProps {
     isOpen: boolean;
     onClose: () => void;
     fundBunnyId: string;
+    onFundingResult: (type: 'success' | 'error', message: string) => void;
 }
 
 const FundBunnyModal: React.FC<FundBunnyModalProps> = ({
     isOpen,
     onClose,
     fundBunnyId,
+    onFundingResult,
 }) => {
     const [isAgreed, setIsAgreed] = useState(false);
     const [bunnyDetail, setBunnyDetail] = useState<FundBunnyDetail | null>(
@@ -31,9 +32,6 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [bnyAmount, setBnyAmount] = useState<number>(0);
-    const [isResultModalOpen, setIsResultModalOpen] = useState(false);
-    const [resultType, setResultType] = useState<'success' | 'error'>('success');
-    const [resultMessage, setResultMessage] = useState('');
 
     useEffect(() => {
         if (isOpen && fundBunnyId) {
@@ -68,26 +66,16 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({
 
             const response = await postFundBunnyFunding(fundBunnyId, fundingData);
             
-            // 성공 시 Result 모달 표시
-            setResultType('success');
-            setResultMessage('펀딩 참여가 성공적으로 완료되었습니다!');
-            setIsResultModalOpen(true);
+            // 성공 시 부모 컴포넌트에 결과 전달
+            onFundingResult('success', '펀딩 참여가 성공적으로 완료되었습니다!');
         } catch (err: any) {
             console.error("펀딩 참여 실패:", err);
             
-            // 실패 시 Result 모달 표시
-            setResultType('error');
-            setResultMessage(err.response?.data?.message || '펀딩 참여에 실패했습니다. 다시 시도해주세요.');
-            setIsResultModalOpen(true);
+            // 실패 시 부모 컴포넌트에 결과 전달
+            onFundingResult('error', err.response?.data?.message || '펀딩 참여에 실패했습니다. 다시 시도해주세요.');
         }
     };
 
-    const handleResultModalClose = () => {
-        setIsResultModalOpen(false);
-        if (resultType === 'success') {
-            onClose(); // 성공 시 모달 닫기
-        }
-    };
 
     if (!isOpen) return null;
 
@@ -235,19 +223,7 @@ const FundBunnyModal: React.FC<FundBunnyModalProps> = ({
         </ModalOverlay>
     );
 
-    return (
-        <>
-            {createPortal(modalContent, document.body)}
-            <ResultModal
-                isOpen={isResultModalOpen}
-                onClose={handleResultModalClose}
-                type={resultType}
-                title={resultType === 'success' ? '펀딩 참여 완료!' : '펀딩 참여 실패'}
-                message={resultMessage}
-                buttonText="확인"
-            />
-        </>
-    );
+    return createPortal(modalContent, document.body);
 };
 
 // Styled Components
@@ -261,7 +237,7 @@ const ModalOverlay = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 100;
     padding: 1.25rem;
     box-sizing: border-box;
 `;

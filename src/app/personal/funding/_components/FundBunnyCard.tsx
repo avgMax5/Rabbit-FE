@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import styled, { keyframes, css } from "styled-components";
 import FundBunnyModal from "../_modal/FundBunnyModal";
+import ResultModal from "../../../_shared/modal/Result";
 import { useCountdown } from "@/app/_hooks/useCountdown";
 
 export default function FundBunnyCard({
@@ -32,6 +33,9 @@ export default function FundBunnyCard({
         Math.round((safeCurrentAmount / safeTargetBny) * 100 * 10) / 10;
     const [mounted, setMounted] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+    const [resultType, setResultType] = useState<'success' | 'error'>('success');
+    const [resultMessage, setResultMessage] = useState('');
     const { timeLeft, isUrgent, isExpired } = useCountdown(endAt);
 
     // bunnyType에 따른 아이콘 매핑
@@ -44,7 +48,7 @@ export default function FundBunnyCard({
             case "C":
                 return "/images/icon/coin_friend.png";
             default:
-                return "/images/icon/coin_balance.png"; // 기본값
+                return "/images/icon/coin_balance.png";
         }
     };
 
@@ -57,7 +61,7 @@ export default function FundBunnyCard({
             case "C":
                 return "단가친화형";
             default:
-                return "밸런스형"; // 기본값
+                return "밸런스형";
         }
     };
 
@@ -72,6 +76,17 @@ export default function FundBunnyCard({
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
+    };
+
+    const handleFundingResult = (type: 'success' | 'error', message: string) => {
+        setResultType(type);
+        setResultMessage(message);
+        setIsResultModalOpen(true);
+        setIsModalOpen(false); // FundBunnyModal 닫기
+    };
+
+    const handleResultModalClose = () => {
+        setIsResultModalOpen(false);
     };
 
     return (
@@ -160,6 +175,15 @@ export default function FundBunnyCard({
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
                 fundBunnyId={fundBunnyId}
+                onFundingResult={handleFundingResult}
+            />
+            <ResultModal
+                isOpen={isResultModalOpen}
+                onClose={handleResultModalClose}
+                type={resultType}
+                title={resultType === 'success' ? '펀딩 참여 완료!' : '펀딩 참여 실패'}
+                message={resultMessage}
+                buttonText="확인"
             />
         </>
     );
