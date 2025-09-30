@@ -42,7 +42,7 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
   const [isResultModalOpen, setIsResultModalOpen] = useState(false);
   const [resultType, setResultType] = useState<'success' | 'error'>('success');
   const [resultMessage, setResultMessage] = useState('');
-  const { user } = useUserStore();
+  const { user, fetchUser } = useUserStore();
   const { getBunnyByName } = useBunnyStore();
 
   // 1) 컨텍스트(주문 가능 수량/액수 등) 로드
@@ -226,8 +226,13 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
     }
   };
 
-  const handleResultModalClose = () => {
+  const handleResultModalClose = async () => {
     setIsResultModalOpen(false);
+
+    const updatedContext = await getBunnyContext(bunny.bunny_name);
+    setBunnyContext(updatedContext);
+
+    await fetchUser();
   };
 
   const handleReset = () => {

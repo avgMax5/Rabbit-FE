@@ -117,7 +117,8 @@ export default function BunnySpec({ bunny }: BunnySpecProps) {
           {spec.career && spec.career.length > 0 ? (
             spec.career.map((career) => (
               <ExperienceItem key={career.career_id}>
-                {career.company_name} {career.position} {formatDateRange(career.start_date, career.end_date)}
+                <ExperienceInfo> {career.company_name} {career.position} </ExperienceInfo>
+                <ExperienceDate> {formatDateRange(career.start_date, career.end_date)} </ExperienceDate>
               </ExperienceItem>
             ))
           ) : (
@@ -272,6 +273,48 @@ const EducationItem = styled.div`
   margin-bottom: 0.3rem;
 `;
 
+const ExperienceInfo = styled.div`
+  font-size: 0.75rem;
+  color: #fff;
+  line-height: 1.2;
+  font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+  }
+`;
+
+const ExperienceDate = styled.div`
+  font-size: 0.7rem;
+  color: #ccc;
+  line-height: 1.2;
+  
+  @media (max-width: 768px) {
+    font-size: 0.65rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.6rem;
+  }
+`;
+
+const ExperienceItem = styled.div`
+  font-size: 0.75rem;
+  color: #fff;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+  }
+`;
+
 const EducationInfo = styled.div`
   font-size: 0.75rem;
   color: #fff;
@@ -301,18 +344,6 @@ const EducationDate = styled.div`
   }
 `;
 
-const ExperienceItem = styled.div`
-  font-size: 0.75rem;
-  color: #fff;
-  
-  @media (max-width: 768px) {
-    font-size: 0.7rem;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 0.65rem;
-  }
-`;
 
 const CertificationContent = styled.div`
   border-radius: 0.5rem;

@@ -7,7 +7,6 @@ interface CorporationBadgeProps {
 }
 
 function CorporationBadge({ badge, amount }: CorporationBadgeProps) {
-    console.log(badge, "src");
     return (
         <Corporation>
             <img src={badge.src} alt={badge.alias} />
