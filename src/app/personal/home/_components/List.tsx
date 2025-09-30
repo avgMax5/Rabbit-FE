@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import {
     BadgeData,
     PositionData,
-    BunnyFundingTypeData,
     BunnyTraitsData,
 } from "../_constants/constants";
 

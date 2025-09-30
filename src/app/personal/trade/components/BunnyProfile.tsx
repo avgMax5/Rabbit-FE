@@ -3,9 +3,10 @@ import styled from "styled-components";
 import { Heart } from "lucide-react";
 import { useState, useEffect } from "react";
 
-import { Bunny, useBunnyStore, BunnyContext } from "../../../_store/bunnyStore";
+import { Bunny, useBunnyStore } from "../../../_store/bunnyStore";
 import { postLike, deleteLike } from "../../../_api/bunnyAPI";
-import { getBadgeIcon, getLinkIcon } from "../utils/bunnyInfoMapper";
+import { getLinkIcon } from "../utils/bunnyInfoMapper";
+import { BadgeData } from "../../home/_constants/constants";
 
 interface ProfileProps {
   bunny: Bunny;
@@ -63,19 +64,29 @@ export default function Profile({ bunny }: ProfileProps) {
             <HeartCount>{getBunnyLikeCount(bunny.bunny_name)}</HeartCount>
           </HeartSection>
           
-          {/* 뱃지 섹션 추가 */}
-          {bunny.badges && bunny.badges.length > 0 && (
+          {/* 뱃지 섹션 */}
+          {Array.isArray(bunny.badges) && (
             <BadgeSection>
-              {bunny.badges.map((badge, index) => {
-                const badgeIcon = getBadgeIcon([badge]);
-                return badgeIcon ? (
-                  <Badge key={index}>
-                    <img src={badgeIcon} alt={badge} />
-                  </Badge>
-                ) : null;
-              })}
+              {bunny.badges.length === 0 ? (
+                <NoBadge>미보유</NoBadge>
+              ) : (
+                <>
+                  {bunny.badges.length > 3 && (
+                    <ExtraCount>+{bunny.badges.length - 3}</ExtraCount>
+                  )}
+                  {bunny.badges.slice(0, 3).map((name: string) => {
+                    const badge = BadgeData.find((b) => b.name === name);
+                    return badge ? (
+                      <Badge key={badge.id} src={badge.src} alt={badge.name} />
+                    ) : (
+                      <span key={name}>{name}</span>
+                    );
+                  })}
+                </>
+              )}
             </BadgeSection>
           )}
+
           
           <Avatar>
             <img src={bunny.image || "/images/login/personalProfile.png"} alt="Profile" />
@@ -190,9 +201,16 @@ const BadgeSection = styled.div`
   transform: translateX(0);
 `;
 
-const Badge = styled.div`
-  width: 1.9rem;
-  height: 1.9rem;
+const ExtraCount = styled.span`
+  font-size: 10px;
+  margin-left: 2px;
+  align-self: top;
+  color: #fff;
+`;
+
+const Badge = styled.img`
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
@@ -205,6 +223,16 @@ const Badge = styled.div`
     height: 80%;
     object-fit: cover;
   }
+`;
+
+const NoBadge = styled.span`
+    width: 3.5rem;
+    height: 1.3rem;
+    border-radius: 1rem;
+    text-align: center;
+    line-height: 1.3rem;
+    font-size: 8px;
+    background-color: #d5ebff51;
 `;
 
 const Avatar = styled.div`
