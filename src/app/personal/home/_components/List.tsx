@@ -105,7 +105,7 @@ function renderValue(
 
     if (fieldKey === "fluctuation_rate" && typeof value === "number") {
         const color = value > 0 ? "#ff5a5a" : value < 0 ? "#60a5fa" : "#fff";
-        return <span style={{ color, fontWeight: "800" }}>{value}%</span>;
+        return <span style={{ color, fontWeight: "800" }}>{value.toFixed(2)}%</span>;
     }
 
     if (fieldKey === "current_price") {

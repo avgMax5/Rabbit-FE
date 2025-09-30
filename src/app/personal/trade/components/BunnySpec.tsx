@@ -117,8 +117,8 @@ export default function BunnySpec({ bunny }: BunnySpecProps) {
           {spec.career && spec.career.length > 0 ? (
             spec.career.map((career) => (
               <ExperienceItem key={career.career_id}>
-                <ExperienceInfo> {career.company_name} {career.position} </ExperienceInfo>
-                <ExperienceDate> {formatDateRange(career.start_date, career.end_date)} </ExperienceDate>
+                <ExperienceInfo>{career.company_name} {career.position}</ExperienceInfo>
+                <ExperienceDate>{formatDateRange(career.start_date, career.end_date)}</ExperienceDate>
               </ExperienceItem>
             ))
           ) : (
@@ -138,7 +138,9 @@ export default function BunnySpec({ bunny }: BunnySpecProps) {
           {spec.certification && spec.certification.length > 0 ? (
             spec.certification.map((cert) => (
               <CertificationItem key={cert.certification_id}>
-                <CertificationInfo>{cert.name} ({cert.ca})</CertificationInfo>
+                <CertificationInfo>
+                  {cert.name} <CertificationCA>({cert.ca})</CertificationCA>
+                </CertificationInfo>
                 <CertificationDate>{formatDate(cert.cdate)}</CertificationDate>
               </CertificationItem>
             ))
@@ -271,47 +273,17 @@ const EducationItem = styled.div`
   flex-direction: column;
   gap: 0.1rem;
   margin-bottom: 0.3rem;
-`;
-
-const ExperienceInfo = styled.div`
-  font-size: 0.75rem;
-  color: #fff;
-  line-height: 1.2;
-  font-weight: 500;
+  background: linear-gradient(135deg, rgba(197, 197, 197, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%);
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
   
-  @media (max-width: 768px) {
-    font-size: 0.7rem;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 0.65rem;
-  }
-`;
-
-const ExperienceDate = styled.div`
-  font-size: 0.7rem;
-  color: #ccc;
-  line-height: 1.2;
-  
-  @media (max-width: 768px) {
-    font-size: 0.65rem;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 0.6rem;
-  }
-`;
-
-const ExperienceItem = styled.div`
-  font-size: 0.75rem;
-  color: #fff;
-  
-  @media (max-width: 768px) {
-    font-size: 0.7rem;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 0.65rem;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, rgba(197, 197, 197, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
   }
 `;
 
@@ -331,19 +303,66 @@ const EducationInfo = styled.div`
 `;
 
 const EducationDate = styled.div`
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   color: #ccc;
   line-height: 1.2;
   
   @media (max-width: 768px) {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
   }
   
   @media (max-width: 480px) {
-    font-size: 0.6rem;
+    font-size: 0.5rem;
   }
 `;
 
+const ExperienceItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-bottom: 0.3rem;
+  background: linear-gradient(135deg, rgba(197, 197, 197, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%);
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, rgba(197, 197, 197, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+  }
+`;
+
+const ExperienceInfo = styled.div`
+  font-size: 0.75rem;
+  color: #fff;
+  line-height: 1.2;
+  font-weight: 500;
+  
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.65rem;
+  }
+`;
+
+const ExperienceDate = styled.div`
+  font-size: 0.6rem;
+  color: #ccc;
+  line-height: 1.2;
+  
+  @media (max-width: 768px) {
+    font-size: 0.55rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.5rem;
+  }
+`;
 
 const CertificationContent = styled.div`
   border-radius: 0.5rem;
@@ -361,9 +380,18 @@ const CertificationItem = styled.div`
   flex-direction: column;
   gap: 0.1rem;
   margin-bottom: 0.3rem;
-  background-color: rgba(197, 197, 197, 0.25);
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
+  background: linear-gradient(135deg, rgba(197, 197, 197, 0.15) 0%, rgba(255, 255, 255, 0.1) 100%);
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, rgba(197, 197, 197, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%);
+  }
 `;
 
 const CertificationInfo = styled.div`
@@ -381,17 +409,30 @@ const CertificationInfo = styled.div`
   }
 `;
 
+const CertificationCA = styled.span`
+  font-size: 0.65rem;
+  font-weight: 400;
+  
+  @media (max-width: 768px) {
+    font-size: 0.6rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.55rem;
+  }
+`;
+
 const CertificationDate = styled.div`
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   color: #ccc;
   line-height: 1.2;
   
   @media (max-width: 768px) {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
   }
   
   @media (max-width: 480px) {
-    font-size: 0.6rem;
+    font-size: 0.5rem;
   }
 `;
 
@@ -402,28 +443,43 @@ const SkillsTags = styled.div`
 `;
 
 const SkillTag = styled.span`
-  background: #AEAEAE;
+  background: linear-gradient(135deg, #AEAEAE 0%, #8A8A8A 100%);
   color: #FFF2C2;
   font-size: 0.65rem;
-  padding: 0.2rem 0.4rem;
-  border-radius: 1rem;
-  font-weight: bold;
+  padding: 0.3rem 0.6rem;
+  border-radius: 1.2rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: default;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #B8B8B8 0%, #9A9A9A 100%);
+  }
   
   @media (max-width: 768px) {
     font-size: 0.6rem;
-    padding: 0.15rem 0.3rem;
+    padding: 0.25rem 0.5rem;
   }
   
   @media (max-width: 480px) {
     font-size: 0.55rem;
-    padding: 0.1rem 0.25rem;
+    padding: 0.2rem 0.4rem;
   }
 `;
 
 const NoDataMessage = styled.div`
   font-size: 0.75rem;
-  color: #fff;
-  padding: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.8rem;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-radius: 0.5rem;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  font-style: italic;
   
   @media (max-width: 768px) {
     font-size: 0.7rem;

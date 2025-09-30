@@ -118,7 +118,7 @@ export const BunnyTraitsData = [
 export const fieldList = [
     { key: "bunny_name", label: "버니 이름" },
     { key: "user_name", label: "개발자" },
-    { key: "developer_type", label: "버니 성향" },
+    { key: "developer_type", label: "개발자 유형" },
     { key: "position", label: "포지션" },
     { key: "current_price", label: "현재 가격" },
     { key: "fluctuation_rate", label: "변동률" },

@@ -15,6 +15,7 @@ import { useBunnyStore, Bunny } from "../../../_store/bunnyStore";
 import { getChart, ChartData } from "../../../_api/bunnyAPI";
 import { Cctv } from "lucide-react";
 import SpaceBackground from "../../../_shared/components/SpaceBackground";
+import { webSocketService } from "../../../_utils/websocket";
 
 export default function Trade() {
     const params = useParams();
@@ -67,6 +68,27 @@ export default function Trade() {
         if (currentBunny?.bunny_name) {
             fetchChartData();
         }
+    }, [currentBunny?.bunny_name]);
+
+    // 페이지 진입 시 즉시 웹소켓 연결
+    useEffect(() => {
+        const initializeWebSocket = async () => {
+            try {
+                await webSocketService.connect();
+                console.log('Trade 페이지에서 웹소켓 연결 완료');
+            } catch (error) {
+                console.error('Trade 페이지 웹소켓 연결 실패:', error);
+            }
+        };
+
+        initializeWebSocket();
+
+        // 페이지 언마운트 시 웹소켓 정리
+        return () => {
+            if (currentBunny?.bunny_name) {
+                webSocketService.unsubscribeFromOrderBook(currentBunny.bunny_name);
+            }
+        };
     }, [currentBunny?.bunny_name]);
 
     if (status.allBunnies.isLoading) {
@@ -261,7 +283,6 @@ const ChartBottomLeftBlock = styled.div`
 `;
 
 const TopLeftBlock = styled.div`
-    background-color: rgba(184, 209, 241, 0.17);
     border-radius: 0.75rem;
     padding: 1rem;
     grid-column: 1;
@@ -269,10 +290,18 @@ const TopLeftBlock = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(
+        135deg,
+        rgba(247, 227, 255, 0.305) 0%,
+        rgba(177, 106, 179, 0.292) 50%,
+        rgba(0, 0, 70, 0.284) 100%
+    );
+    backdrop-filter: blur(25px);
+    box-shadow: 0 8px 32px rgba(176, 106, 179, 0.25),
+        0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 `;
 
 const MiddleLeftBlock = styled.div`
-    background-color: rgba(184, 209, 241, 0.17);
     border-radius: 1.25rem;
     grid-column: 1;
     grid-row: 2;
@@ -280,10 +309,18 @@ const MiddleLeftBlock = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    background: linear-gradient(
+        135deg,
+        rgba(247, 227, 255, 0.305) 0%,
+        rgba(177, 106, 179, 0.292) 50%,
+        rgba(0, 0, 70, 0.284) 100%
+    );
+    backdrop-filter: blur(25px);
+    box-shadow: 0 8px 32px rgba(176, 106, 179, 0.25),
+        0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 `;
 
 const BottomLeftBlock = styled.div`
-    background-color: rgba(184, 209, 241, 0.17);
     border-radius: 1.25rem;
     grid-column: 1;
     grid-row: 3;
@@ -292,6 +329,16 @@ const BottomLeftBlock = styled.div`
     flex-direction: column;
     gap: 0.75rem;
     overflow: hidden;
+
+    background: linear-gradient(
+        135deg,
+        rgba(247, 227, 255, 0.305) 0%,
+        rgba(177, 106, 179, 0.292) 50%,
+        rgba(0, 0, 70, 0.284) 100%
+    );
+    backdrop-filter: blur(25px);
+    box-shadow: 0 8px 32px rgba(176, 106, 179, 0.25),
+        0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 `;
 
 const RightSection = styled.div`

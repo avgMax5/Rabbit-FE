@@ -9,7 +9,7 @@ interface CurrentPriceProps {
 
 export default function CurrentPrice({ bunny }: CurrentPriceProps) {
   // 스토어에서 실시간 값 읽기
-  const { bunnies, allBunnies, startPriceRealtime, stopPriceRealtime } = useBunnyStore();
+  const { bunnies, allBunnies, startPriceRealtime, stopPriceRealtime, isWebSocketConnected } = useBunnyStore();
 
   // 현재 화면 대상 bunnyName
   const bunnyName = bunny.bunny_name;
@@ -43,7 +43,7 @@ export default function CurrentPrice({ bunny }: CurrentPriceProps) {
     <DashboardContent>
       <PriceSection>
         <MainValue>{price}</MainValue>
-        <StatusDot />
+        <StatusDot $isConnected={isWebSocketConnected()} />
       </PriceSection>
       <ChangeInfo>
         <ChangeValue $isPositive={isPositive}>{change}</ChangeValue>
@@ -67,7 +67,7 @@ const DashboardContent = styled.div`
 const PriceSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   margin-bottom: 0.5rem;
 `;
 
@@ -77,15 +77,28 @@ const MainValue = styled.div`
   color: white;
 `;
 
-const StatusDot = styled.div`
+const StatusDot = styled.div<{ $isConnected: boolean }>`
   width: 8px;
   height: 8px;
-  background-color: #FEE2A7;
+  background-color: ${({ $isConnected }) => $isConnected ? '#4ade80' : '#ffc107'};
   border-radius: 50%;
   box-shadow: 
-    inset -0.56px -1.13px 2.81px #FFC54A,
+    inset -0.56px -1.13px 2.81px ${({ $isConnected }) => $isConnected ? '#22c55e' : '#FFC54A'},
     inset 0.56px 0.56px 0.56px #FFFBF2,
-    1px 1px 2px #FEE2A7;
+    1px 1px 2px ${({ $isConnected }) => $isConnected ? '#4ade80' : '#FEE2A7'};
+  
+  ${({ $isConnected }) => $isConnected && `
+    animation: blink 1.5s infinite;
+  `}
+  
+  @keyframes blink {
+    0%, 50% {
+      opacity: 1;
+    }
+    51%, 100% {
+      opacity: 0.3;
+    }
+  }
 `;
 
 const ChangeInfo = styled.div`
@@ -99,18 +112,18 @@ const ChangeInfo = styled.div`
 
 const ChangeValue = styled.span<{ $isPositive: boolean }>`
   font-size: 0.8rem;
-  color: ${({ $isPositive }) => $isPositive ? '#ff4444' : '#4444ff'};
+  color: ${({ $isPositive }) => $isPositive ? 'rgb(255, 90, 90)' : 'rgb(96, 165, 250);'};
   font-weight: bold;
 `;
 
 const ChangePercentage = styled.span<{ $isPositive: boolean }>`
   font-size: 0.8rem;
-  color: ${({ $isPositive }) => $isPositive ? '#ff4444' : '#4444ff'};
+  color: ${({ $isPositive }) => $isPositive ? 'rgb(255, 90, 90)' : 'rgb(96, 165, 250);'};
   font-weight: bold;
 `;
 
 const ChangeArrow = styled.span<{ $isPositive: boolean }>`
   font-size: 0.8rem;
-  color: ${({ $isPositive }) => $isPositive ? '#ff4444' : '#4444ff'};
+  color: ${({ $isPositive }) => $isPositive ? 'rgb(255, 90, 90)' : 'rgb(96, 165, 250);'};
   font-weight: bold;
 `;

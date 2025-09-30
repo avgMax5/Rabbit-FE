@@ -12,18 +12,22 @@ declare global {
 
 export interface OrderBookSnapshot {
   bunnyName: string;
-  bids: Array<{ price: number; quantity: number }>;
-  asks: Array<{ price: number; quantity: number }>;
+  orders: Array<{ price: number; quantity: number; type: 'BUY' | 'SELL' }>;
   currentPrice: number;
+  serverTime: number;
+}
+
+export interface OrderBookLevel {
+  price: number;
+  quantity: number;
+  type: 'BUY' | 'SELL';
 }
 
 export interface OrderBookDiff {
   bunnyName: string;
-  bidUpserts: Array<{ price: number; quantity: number }>;
-  bidDeletes: number[];
-  askUpserts: Array<{ price: number; quantity: number }>;
-  askDeletes: number[];
-  currentPrice?: number;
+  orderUpserts: OrderBookLevel[];
+  orderDeletes: number[];
+  currentPrice: number;
   serverTime: number;
 }
 
@@ -52,7 +56,7 @@ export function calcFluctuationRate(currentPrice: number, closingPrice: number):
 }
 
 class WebSocketService {
-  private client: Client | null = null;
+  public client: Client | null = null;
   private subscriptions: Map<string, StompSubscription> = new Map();
   private desiredSubscriptions: Map<string, (data: any) => void> = new Map();
 
@@ -121,6 +125,10 @@ class WebSocketService {
     } finally {
       this.client = null;
     }
+  }
+
+  isConnected(): boolean {
+    return this.client?.connected ?? false;
   }
 
   // 공통 구독: 의도 저장 → 실제 subscribe (연결 상태에 따라 지연될 수 있음)
@@ -201,7 +209,7 @@ class WebSocketService {
     const destination = `/topic/bunnies/${bunnyName}/orderbook`;
     this.subscribeRaw(destination, (data) => {
       // 스냅샷/차이 구분
-      if (data.bids && data.asks && !data.bidUpserts) {
+      if (data.orders && !data.orderUpserts) {
         onSnapshot(data as OrderBookSnapshot);
       } else {
         onDiff(data as OrderBookDiff);

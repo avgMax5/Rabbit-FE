@@ -19,12 +19,12 @@ export interface OrderRequest {
 export interface OrderBookItem {
     price: number;
     quantity: number;
+    type: 'BUY' | 'SELL';
 }
 
 export interface OrderBookData {
     bunnyName: string;
-    bids: OrderBookItem[];
-    asks: OrderBookItem[];
+    orders: Array<{ price: number; quantity: number; type: 'BUY' | 'SELL' }>;
     currentPrice: number;
     serverTime: number;
 }
