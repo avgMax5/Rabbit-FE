@@ -14,6 +14,7 @@ import {
     OrderBunny,
 } from "@/app/_api/userAPI";
 import Top1Container from "../_components/my-bunny/Top1Container";
+import { useUserStore } from "@/app/_store/userStore";
 
 const orderFieldList = [
     { key: "ordered_at", label: "주문시간" },
@@ -67,40 +68,12 @@ function MyBunnyList() {
     const [holdDataList, setHoldDataList] = useState<HoldBunny[]>([]);
     const [orderDataList, setOrderDataList] = useState<OrderItem[]>([]);
     const [bunnyStats, setBunnyStats] = useState<BunnyStats>();
+    const { user } = useUserStore();
 
     const position = bunnyStats?.position;
     const developer = bunnyStats?.developer_type;
     const coin = bunnyStats?.coin_type;
-
-    // const orderDummyData = [
-    //     {
-    //         ordered_at: "2025-09-26T15:30:00",
-    //         bunny_name: "BUNNY",
-    //         quantity: 120,
-    //         price: 1500,
-    //         fee: 30,
-    //         amount: 180000,
-    //         order_type: "BUY",
-    //     },
-    //     {
-    //         ordered_at: "2025-09-26T15:45:00",
-    //         bunny_name: "CARROT",
-    //         quantity: 50,
-    //         price: 3200,
-    //         fee: 16,
-    //         amount: 160000,
-    //         order_type: "SELL",
-    //     },
-    //     {
-    //         ordered_at: "2025-09-26T16:00:00",
-    //         bunny_name: "HOP",
-    //         quantity: 200,
-    //         price: 980,
-    //         fee: 40,
-    //         amount: 196000,
-    //         order_type: "BUY",
-    //     },
-    // ];
+    const myRole = user?.role;
 
     const topData = [
         {
@@ -205,7 +178,7 @@ function MyBunnyList() {
 
     return (
         <Wrapper>
-            <Top1Container data={topData} />
+            <Top1Container data={topData} myRole={myRole} />
             <FirstRow>
                 <SortBigButton
                     sortTitle="직군"
@@ -277,7 +250,8 @@ const FirstRow = styled.div`
     grid-template-columns: 2fr 2fr 2fr 1fr;
     grid-row: 1;
     width: 100%;
-    height: 100%;
+    height: 0;
+    min-height: 100%;
 `;
 
 const SecondRow = styled.div`

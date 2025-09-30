@@ -8,7 +8,6 @@ interface SortBigButtonProps {
 }
 
 function SortBigButton({ sortTitle, chartData, colors }: SortBigButtonProps) {
-    // 직군별 호버 배경색 결정
     const getHoverBackgroundColor = (title: string) => {
         if (title.includes("직군")) {
             return "rgb(251, 244, 237)";
@@ -22,17 +21,15 @@ function SortBigButton({ sortTitle, chartData, colors }: SortBigButtonProps) {
 
     return (
         <Div $hoverColor={getHoverBackgroundColor(sortTitle)}>
-            <TopContainer>
-                <SortTitle className="sort-title">{sortTitle}</SortTitle>
-                <GraphBox>
-                    <NightingaleChart
-                        data={chartData}
-                        colors={colors}
-                        inner={"30%"}
-                        outer={"80%"}
-                    />
-                </GraphBox>
-            </TopContainer>
+            <SortTitle className="sort-title">{sortTitle}</SortTitle>
+            <GraphBox>
+                <NightingaleChart
+                    data={chartData}
+                    colors={colors}
+                    inner={"25rem"}
+                    outer={"70rem"}
+                />
+            </GraphBox>
         </Div>
     );
 }
@@ -40,7 +37,8 @@ function SortBigButton({ sortTitle, chartData, colors }: SortBigButtonProps) {
 const Div = styled.div<{ $hoverColor: string }>`
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 0;
+    min-height: 100%;
     padding: 0.6rem;
     box-sizing: border-box;
     border-radius: 8px;
@@ -60,12 +58,6 @@ const Div = styled.div<{ $hoverColor: string }>`
             font-weight: 900;
         }
     }
-`;
-
-const TopContainer = styled.div`
-    position: relative;
-    width: 100%;
-    height: 100%;
 `;
 
 const SortTitle = styled.div`
