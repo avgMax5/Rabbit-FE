@@ -78,7 +78,6 @@ const TopSection = styled.div`
 `;
 
 const BottomSection = styled.div`
-  flex: 1;
   display: flex;
   flex-direction: column;
   border-radius: 0.75rem;

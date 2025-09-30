@@ -88,6 +88,7 @@ interface BunnyState {
     // 실시간 가격 스트림 제어
     startPriceRealtime: (bunnyName: string) => Promise<void>;
     stopPriceRealtime: (bunnyName: string) => void;
+    isWebSocketConnected: () => boolean;
 
     filters: Filters;
     setFilter: (key: string, value: number | number[] | null) => void;
@@ -362,6 +363,10 @@ export const useBunnyStore = create<BunnyState>((set, get) => ({
     stopPriceRealtime: (bunnyName: string) => {
         webSocketService.unsubscribeFromCurrentPrice(bunnyName);
         webSocketService.unsubscribeFromClosingPrice(bunnyName);
+    },
+
+    isWebSocketConnected: () => {
+        return webSocketService.isConnected();
     },
 
 

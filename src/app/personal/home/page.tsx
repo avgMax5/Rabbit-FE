@@ -57,7 +57,7 @@ function Personal() {
                             />
                             <SortButtons>
                                 <SortButton
-                                    text={"버니 타입"}
+                                    text={"버니 유형"}
                                     data={SelectData[0]}
                                     filterKey="bunnyType"
                                 />
@@ -67,7 +67,7 @@ function Personal() {
                                     filterKey="position"
                                 />
                                 <SortButton
-                                    text={"버니 성향"}
+                                    text={"개발자 유형"}
                                     data={SelectData[2]}
                                     filterKey="bunnyTraits"
                                 />

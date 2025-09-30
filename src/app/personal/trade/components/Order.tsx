@@ -85,33 +85,23 @@ export default function Order({ activeTab, setActiveTab, bunny }: OrderProps) {
 
               const next = { ...prev };
 
-              // 매수 upsert
-              diff.bidUpserts.forEach((u) => {
-                const i = next.bids.findIndex((b) => b.price === u.price);
-                if (i >= 0) next.bids[i] = u;
-                else next.bids.push(u);
-              });
-              // 매수 delete (숫자 배열: 가격)
-              diff.bidDeletes.forEach((price) => {
-                next.bids = next.bids.filter((b) => b.price !== price);
-              });
+              // orderUpserts 처리 (매수/매도 통합)
+              if (diff.orderUpserts && Array.isArray(diff.orderUpserts)) {
+                diff.orderUpserts.forEach((order) => {
+                  const i = next.orders.findIndex((o) => o.price === order.price && o.type === order.type);
+                  if (i >= 0) next.orders[i] = { ...order };
+                  else next.orders.push({ ...order });
+                });
+              }
 
-              // 매도 upsert
-              diff.askUpserts.forEach((u) => {
-                const i = next.asks.findIndex((a) => a.price === u.price);
-                if (i >= 0) next.asks[i] = u;
-                else next.asks.push(u);
-              });
-              // 매도 delete (숫자 배열: 가격)
-              diff.askDeletes.forEach((price) => {
-                next.asks = next.asks.filter((a) => a.price !== price);
-              });
+              // orderDeletes 처리 (가격 배열)
+              if (diff.orderDeletes && Array.isArray(diff.orderDeletes)) {
+                diff.orderDeletes.forEach((price) => {
+                  next.orders = next.orders.filter((o) => o.price !== price);
+                });
+              }
 
-              // 정렬 (매수: 내림차순, 매도: 오름차순)
-              next.bids.sort((a, b) => b.price - a.price);
-              next.asks.sort((a, b) => a.price - b.price);
-
-              // 현재가 갱신(optional)
+              // 현재가 갱신
               if (typeof diff.currentPrice === 'number') {
                 next.currentPrice = diff.currentPrice;
               }
@@ -398,10 +388,10 @@ const TabButton = styled.button<{ $active: boolean; $type: 'buy' | 'sell' }>`
 `;
 
 const TradeArea = styled.div`
-  flex: 1;
   background-color: rgba(252, 252, 252, 0.34);
   border-radius: 0 0 0.75rem 0.75rem;
   padding: 0.8rem;
+  height: fit-content;
 `;
 
 const OrderForm = styled.div`

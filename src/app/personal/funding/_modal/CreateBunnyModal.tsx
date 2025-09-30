@@ -227,7 +227,7 @@ export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalPr
                             )}
                         </Section>
 
-                        {/* 버니 타입 선택 섹션 */}
+                        {/* 버니 유형 선택 섹션 */}
                         <Section>
                             <TypeCardsContainer>
                                 <TypeCard

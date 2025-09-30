@@ -299,23 +299,23 @@ const GradientBackground = styled.div`
   @keyframes auroraFlow {
     0% {
       filter: saturate(1) brightness(1) contrast(1);
-      transform: scale(1) rotate(0deg);
+      transform: scale(1)
     }
     25% {
       filter: saturate(1.1) brightness(1.05) contrast(1.05);
-      transform: scale(1.02) rotate(1deg);
+      transform: scale(1.02)
     }
     50% {
       filter: saturate(1.2) brightness(1.1) contrast(1.1);
-      transform: scale(1.05) rotate(0deg);
+      transform: scale(1.05)
     }
     75% {
       filter: saturate(1.1) brightness(1.05) contrast(1.05);
-      transform: scale(1.02) rotate(-1deg);
+      transform: scale(1.02)
     }
     100% {
       filter: saturate(1) brightness(1) contrast(1);
-      transform: scale(1) rotate(0deg);
+      transform: scale(1)
     }
   }
 `;

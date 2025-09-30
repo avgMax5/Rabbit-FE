@@ -14,7 +14,7 @@ export function getYesterdayMidnight(): Date {
 }
 
 export function ListContainer() {
-    const { allBunnies, fetchAllBunnies } = useBunnyStore();
+    const { allBunnies, fetchAllBunnies, startPriceRealtime, stopPriceRealtime } = useBunnyStore();
 
     useEffect(() => {
         if (!allBunnies || allBunnies.length === 0) {
@@ -30,6 +30,24 @@ export function ListContainer() {
         );
     }, [allBunnies]);
 
+    // 실시간 가격 구독 시작
+    useEffect(() => {
+        if (filteredList.length > 0) {
+            filteredList.forEach((bunny) => {
+                startPriceRealtime(bunny.bunny_name);
+            });
+        }
+
+        // 컴포넌트 언마운트 시 구독 해제
+        return () => {
+            if (filteredList.length > 0) {
+                filteredList.forEach((bunny) => {
+                    stopPriceRealtime(bunny.bunny_name);
+                });
+            }
+        };
+    }, [filteredList, startPriceRealtime, stopPriceRealtime]);
+
     return (
         <List
             fieldList={fieldList}
@@ -40,7 +58,7 @@ export function ListContainer() {
 }
 
 export function BunnyListContainer() {
-    const { bunnies, fetchBunnies, filters, status } = useBunnyStore();
+    const { bunnies, fetchBunnies, filters, status, startPriceRealtime, stopPriceRealtime } = useBunnyStore();
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
 
@@ -81,6 +99,24 @@ export function BunnyListContainer() {
     useEffect(() => {
         fetchBunnies({ sortType: "", page, size });
     }, [page, size, fetchBunnies]);
+
+    // 실시간 가격 구독 시작
+    useEffect(() => {
+        if (filteredBunnies.length > 0) {
+            filteredBunnies.forEach((bunny) => {
+                startPriceRealtime(bunny.bunny_name);
+            });
+        }
+
+        // 컴포넌트 언마운트 시 구독 해제
+        return () => {
+            if (filteredBunnies.length > 0) {
+                filteredBunnies.forEach((bunny) => {
+                    stopPriceRealtime(bunny.bunny_name);
+                });
+            }
+        };
+    }, [filteredBunnies, startPriceRealtime, stopPriceRealtime]);
 
     if (status.bunnies.isLoading)
         return (

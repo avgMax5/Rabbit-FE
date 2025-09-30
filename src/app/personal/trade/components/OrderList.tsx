@@ -35,10 +35,8 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
   const [isLoading, setIsLoading] = useState(false);
   const wsConnected = useRef(false);
   
-  const maxQuantity = orderBookData ? Math.max(
-    ...orderBookData.bids.map(bid => bid.quantity),
-    ...orderBookData.asks.map(ask => ask.quantity)
-  ) : 0;
+  const maxQuantity = orderBookData && orderBookData.orders.length > 0 ? 
+    Math.max(...orderBookData.orders.map(order => order.quantity)) : 0;
   
   const getQuantityPercentage = (quantity: number) => {
     return maxQuantity > 0 ? (quantity / maxQuantity) * 100 : 0;
@@ -48,6 +46,12 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
     const changeRate = ((price - currentPrice) / currentPrice) * 100;
     const sign = changeRate >= 0 ? '+' : '';
     return `${sign}${changeRate.toFixed(2)}%`;
+  };
+
+  const getChangeStatus = (price: number, currentPrice: number): 'positive' | 'negative' | 'neutral' => {
+    if (price > currentPrice) return 'positive';
+    if (price < currentPrice) return 'negative';
+    return 'neutral';
   };
 
   const formatDateTime = (dateTimeString: string): string => {
@@ -66,9 +70,17 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
     }
   };
 
-  // WebSocket 연결
-  const connectWebSocket = async () => {
+  // WebSocket 연결 상태 확인 및 필요시 연결
+  const ensureWebSocketConnection = async () => {
     try {
+      // 이미 연결되어 있는지 확인
+      if (webSocketService.client?.connected) {
+        wsConnected.current = true;
+        console.log('WebSocket 이미 연결됨');
+        return;
+      }
+      
+      // 연결되지 않은 경우에만 연결 시도
       await webSocketService.connect();
       wsConnected.current = true;
       console.log('WebSocket 연결 완료');
@@ -81,66 +93,17 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
   // 호가창 스냅샷 처리
   const handleOrderBookSnapshot = (snapshot: OrderBookSnapshot) => {
     console.log('호가창 스냅샷 수신:', snapshot);
-    setOrderBookData({
-      bunnyName: snapshot.bunnyName,
-      bids: snapshot.bids,
-      asks: snapshot.asks,
-      currentPrice: snapshot.currentPrice,
-      serverTime: Date.now()
-    });
+  
+    setOrderBookData(snapshot);
   };
 
-  // 호가창 차이 처리
+  // 호가창 차이 처리 - diff 처리가 복잡하므로 스냅샷 재요청
   const handleOrderBookDiff = (diff: OrderBookDiff) => {
-    console.log('호가창 차이 수신:', diff);
-    
-    setOrderBookData(prevData => {
-      if (!prevData) return prevData;
-
-      // 기존 데이터 복사
-      let newBids = [...prevData.bids];
-      let newAsks = [...prevData.asks];
-
-      // Bid 업데이트/삭제
-      diff.bidUpserts.forEach(upsert => {
-        const index = newBids.findIndex(bid => bid.price === upsert.price);
-        if (index >= 0) {
-          newBids[index] = upsert;
-        } else {
-          newBids.push(upsert);
-        }
-      });
-
-      diff.bidDeletes.forEach(del => {
-        newBids = newBids.filter(bid => bid.price !== del.price);
-      });
-
-      // Ask 업데이트/삭제
-      diff.askUpserts.forEach(upsert => {
-        const index = newAsks.findIndex(ask => ask.price === upsert.price);
-        if (index >= 0) {
-          newAsks[index] = upsert;
-        } else {
-          newAsks.push(upsert);
-        }
-      });
-
-      diff.askDeletes.forEach(price => {
-        newAsks = newAsks.filter(ask => ask.price !== price);
-      });
-
-      // 가격순 정렬
-      newBids.sort((a, b) => b.price - a.price);
-      newAsks.sort((a, b) => a.price - b.price);
-
-      return {
-        ...prevData,
-        bids: newBids,
-        asks: newAsks,
-        currentPrice: diff.currentPrice ?? prevData.currentPrice,
-        serverTime: diff.serverTime
-      };
-    });
+    console.log('호가창 차이 수신, 전체 스냅샷 재요청:', diff);
+    // diff 처리 대신 전체 스냅샷을 다시 요청하는 것이 더 안전함
+    if (wsConnected.current) {
+      webSocketService.requestOrderBookSnapshot(bunny.bunny_name);
+    }
   };
 
   const fetchOrderHistory = async () => {
@@ -172,16 +135,19 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
   const fetchOrderBook = async () => {
     setIsLoading(true);
     try {
+      // 1. 웹소켓 연결 상태 확인 및 필요시 연결
+      await ensureWebSocketConnection();
+      
       if (wsConnected.current) {
-        // 1. REST API로 초기 스냅샷 가져오기
+        // 2. REST API로 초기 스냅샷 가져오기
         console.log('REST API로 스냅샷 요청:', bunny.bunny_name);
         const snapshot = await getOrderBookSnapshot(bunny.bunny_name);
         console.log('스냅샷 수신:', snapshot);
         
-        // 2. 스냅샷으로 상태 세팅
+        // 3. 스냅샷으로 상태 세팅
         setOrderBookData(snapshot);
         
-        // 3. WebSocket 구독 시작 (이미 연결되어 있음)
+        // 4. WebSocket 구독 시작
         console.log('WebSocket 구독 시작:', bunny.bunny_name);
         webSocketService.subscribeToOrderBook(
           bunny.bunny_name,
@@ -190,6 +156,7 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
         );
       } else {
         // HTTP API로 폴백
+        console.log('웹소켓 연결 실패, HTTP API로 폴백');
         const data = await getOrderBookSnapshot(bunny.bunny_name);
         setOrderBookData(data);
       }
@@ -224,31 +191,17 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
     }
   }, [bunny.bunny_name, activeOrderTab]);
 
-  // WebSocket 연결 및 정리
+  // 컴포넌트 언마운트 시 WebSocket 정리
   useEffect(() => {
-    const initializeWebSocket = async () => {
-      await connectWebSocket();
-    };
-
-    initializeWebSocket();
-
     return () => {
-      // 컴포넌트 언마운트 시 WebSocket 정리
+      // 컴포넌트 언마운트 시 해당 버니의 구독만 해제
       if (bunny.bunny_name) {
         webSocketService.unsubscribeFromOrderBook(bunny.bunny_name);
       }
-      webSocketService.disconnect();
-    };
-  }, []);
-
-  // bunny 변경 시 이전 구독 해제
-  useEffect(() => {
-    return () => {
-      if (bunny.bunny_name) {
-        webSocketService.unsubscribeFromOrderBook(bunny.bunny_name);
-      }
+      // 웹소켓 연결은 페이지 레벨에서 관리하므로 여기서는 해제하지 않음
     };
   }, [bunny.bunny_name]);
+
 
 
   return (
@@ -285,45 +238,26 @@ export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: 
                 <EmptyState>데이터를 불러오는 중...</EmptyState>
               ) : orderBookData ? (
                 <>
-                  {orderBookData.bids.map((bid, index) => (
-                    <OrderItem key={`bid-${index}`}>
+                  {orderBookData.orders.map((order, index) => (
+                    <OrderItem key={`order-${index}`}>
                       <OrderLeftArea>
                         <OrderBar 
-                          $orderType="BUY"
-                          $widthPercentage={getQuantityPercentage(bid.quantity)}
+                          $orderType={order.type}
+                          $widthPercentage={getQuantityPercentage(order.quantity)}
                         >
-                          {bid.quantity}
+                          {order.quantity}
                         </OrderBar>
                       </OrderLeftArea>
                       <OrderRightArea>
-                        <OrderPrice>{bid.price.toLocaleString()}</OrderPrice>
-                        <OrderChange $isPositive={bid.price >= orderBookData.currentPrice}>
-                          {calculateChangeRate(bid.price, orderBookData.currentPrice)}
+                        <OrderPrice>{order.price.toLocaleString()}</OrderPrice>
+                        <OrderChange $changeStatus={getChangeStatus(order.price, orderBookData.currentPrice)}>
+                          {calculateChangeRate(order.price, orderBookData.currentPrice)}
                         </OrderChange>
                       </OrderRightArea>
                     </OrderItem>
                   ))}
                   
-                  {orderBookData.asks.map((ask, index) => (
-                    <OrderItem key={`ask-${index}`}>
-                      <OrderLeftArea>
-                        <OrderBar 
-                          $orderType="SELL"
-                          $widthPercentage={getQuantityPercentage(ask.quantity)}
-                        >
-                          {ask.quantity}
-                        </OrderBar>
-                      </OrderLeftArea>
-                      <OrderRightArea>
-                        <OrderPrice>{ask.price.toLocaleString()}</OrderPrice>
-                        <OrderChange $isPositive={ask.price >= orderBookData.currentPrice}>
-                          {calculateChangeRate(ask.price, orderBookData.currentPrice)}
-                        </OrderChange>
-                      </OrderRightArea>
-                    </OrderItem>
-                  ))}
-                  
-                  {orderBookData.bids.length === 0 && orderBookData.asks.length === 0 && (
+                  {orderBookData.orders.length === 0 && (
                     <EmptyState>호가 데이터가 없습니다.</EmptyState>
                   )}
                 </>
@@ -531,10 +465,21 @@ const OrderPrice = styled.span`
   color: #333;
 `;
 
-const OrderChange = styled.span<{ $isPositive: boolean }>`
+const OrderChange = styled.span<{ $changeStatus: 'positive' | 'negative' | 'neutral' }>`
   font-size: 0.7rem;
   font-weight: 600;
-  color: ${({ $isPositive }) => $isPositive ? '#e74c3c' : '#4a90e2'};
+  color: ${({ $changeStatus }) => {
+    switch ($changeStatus) {
+      case 'positive':
+        return '#e74c3c';
+      case 'negative':
+        return '#4a90e2';
+      case 'neutral':
+        return '#575757';
+      default:
+        return '#6b7280';
+    }
+  }};
 `;
 
 // Order History Styles
@@ -685,4 +630,3 @@ const EmptyState = styled.div`
   font-size: 0.9rem;
   font-weight: 500;
 `;
-
