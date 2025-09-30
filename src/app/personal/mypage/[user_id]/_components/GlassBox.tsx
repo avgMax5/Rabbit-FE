@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Icon } from "@iconify/react";
 import Notification from "../../../../_shared/components/Notification";
 
@@ -26,13 +27,16 @@ function GlassBox({
     iconColor = "#ffffffc2",
     notiWidth = "10px",
 }: GlassBoxProps) {
-    const [mouseEnter, setMouseEnter] = useState(false);
-    const getNotiModal = () => {
-        setMouseEnter(true);
-    };
-    const handleMouseLeave = () => {
-        setMouseEnter(false);
-    };
+    //const [mouseEnter, setMouseEnter] = useState(false);
+    const [showTooltip, setShowTooltip] = useState(false);
+    const iconRef = useRef<HTMLDivElement>(null);
+
+    // const getNotiModal = () => {
+    //     setMouseEnter(true);
+    // };
+    // const handleMouseLeave = () => {
+    //     setMouseEnter(false);
+    // };
 
     return (
         <Div
@@ -42,22 +46,36 @@ function GlassBox({
             <Top>
                 <Title $color={color}>{text}</Title>
                 {isNoti && (
-                    <IconContainer>
+                    <IconContainer
+                        ref={iconRef}
+                        onMouseEnter={() => setShowTooltip(true)}
+                        onMouseLeave={() => setShowTooltip(false)}
+                    >
                         <Icon
                             icon="mingcute:question-fill"
                             color={iconColor}
                             width="13px"
-                            onMouseEnter={getNotiModal}
-                            onMouseLeave={handleMouseLeave}
+                            // onMouseEnter={getNotiModal}
+                            // onMouseLeave={handleMouseLeave}
                         />
-                        {mouseEnter && notification && (
-                            // <NotificationPortal>
-                            <Notification
-                                notification={notification}
-                                width={notiWidth}
-                            />
-                            // </NotificationPortal>
-                        )}
+                        {notification &&
+                            showTooltip &&
+                            iconRef.current &&
+                            createPortal(
+                                <Notification
+                                    notification={notification}
+                                    width={notiWidth}
+                                    top={
+                                        iconRef.current.getBoundingClientRect()
+                                            .bottom + 4
+                                    }
+                                    left={
+                                        iconRef.current.getBoundingClientRect()
+                                            .left
+                                    }
+                                />,
+                                document.body
+                            )}
                     </IconContainer>
                 )}
             </Top>
