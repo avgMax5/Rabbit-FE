@@ -1,5 +1,5 @@
 # --- 1단계: 빌드 ---
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ COPY . /app
 RUN npm run build
 
 # --- 2단계: 실행 ---
-FROM node:18-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
