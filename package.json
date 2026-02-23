@@ -12,7 +12,7 @@
         "@iconify/json": "^2.2.384",
         "@iconify/react": "^6.0.2",
         "@stomp/stompjs": "^7.2.0",
-        "axios": "^1.12.2",
+        "axios": "^1.13.5",
         "critters": "^0.0.23",
         "echarts": "^5.6.0",
         "echarts-for-react": "^3.0.2",
