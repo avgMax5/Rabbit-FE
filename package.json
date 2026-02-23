@@ -26,7 +26,7 @@
         "remark-breaks": "^4.0.0",
         "sockjs-client": "^1.6.1",
         "styled-components": "^6.1.19",
-        "swiper": "^11.2.10",
+        "swiper": "^12.1.2",
         "zustand": "^5.0.8"
     },
     "devDependencies": {
