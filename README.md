@@ -1,38 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 개발자 가치 매매 플랫폼, Rabbit
 
-## Getting Started
+<img width="1661" height="1050" alt="Image" src="https://github.com/user-attachments/assets/3d458300-d169-45b4-b830-df7740169ec0" />
 
-First, run the development server:
+## 🐰 프로젝트 소개
+- Rabbit은 개발자의 가치를 수치화하고 거래할 수 있는 플랫폼입니다.
+- 개발자는 자신의 스펙과 경력을 업로드해 개인 코인인 ***버니(Bunny)*** 를 상장하고, 투자자와 사용자들은 시장에서 이 버니를 거래하며 개발자의 성장 가능성과 역량을 평가합니다.
+- 이렇게 형성된 시장 가치는 단순한 숫자가 아니라, 개발자의 신뢰도와 잠재력을 보여주는 지표가 됩니다.
+- 기업은 이를 기반으로 유망한 인재를 선발할 수 있고, Rabbit은 개발자·투자자·기업이 함께 만드는 새로운 형태의 가치 평가 생태계를 지향합니다.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ⚙️ 기술 스택
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| 구분 | 사용 기술 |
+| --- | --- |
+| **Frontend** | Next.js 14, TypeScript, Zustand, Tailwind CSS, Framer Motion |
+| **Backend** | Spring Boot, JPA, MySQL |
+| **Infra / DevOps** | Nginx, Docker, Jenkins |
+| **ETC** | WebSocket(STOMP), Figma |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 기능 소개
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| **분류** | **기능** | **기능 설명** |
+| --- | --- | --- |
+| **로그인 / 회원가입** | OAuth 2.0 인증 로그인 | 구글, 카카오, 네이버, 깃허브를 통한 로그인 |
+| **마이 페이지** | - 내 정보 (스펙 기입 / 수정)- 마이 버니- 버니 리스트- 로그아웃 | - 스펙을 자유롭게 기입하거나 수정하며 차후 이력서로 사용 가능- AI 피드백과 나의 버니에 대한 정보를 볼 수 있음- 내가 보유하고 있는 버니들을 볼 수 있으며, 직군 및 유형들의 비율과 보유 및 주문 내역을 확인 가능 |
+| **펀딩 페이지** | - 버니 둘러보기 (펀딩 참여)- 버니 상장하기 (상장심사) | - 펀딩된 목록을 특정 정렬 기준에 맞춰 볼 수 있으며, 이에 참여하여 초기 투자 지분을 얻을 수 있음- 펀딩 조건 심사로 버니 유형을 골라서 상장 신청 가능함 |
+| **메인 페이지** | 특정 기준으로 구분된 버니 | - GOT 탑승한 버니들 (상장된 지 얼마 되지 않은 버니들)- 래빗의 로켓에 탑승하고 있는 버니들 (다양한 정렬 기준으로 볼 수 있는 버니 목록 리스트)- Rabbit 지수 (시장 심리 지수)- 시가총액 순위- 일 매수 / 매도 체결강도 순위- 버니 선택 시 상세 페이지(주문 페이지) 로 이동 |
+| **거래 페이지 (버니) - 상세 정보** | - 버니 상세 페이지 (주문 페이지)- 개발자 유형- 특정 기간 종가 차트- 좋아요 추가 / 취소- 호가창 / 내 주문 | - 해당 버니의 스펙, 버니 유형, AI 한줄평, 현재가를 볼 수 있음- 해당 버니의 개발자 유형을 나타냄 - 일간 / 주간 / 월간으로 해당 시기의 종가를 시각화 시킨 차트   (스케쥴러를 통해 00시 01분 기준으로 종가 갱신)- ‘개인’이 ‘좋아요’를 누르면 하트가 생성되며, 취소는 반대- 해당 버니에 어떤 호가들이 레벨 단위로 쌓여있는지 보여주는 오더북 (호가창)- 해당 버니에 대한 나의 주문을 볼 수 있는 리스트 (내 주문) |
+| **거래 페이지 (버니) - 주문** | 주문 요청 / 취소 | - 매수 / 매도의 가능 수량 및 금액과 수수료(0.1%)가 포함된 최종 금액을 보고 요청- 오더 리스트(내 주문)에서 취소 가능함- 매수 요청 시, 수수료(0.1%)가 포함된 금액이 빠져나가며,  취소 시 미체결 분 만큼 지불한 수수료를 포함하여 환불- 매도 요청 시, 요청 수량만큼 빠져나가며, 취소 시 미체결 분 만큼 반환 |
+| **거래 페이지 (버니) - 체결** | 체결 | - 매수 시, 나의 호가와 같거나 낮은 매도가들 중에서 제일 낮은 순으로 체결- 매도 시, 나의 호가와 같거나 높은 매수가들 중에서 제일 높은 순으로 체결- 매수 / 매도 둘 다, 같은 레벨에서 체결이 일어난다면 생성시간 오름차순으로 체결- 매수 체결 시, 주문 단계에서 빠져나간 금액으로 체결됨- 매도 체결 시, 원금에서 수수료(0.1%)를 제외한 금액을 수령함 |
+| **캐럿 상점** | - 캐럿 구매- 캐럿 환전- 티켓 구매- 기프티콘 샵 | - 현금을 캐럿으로 환전 (1 : 10000)- 캐럿을 현금으로 환전 (10000  : 1)- 개발자 컨퍼런스 티켓으로 교환 (제휴)- 기프티콘으로 교환 (제휴) |
 
-## Learn More
+## 📁 폴더 설명
 
-To learn more about Next.js, take a look at the following resources:
+| 폴더 경로 | 설명 |
+| --- | --- |
+| **app/_api/** | 서버 통신(API 요청) 관련 함수 모음 |
+| **app/_components/** | 공용 폼, 인트로, 로고 등 전역 컴포넌트 |
+| **app/_hooks/** | 커스텀 훅 (예: 카운트다운, 애니메이션) |
+| **app/_shared/components/** | 버튼, 차트, 헤더 등 공통 UI 컴포넌트 |
+| **app/_shared/modal/** | Confirm, Result 등 공용 모달 컴포넌트 |
+| **app/_store/** | 전역 상태 관리 (Zustand 등) |
+| **app/_utils/** | 공용 유틸 함수 (예: WebSocket 관리) |
+| **app/personal/home/** | 개인 유저 홈 화면 (랭킹, 배너 등) |
+| **app/personal/funding/** | 펀딩 관련 페이지 및 컴포넌트 |
+| **app/personal/mypage/** | 개인 마이페이지 (내 정보, 내 버니 등) |
+| **app/personal/trade/** | 거래 페이지 (버니 코인 매매 화면) |
+| **app/corporation/** | 기업 사용자 페이지 |
+| **app/signup/** | 회원가입 관련 페이지 및 API |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## hello
+## 👤 역할 분담
+| **팀원** | **역할** |
+| --- | --- |
+| **허재환** | 인프라 구성 및 프로젝트 관리, 개발 보조 및 CI / CD |
+| **장하진** | 백엔드 개발, 서비스 기획 |
+| **정재웅** | 백엔드 리드, 서비스 기획 |
+| **홍민우** | 프론트엔드 리드, 서비스 기획 및 디자인 |
+| **황호연** | 프론트엔드 개발, 서비스 기획 |
