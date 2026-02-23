@@ -1,0 +1,722 @@
+"use client";
+import { useState, useEffect, useRef, useMemo } from "react";
+import styled from "styled-components";
+import { Bunny, useBunnyStore } from "../../../_store/bunnyStore";
+import { getOrderBookSnapshot, OrderBookData, cancelOrder, getOrderList } from "../../../_api/bunnyAPI";
+import { webSocketService, OrderBookSnapshot, OrderBookDiff } from "../../../_utils/websocket";
+
+interface OrderItem {
+  id: number;
+  quantity: number;
+  price: string;
+  changeRate: string;
+  order_type: 'BUY' | 'SELL';
+}
+
+interface OrderHistoryItem {
+  order_id: number;
+  orderTime: string;
+  orderType: 'BUY' | 'SELL';
+  quantity: number;
+  unitPrice: number;
+  settlementAmount: number;
+  changeRate: string;
+}
+
+interface OrderListProps {
+  activeOrderTab: string;
+  setActiveOrderTab: (tab: string) => void;
+  bunny: Bunny;
+}
+
+export default function OrderList({ activeOrderTab, setActiveOrderTab, bunny }: OrderListProps) {
+  const [orderBookData, setOrderBookData] = useState<OrderBookData | null>(null);
+  const [orderHistoryData, setOrderHistoryData] = useState<OrderHistoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const wsConnected = useRef(false);
+  const orderItemsContainerRef = useRef<HTMLDivElement>(null);
+  
+  // 웹소켓 실시간 현재가 데이터 가져오기
+  const { bunnies, allBunnies, startPriceRealtime, stopPriceRealtime } = useBunnyStore();
+  const bunnyName = bunny.bunny_name;
+  
+  // 스토어에서 동일 bunny 찾기 (실시간 값 우선)
+  const live = useMemo(() => {
+    const foundInAll = allBunnies.find((bunny) => bunny.bunny_name === bunnyName);
+    if (foundInAll) return foundInAll;
+    return bunnies.find((bunny) => bunny.bunny_name === bunnyName);
+  }, [allBunnies, bunnies, bunnyName]);
+  
+  // 실시간 현재가
+  const currentPrice = live?.current_price ?? bunny.current_price ?? 0;
+  
+  const maxQuantity = orderBookData && orderBookData.orders.length > 0 ? 
+    Math.max(...orderBookData.orders.map(order => order.quantity)) : 0;
+  
+  const getQuantityPercentage = (quantity: number) => {
+    return maxQuantity > 0 ? (quantity / maxQuantity) * 100 : 0;
+  };
+
+  const calculateChangeRate = (price: number, currentPrice: number): string => {
+    const changeRate = ((price - currentPrice) / currentPrice) * 100;
+    const sign = changeRate >= 0 ? '+' : '';
+    return `${sign}${changeRate.toFixed(2)}%`;
+  };
+
+  const getChangeStatus = (price: number, currentPrice: number): 'positive' | 'negative' | 'neutral' => {
+    if (price > currentPrice) return 'positive';
+    if (price < currentPrice) return 'negative';
+    return 'neutral';
+  };
+
+  // 현재가와 일치하는지 확인하는 함수
+  const isCurrentPrice = (price: number): boolean => {
+    return Math.abs(Number(price) - Number(currentPrice)) < 0.01; // 소수점 오차 고려
+  };
+
+  // 현재가를 중심으로 스크롤하는 함수
+  const scrollToCurrentPrice = () => {
+    if (!orderItemsContainerRef.current || !orderBookData) return;
+    
+    const container = orderItemsContainerRef.current;
+    
+    // 현재가와 가장 가까운 item 찾기
+    let closestIndex = -1;
+    let minDiff = Infinity;
+    
+    orderBookData.orders.forEach((order, index) => {
+      const diff = Math.abs(Number(order.price) - Number(currentPrice));
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = index;
+      }
+    });
+    
+    if (closestIndex === -1) return;
+    
+    // 실제 item 높이 계산 (첫 번째 item이 있는 경우)
+    const firstItem = container.children[0] as HTMLElement;
+    const itemHeight = firstItem ? firstItem.offsetHeight + 8 : 60; // gap 0.5rem = 8px 포함
+    
+    // 현재가 item을 중심으로 스크롤 (위아래로 10개씩 보이도록)
+    const containerHeight = container.clientHeight;
+    const visibleItems = Math.floor(containerHeight / itemHeight);
+    const centerOffset = Math.floor(visibleItems / 2);
+    
+    const targetIndex = Math.max(0, closestIndex - centerOffset);
+    const scrollTop = targetIndex * itemHeight;
+    
+    container.scrollTo({
+      top: scrollTop,
+      behavior: 'smooth'
+    });
+  };
+
+  const formatDateTime = (dateTimeString: string): string => {
+    try {
+      const date = new Date(dateTimeString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    } catch (error) {
+      console.error('날짜 포맷팅 오류:', error);
+      return dateTimeString;
+    }
+  };
+
+  // WebSocket 연결 상태 확인 및 필요시 연결
+  const ensureWebSocketConnection = async () => {
+    try {
+      // 이미 연결되어 있는지 확인
+      if (webSocketService.client?.connected) {
+        wsConnected.current = true;
+        console.log('WebSocket 이미 연결됨');
+        return;
+      }
+      
+      // 연결되지 않은 경우에만 연결 시도
+      await webSocketService.connect();
+      wsConnected.current = true;
+      console.log('WebSocket 연결 완료');
+    } catch (error) {
+      console.error('WebSocket 연결 실패:', error);
+      wsConnected.current = false;
+    }
+  };
+
+  // 호가창 스냅샷 처리
+  const handleOrderBookSnapshot = (snapshot: OrderBookSnapshot) => {
+    console.log('호가창 스냅샷 수신:', snapshot);
+  
+    setOrderBookData(snapshot);
+  };
+
+  // 호가창 차이 처리 - diff 처리가 복잡하므로 스냅샷 재요청
+  const handleOrderBookDiff = (diff: OrderBookDiff) => {
+    console.log('호가창 차이 수신, 전체 스냅샷 재요청:', diff);
+    // diff 처리 대신 전체 스냅샷을 다시 요청하는 것이 더 안전함
+    if (wsConnected.current) {
+      webSocketService.requestOrderBookSnapshot(bunny.bunny_name);
+    }
+  };
+
+  const fetchOrderHistory = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getOrderList(bunny.bunny_name);
+      console.log('API 응답 구조:', response);
+      
+      const orderList = response?.orders || [];
+      
+      const mappedOrderHistoryData = orderList.map((orders: any) => ({
+        order_id: orders.order_id,
+        orderTime: formatDateTime(orders.ordered_at),
+        orderType: orders.order_type,
+        quantity: orders.quantity,
+        unitPrice: orders.unit_price,
+        settlementAmount: (orders.quantity || orders.order_quantity || 0) * (orders.unit_price || 0),
+        changeRate: orders.changeRate || '0.00%'
+      }));
+      setOrderHistoryData(mappedOrderHistoryData);
+    } catch (error) {
+      console.error('주문 내역 데이터 가져오기 실패:', error);
+      setOrderHistoryData([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchOrderBook = async () => {
+    setIsLoading(true);
+    try {
+      // 1. 웹소켓 연결 상태 확인 및 필요시 연결
+      await ensureWebSocketConnection();
+      
+      if (wsConnected.current) {
+        // 2. REST API로 초기 스냅샷 가져오기
+        console.log('REST API로 스냅샷 요청:', bunny.bunny_name);
+        const snapshot = await getOrderBookSnapshot(bunny.bunny_name);
+        console.log('스냅샷 수신:', snapshot);
+        
+        // 3. 스냅샷으로 상태 세팅
+        setOrderBookData(snapshot);
+        
+        // 4. WebSocket 구독 시작
+        console.log('WebSocket 구독 시작:', bunny.bunny_name);
+        webSocketService.subscribeToOrderBook(
+          bunny.bunny_name,
+          handleOrderBookSnapshot,
+          handleOrderBookDiff
+        );
+      } else {
+        // HTTP API로 폴백
+        console.log('웹소켓 연결 실패, HTTP API로 폴백');
+        const data = await getOrderBookSnapshot(bunny.bunny_name);
+        setOrderBookData(data);
+      }
+    } catch (error) {
+      console.error('Orderbook 데이터 가져오기 실패:', error);
+      setOrderBookData(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancelOrder = async (orderId: string) => {
+    if (window.confirm('정말로 이 주문을 취소하시겠습니까?')) {
+      try {
+        await cancelOrder(bunny.bunny_name, orderId.toString());
+        await fetchOrderHistory();
+        alert('주문이 취소되었습니다.');
+      } catch (error) {
+        console.error('주문 취소 실패:', error);
+        alert('주문 취소에 실패했습니다.');
+      }
+    }
+  };
+
+  // 웹소켓 실시간 가격 구독
+  useEffect(() => {
+    startPriceRealtime(bunnyName);
+    return () => {
+      stopPriceRealtime(bunnyName);
+    };
+  }, [bunnyName, startPriceRealtime, stopPriceRealtime]);
+
+  useEffect(() => {
+    if (bunny.bunny_name) {
+      if (activeOrderTab === '호가창') {
+        fetchOrderBook();
+      } else if (activeOrderTab === '내 주문') {
+        fetchOrderHistory();
+      }
+    }
+  }, [bunny.bunny_name, activeOrderTab]);
+
+  // 호가 데이터가 로드되거나 현재가가 변경될 때 현재가 중심으로 스크롤
+  useEffect(() => {
+    if (orderBookData && currentPrice > 0) {
+      // 약간의 지연을 두어 DOM이 완전히 렌더링된 후 스크롤 실행
+      const timer = setTimeout(() => {
+        scrollToCurrentPrice();
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [orderBookData, currentPrice]);
+
+  // 컴포넌트 언마운트 시 WebSocket 정리
+  useEffect(() => {
+    return () => {
+      // 컴포넌트 언마운트 시 해당 버니의 구독만 해제
+      if (bunny.bunny_name) {
+        webSocketService.unsubscribeFromOrderBook(bunny.bunny_name);
+      }
+      // 웹소켓 연결은 페이지 레벨에서 관리하므로 여기서는 해제하지 않음
+    };
+  }, [bunny.bunny_name]);
+
+
+
+  return (
+    <OrderListWrapper>
+      <OrderTabContainer>
+        <OrderTabButton
+          $active={activeOrderTab === '호가창'}
+          onClick={() => setActiveOrderTab('호가창')}
+        >
+          호가창
+        </OrderTabButton>
+        <OrderTabButton 
+          $active={activeOrderTab === '내 주문'}
+          onClick={() => setActiveOrderTab('내 주문')}
+        >
+          내 주문
+        </OrderTabButton>
+      </OrderTabContainer>
+      
+      <OrderArea>
+        {activeOrderTab === '호가창' ? (
+          <>
+            <OrderHeader>
+              <HeaderLeftSection>
+                <HeaderCell>수량</HeaderCell>
+              </HeaderLeftSection>
+              <HeaderRightSection>
+                <HeaderCell>가격</HeaderCell>
+                <HeaderCell>등락비</HeaderCell>
+              </HeaderRightSection>
+            </OrderHeader>
+            <OrderItemsContainer ref={orderItemsContainerRef}>
+              {isLoading ? (
+                <EmptyState>데이터를 불러오는 중...</EmptyState>
+              ) : orderBookData ? (
+                <>
+                  {orderBookData.orders.map((order, index) => (
+                    <OrderItem 
+                      key={`order-${index}`}
+                      $isCurrentPrice={isCurrentPrice(order.price)}
+                    >
+                      <OrderLeftArea>
+                        <OrderBar 
+                          $orderType={order.type}
+                          $widthPercentage={getQuantityPercentage(order.quantity)}
+                        >
+                          {order.quantity}
+                        </OrderBar>
+                      </OrderLeftArea>
+                      <OrderRightArea>
+                        <OrderPrice>{order.price.toLocaleString()}</OrderPrice>
+                        <OrderChange $changeStatus={getChangeStatus(order.price, Number(currentPrice))}>
+                          {calculateChangeRate(order.price, Number(currentPrice))}
+                        </OrderChange>
+                      </OrderRightArea>
+                    </OrderItem>
+                  ))}
+                  
+                  {orderBookData.orders.length === 0 && (
+                    <EmptyState>호가 데이터가 없습니다.</EmptyState>
+                  )}
+                </>
+              ) : (
+                <EmptyState>호가 데이터가 없습니다.</EmptyState>
+              )}
+            </OrderItemsContainer>
+          </>
+        ) : (
+          <OrderHistoryContainer>
+            <OrderHistoryHeader>
+              <HeaderCell>주문시간</HeaderCell>
+              <HeaderCell>주문 유형</HeaderCell>
+              <HeaderCell>수량</HeaderCell>
+              <HeaderCell>단가</HeaderCell>
+              <HeaderCell>정산금액</HeaderCell>
+            </OrderHistoryHeader>
+            {orderHistoryData.length > 0 ? (
+              orderHistoryData.map((item) => (
+                <OrderHistoryItem key={item.order_id}>
+                  <HistoryCell>{item.orderTime}</HistoryCell>
+                  <HistoryCell>
+                    <OrderTypeBadge $orderType={item.orderType}>
+                      {item.orderType}
+                    </OrderTypeBadge>
+                  </HistoryCell>
+                  <HistoryCell>{item.quantity}</HistoryCell>
+                  <HistoryCell>{item.unitPrice.toLocaleString()}</HistoryCell>
+                  <HistoryCell>
+                    <SettlementAmountContainer>
+                      <SettlementAmount>{item.settlementAmount.toLocaleString()}</SettlementAmount>
+                      <CancelButton 
+                        onClick={() => handleCancelOrder(item.order_id.toString())}
+                        title="주문 취소"
+                      >
+                        취소하기
+                      </CancelButton>
+                    </SettlementAmountContainer>
+                  </HistoryCell>
+                </OrderHistoryItem>
+              ))
+            ) : (
+              <EmptyState>주문 내역이 없습니다.</EmptyState>
+            )}
+          </OrderHistoryContainer>
+        )}
+      </OrderArea>
+    </OrderListWrapper>
+  );
+}
+
+const OrderListWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex:1;
+  border-radius: 0.75rem;
+  overflow: hidden;
+`;
+
+const OrderTabContainer = styled.div`
+  display: flex;
+  gap: 0.2rem;
+`;
+
+const OrderTabButton = styled.button<{ $active: boolean }>`
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0.5rem 0.5rem 0 0;
+  
+  ${({ $active }) => {
+    if ($active) {
+      return `
+        background-color: rgba(252, 252, 252, 0.34);
+        color: #FAE7C1;
+      `;
+    } else {
+      return `
+        background-color: rgba(255, 255, 255, 0.56);
+        color: #697077;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.7);
+        }
+      `;
+    }
+  }}
+`;
+
+const OrderArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  max-height: 400px;
+  border-radius: 0 0 0.75rem 0.75rem;
+  padding: 0;
+  overflow: hidden;
+`;
+
+const OrderHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(252, 252, 252, 0.4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+`;
+
+const HeaderLeftSection = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const HeaderRightSection = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 2rem;
+`;
+
+const OrderItemsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 1200px; /* 20개 item * 60px 높이 */
+  overflow-y: auto;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  background-color: rgba(252, 252, 252, 0.25);
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+`;
+
+const OrderItem = styled.div<{ $isCurrentPrice?: boolean }>`
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: rgba(252, 252, 252, 0.34);
+  transition: all 0.2s ease;
+  border: ${({ $isCurrentPrice }) => 
+    $isCurrentPrice ? '2px solid #FAE7C1' : '2px solid transparent'
+  };
+  border-radius: ${({ $isCurrentPrice }) => 
+    $isCurrentPrice ? '0.5rem' : '0'
+  };
+  box-shadow: ${({ $isCurrentPrice }) => 
+    $isCurrentPrice ? '0 0 10px rgba(250, 231, 193, 0.5)' : 'none'
+  };
+  
+  &:hover {
+    background-color: rgba(252, 252, 252, 0.5);
+  }
+`;
+
+const OrderLeftArea = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const OrderRightArea = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+`;
+
+const OrderBar = styled.div<{ $orderType: 'BUY' | 'SELL'; $widthPercentage: number }>`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 1.5rem;
+  width: ${({ $widthPercentage }) => $widthPercentage}%;
+  min-width: 2rem;
+  padding: 0 0.5rem;
+  background-color: ${({ $orderType }) => $orderType === 'BUY' ? 'rgba(255, 102, 102, 0.44)' : 'rgba(82, 131, 255, 0.44)'};
+  border-radius: 0.25rem;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  transition: width 0.3s ease;
+`;
+
+const OrderPrice = styled.span`
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+`;
+
+const OrderChange = styled.span<{ $changeStatus: 'positive' | 'negative' | 'neutral' }>`
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: ${({ $changeStatus }) => {
+    switch ($changeStatus) {
+      case 'positive':
+        return 'rgb(216, 3, 3)';
+      case 'negative':
+        return 'rgb(0, 88, 212)';
+      case 'neutral':
+        return 'rgb(107, 107, 107)';
+      default:
+        return 'rgb(107, 114, 128)';
+    }
+  }};
+`;
+
+// Order History Styles
+
+const OrderHistoryContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  background-color: rgba(252, 252, 252, 0.25);
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+  }
+`;
+
+
+const OrderHistoryHeader = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.8fr 1fr 1.2fr;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(252, 252, 252, 0.4);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+`;
+
+const OrderHistoryItem = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.8fr 1fr 1.2fr;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: rgba(252, 252, 252, 0.3);
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const HeaderCell = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+`;
+
+const SortIcon = styled.span`
+  font-size: 0.7rem;
+  color: #FAE7C1;
+`;
+
+const HistoryCell = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #333;
+`;
+
+const OrderTypeBadge = styled.span<{ $orderType: 'BUY' | 'SELL' }>`
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: ${({ $orderType }) => $orderType === 'BUY' ? '#e74c3c' : '#4a90e2'};
+  color: white;
+`;
+
+const SettlementAmountContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+`;
+
+const SettlementAmount = styled.span`
+  font-size: 0.8rem;
+  color: #333;
+  transition: opacity 0.2s ease;
+  
+  ${OrderHistoryItem}:hover & {
+    opacity: 0;
+  }
+`;
+
+const CancelButton = styled.button`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 24px;
+  border: 1px solid #e74c3c;
+  border-radius: 0.25rem;
+  background-color: transparent;
+  color: #e74c3c;
+  font-size: 0.65rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  ${OrderHistoryItem}:hover & {
+    opacity: 1;
+  }
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #999;
+  font-size: 0.9rem;
+  font-weight: 500;
+`;

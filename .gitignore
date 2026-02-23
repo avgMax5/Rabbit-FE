@@ -43,6 +43,8 @@ web_modules/
 
 # dotenv environment variables file
 .env
+.env.local
+.env.development
 .env.test
 .env.production
 
@@ -100,3 +102,8 @@ dist
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
+
+# Package files
+package-lock.json
+
+.DS_Store

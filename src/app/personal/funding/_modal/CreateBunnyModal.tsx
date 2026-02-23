@@ -1,0 +1,675 @@
+"use client";
+
+import React, { useState } from "react";
+import styled from "styled-components";
+import Image from "next/image";
+import Button from "../../../_shared/components/Button";
+import TypeCard from "../_components/TypeCard";
+import ResultModal from "../../../_shared/modal/Result";
+import { checkBunnyName, postFundBunny } from "../../../_api/fundingAPI";
+
+interface CreateBunnyModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+export default function CreateBunnyModal({ isOpen, onClose }: CreateBunnyModalProps) {
+  const [bunnyName, setBunnyName] = useState('');
+  const [selectedType, setSelectedType] = useState<'A' | 'B' | 'C'>('B');
+  const [agreement1, setAgreement1] = useState(false);
+  const [agreement2, setAgreement2] = useState(false);
+  const [isCheckingDuplicate, setIsCheckingDuplicate] = useState(false);
+  const [nameError, setNameError] = useState('');
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false);
+  const [resultType, setResultType] = useState<'success' | 'error'>('success');
+  const [resultMessage, setResultMessage] = useState('');
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      setBunnyName('');
+      setSelectedType('B');
+      setAgreement1(false);
+      setAgreement2(false);
+      setIsCheckingDuplicate(false);
+      setNameError('');
+      setIsResultModalOpen(false);
+    }
+  }, [!isOpen]);
+
+  // 버니 이름 검증 함수
+  const validateBunnyName = (name: string): string => {
+    if (!name.trim()) {
+      return '';
+    }
+
+    // 대문자를 소문자로 변환
+    const normalizedName = name.toLowerCase();
+    
+    // 길이 검증
+    if (normalizedName.length < 3) {
+      return '버니 이름은 3자 이상이어야 합니다.';
+    }
+    if (normalizedName.length > 20) {
+      return '버니 이름은 20자 이하여야 합니다.';
+    }
+
+    // 허용 문자 검증 (영어 소문자, 숫자, 하이픈만)
+    const allowedPattern = /^[a-z0-9-]+$/;
+    if (!allowedPattern.test(normalizedName)) {
+      return '영어 소문자, 숫자, 하이픈만 사용할 수 있습니다.';
+    }
+
+    // 하이픈으로 시작하거나 끝나는지 검증
+    if (normalizedName.startsWith('-') || normalizedName.endsWith('-')) {
+      return '하이픈으로 시작하거나 끝날 수 없습니다.';
+    }
+
+    // 연속된 하이픈 검증
+    if (normalizedName.includes('--')) {
+      return '연속된 하이픈을 사용할 수 없습니다.';
+    }
+
+    return '';
+  };
+
+  // 버니 이름 변경 핸들러
+  const handleBunnyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    setBunnyName(value);
+    
+    // 실시간 검증
+    const error = validateBunnyName(value);
+    setNameError(error);
+  };
+
+  const marketCap = 100000000;
+
+    const getTypeValues = (type: "A" | "B" | "C") => {
+        switch (type) {
+            case "A":
+                return { issuance: 1000, unitPrice: 100000 };
+            case "B":
+                return { issuance: 100000, unitPrice: 1000 };
+            case "C":
+                return { issuance: 1000000, unitPrice: 100 };
+            default:
+                return { issuance: 100000, unitPrice: 1000 };
+        }
+    };
+
+    const { issuance, unitPrice } = getTypeValues(selectedType);
+
+    const isSubmitEnabled = agreement1 && agreement2;
+
+    if (!isOpen) return null;
+
+  const handleSubmit = async () => {
+    // 버니 이름 검증
+    const error = validateBunnyName(bunnyName);
+    if (error) {
+      setResultType('error');
+      setResultMessage('올바른 버니 이름을 입력해주세요.');
+      setIsResultModalOpen(true);
+      return;
+    }
+
+    try {
+      await postFundBunny(bunnyName.toLowerCase(), selectedType);
+      setResultType('success');
+      setResultMessage('상장심사 신청이 완료되었습니다.');
+      setIsResultModalOpen(true);
+    } catch (error) {
+      console.error('상장심사 신청 오류:', error);
+      setResultType('error');
+      setResultMessage('상장심사 신청 중 오류가 발생했습니다.');
+      setIsResultModalOpen(true);
+    }
+  };
+
+  const handleResultModalClose = () => {
+    setIsResultModalOpen(false);
+    if (resultType === 'success' && resultMessage === '상장심사 신청이 완료되었습니다.') {
+      onClose(); // 성공 시 모달 닫기
+    }
+  };
+
+  const handleCheckDuplicate = async () => {
+    if (!bunnyName.trim()) {
+      setResultType('error');
+      setResultMessage('버니 이름을 입력해주세요.');
+      setIsResultModalOpen(true);
+      return;
+    }
+
+    // 검증 오류가 있으면 중복 체크 불가
+    const error = validateBunnyName(bunnyName);
+    if (error) {
+      setResultType('error');
+      setResultMessage('올바른 버니 이름을 입력해주세요.');
+      setIsResultModalOpen(true);
+      return;
+    }
+    
+    setIsCheckingDuplicate(true);
+    try {
+      const response = await checkBunnyName(bunnyName.toLowerCase());
+      
+      if (!response) {
+        setResultType('error');
+        setResultMessage('중복 체크 중 오류가 발생했습니다.');
+        setIsResultModalOpen(true);
+        return;
+      }
+      
+      if (response.isDuplicate) {
+        setResultType('error');
+        setResultMessage('이미 사용 중인 버니 이름입니다.');
+        setIsResultModalOpen(true);
+      } else {
+        setResultType('success');
+        setResultMessage('사용 가능한 버니 이름입니다.');
+        setIsResultModalOpen(true);
+      }
+    } catch (error) {
+      console.error('중복 체크 오류:', error);
+      setResultType('error');
+      setResultMessage('중복 체크 중 오류가 발생했습니다.');
+      setIsResultModalOpen(true);
+    } finally {
+      setIsCheckingDuplicate(false);
+    }
+  };
+
+  return (
+        <>
+            <ModalOverlay onClick={onClose}>
+                <ModalContent onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                    <ModalHeader>
+                        <Image
+                            src="/images/personal/funding/astronaut.png"
+                            alt="close"
+                            width={48}
+                            height={50}
+                        />
+                        <CloseButton onClick={onClose}>X</CloseButton>
+                    </ModalHeader>
+
+                    <FormContainer>
+                        {/* 버니 이름 섹션 */}
+                        <Section>
+                            <InputRow>
+                                <InputLabel>버니 이름</InputLabel>
+                                <InputWithButton>
+                                    <NameInput
+                                        type="text"
+                                        value={bunnyName}
+                                        onChange={handleBunnyNameChange}
+                                        placeholder="버니 이름을 입력하세요"
+                                    />
+                                    <CheckDuplicateButton
+                                        onClick={handleCheckDuplicate}
+                                        disabled={isCheckingDuplicate}
+                                    >
+                                        {isCheckingDuplicate
+                                            ? "확인중..."
+                                            : "중복체크"}
+                                    </CheckDuplicateButton>
+                                </InputWithButton>
+                            </InputRow>
+                            <InputDescription>
+                                이름은 영어 소문자, 숫자, 하이픈(연속, 시작/끝 위치
+                                불가)으로 이루어진 3~20 자리 이름만 가능합니다.
+                            </InputDescription>
+                            {nameError && (
+                                <ErrorMessage>
+                                    {nameError}
+                                </ErrorMessage>
+                            )}
+                        </Section>
+
+                        {/* 버니 유형 선택 섹션 */}
+                        <Section>
+                            <TypeCardsContainer>
+                                <TypeCard
+                                    type="A"
+                                    isSelected={selectedType === "A"}
+                                    onClick={() => setSelectedType("A")}
+                                />
+                                <TypeCard
+                                    type="B"
+                                    isSelected={selectedType === "B"}
+                                    onClick={() => setSelectedType("B")}
+                                />
+                                <TypeCard
+                                    type="C"
+                                    isSelected={selectedType === "C"}
+                                    onClick={() => setSelectedType("C")}
+                                />
+                            </TypeCardsContainer>
+                        </Section>
+
+                        {/* 코인 상세 정보 섹션 */}
+                        <InfoSection>
+                            <InfoRow>
+                                <InfoLabel>시가 총액</InfoLabel>
+                                <InfoValueWithUnit>
+                                    <InfoValue>
+                                        {marketCap.toLocaleString()}
+                                    </InfoValue>
+                                    <InfoUnit>C</InfoUnit>
+                                </InfoValueWithUnit>
+                            </InfoRow>
+
+                            <InfoRow>
+                                <InfoLabel>발행량</InfoLabel>
+                                <InfoValueWithUnit>
+                                    <InfoValue>
+                                        {issuance.toLocaleString()}
+                                    </InfoValue>
+                                    <InfoUnit>BNY</InfoUnit>
+                                </InfoValueWithUnit>
+                            </InfoRow>
+
+                            <InfoRow>
+                                <InfoLabel>단가</InfoLabel>
+                                <InfoValueWithUnit>
+                                    <InfoValue>
+                                        {unitPrice.toLocaleString()}
+                                    </InfoValue>
+                                    <InfoUnit>C</InfoUnit>
+                                </InfoValueWithUnit>
+                            </InfoRow>
+                        </InfoSection>
+
+                        {/* 동의 사항 섹션 */}
+                        <AgreementSection>
+                            <AgreementItem>
+                                <Checkbox
+                                    type="checkbox"
+                                    checked={agreement1}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                        setAgreement1(e.target.checked)
+                                    }
+                                />
+                                <AgreementText>
+                                    3일 내에 상장되지 못하면 자동으로 폐지되는 것에
+                                    동의합니다.
+                                </AgreementText>
+                            </AgreementItem>
+
+                            <AgreementItem>
+                                <Checkbox
+                                    type="checkbox"
+                                    checked={agreement2}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                        setAgreement2(e.target.checked)
+                                    }
+                                />
+                                <AgreementText>
+                                    한번 상장된 코인은 정보를 임의로 변경/삭제 할 수
+                                    없음에 동의합니다.
+                                </AgreementText>
+                            </AgreementItem>
+                        </AgreementSection>
+
+                        {/* 제출 버튼 */}
+                        <ButtonContainer>
+                            <Button
+                                onClick={handleSubmit}
+                                disabled={!isSubmitEnabled}
+                                variant="primary"
+                                size="medium"
+                                type="button"
+                            >
+                                상장심사 받기
+                            </Button>
+                        </ButtonContainer>
+                    </FormContainer>
+                </ModalContent>
+            </ModalOverlay>
+            
+            <ResultModal
+                isOpen={isResultModalOpen}
+                onClose={handleResultModalClose}
+                type={resultType}
+                title={resultType === 'success' ? '사용 가능!' : '오류 발생'}
+                message={resultMessage}
+                buttonText="확인"
+            />
+        </>
+    );
+}
+
+const ModalOverlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+    background-image: linear-gradient(
+        135deg,
+        #6c98f8fd,
+        #7287e6b3,
+        #a86ce5a1,
+        #b458ffb9
+    );
+    border-radius: 1.25rem;
+    padding: 1rem 4rem;
+    max-width: 50rem;
+    width: 80%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 1.25rem 2.5rem rgba(0, 0, 0, 0.3);
+`;
+
+const ModalHeader = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+`;
+
+const CloseButton = styled.button`
+    position: absolute;
+    right: 1rem;
+    background: #fee2a7;
+    box-shadow: inset -0.125rem -0.25rem 0.625rem #ffc54a,
+        inset 0.125rem 0.125rem 0.125rem #fffbf2,
+        0.125rem 0.0625rem 0.25rem rgba(254, 226, 167, 0.3);
+    border: none;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #ffa629;
+    font-weight: 800;
+
+    &:hover {
+        background: #ffed4e;
+        transform: scale(1.1);
+    }
+`;
+
+const FormContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 1.875rem;
+`;
+
+const Section = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.9375rem;
+`;
+
+const InfoSection = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.9375rem;
+    align-items: center;
+`;
+
+const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const SectionTitle = styled.h2`
+    color: #dedcdc;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+`;
+
+const NameInput = styled.input`
+    background: #ffffff;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 0.9375rem;
+    font-size: 16px;
+    color: #333;
+    flex: 1;
+
+    &::placeholder {
+        color: #999;
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.125rem #7d37ff;
+    }
+`;
+
+const InputDescription = styled.p`
+    color: #cccccc;
+    font-size: 10px;
+    margin: 0;
+    line-height: 1.4;
+    text-align: right;
+`;
+
+const TypeCardsContainer = styled.div`
+    display: flex;
+    gap: 1.25rem;
+    justify-content: space-between;
+
+    @media (max-width: 48rem) {
+        flex-direction: column;
+    }
+`;
+
+const InputRow = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+`;
+
+const InputLabel = styled.label`
+    color: #f7f6f6;
+    text-shadow: 1.24px 1.24px 3.71px #c7c7c7,
+        3.71px 3.71px 4.95px rgba(0, 0, 0, 0.25);
+    font-size: 24px;
+    font-weight: 700;
+    min-width: 6.25rem;
+`;
+
+const InfoRow = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0.75rem 0;
+    width: 100%;
+    max-width: 25rem;
+`;
+
+const InfoLabel = styled.div`
+    color: #ffffff;
+    text-shadow: 1.24px 1.24px 3.71px rgba(160, 160, 160, 1),
+        3.71px 3.71px 4.95px rgba(0, 0, 0, 0.25);
+    font-size: 20px;
+    font-weight: 700;
+    min-width: 6.25rem;
+`;
+
+const InfoValueWithUnit = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+`;
+
+const InfoValue = styled.div`
+    color: #fee2a7;
+    font-size: 24px;
+    font-weight: 900;
+`;
+
+const InfoUnit = styled.div`
+    color: #c9b281;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 700;
+`;
+
+const InputWithUnit = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex: 1;
+`;
+
+const InputWithButton = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+`;
+
+const CheckDuplicateButton = styled.button`
+    background: #fee2a7;
+    box-shadow: inset -0.125rem -0.25rem 0.625rem #ffc54a,
+        inset 0.125rem 0.125rem 0.125rem #fffbf2,
+        0.125rem 0.0625rem 0.25rem rgba(254, 226, 167, 0.3);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    color: #ffa629;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 5rem;
+
+    &:hover:not(:disabled) {
+        background: #ffed4e;
+        transform: translateY(-0.0625rem);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: inset 0.125rem 0.25rem 0.625rem #ffc54a,
+            inset -0.125rem -0.125rem 0.125rem #fffbf2,
+            0.0625rem 0.03125rem 0.125rem rgba(254, 226, 167, 0.3);
+    }
+`;
+
+const NumberInput = styled.input`
+    background: #f5f5f5;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 0.9375rem;
+    font-size: 16px;
+    color: #666;
+    flex: 1;
+
+    &::placeholder {
+        color: #999;
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.125rem #ffd700;
+    }
+
+    &[readonly] {
+        background: #f5f5f5;
+        color: #666;
+        cursor: not-allowed;
+    }
+`;
+
+const UnitLabel = styled.span`
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    min-width: 2.5rem;
+`;
+
+const AgreementSection = styled.div`
+    background: #d4d4fb57;
+    border-radius: 0.9375rem;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9375rem;
+`;
+
+const AgreementItem = styled.div`
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+`;
+
+const Checkbox = styled.input`
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+    cursor: pointer;
+    appearance: none;
+    border: 0.125rem solid #f7d282;
+    border-radius: 0.25rem;
+    background: transparent;
+    position: relative;
+    transition: all 0.3s ease;
+
+    &:checked {
+        background: #fee2a7;
+        border-color: #fee2a7;
+
+        &::after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #333;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    }
+
+    &:hover {
+        border-color: #ffd700;
+        box-shadow: 0 0 0 0.125rem rgba(254, 226, 167, 0.3);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.1875rem rgba(254, 226, 167, 0.5);
+    }
+`;
+
+const AgreementText = styled.span`
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.4;
+    flex: 1;
+`;
+
+const ErrorMessage = styled.div`
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 0.5rem;
+    text-align: right;
+`;
